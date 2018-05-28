@@ -1,7 +1,7 @@
-# Node.js Hello World
+# Installations-Guide
 
-This sample demonstrates a tiny Hello World node.js app for [App Service Web App](https://docs.microsoft.com/azure/app-service-web).
-
-# Contributing
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+1. Node.JS installieren
+2. Repository forken (und Upstream passend einrichten)
+3. Im “backend” Ordner eine Konsole öffnen (oder in Webstorm über den internen Terminal in den backend Ordner navigieren)
+4. “npm install” ausführen und etwas warten
+5. Per IDE die “index.js” im Root-Ornder starten
