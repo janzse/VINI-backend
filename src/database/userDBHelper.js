@@ -1,6 +1,6 @@
 import dbCon from "./msSqlWrapper";
 
-function registerUserInDB(username, password, callback){
+function registerUserInDB(username, password, callback) {
 
   const registerUserQuery = `INSERT INTO users (username, password) VALUES ('${username}', SHA('${password}'));`;
 

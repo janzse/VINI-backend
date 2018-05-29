@@ -1,13 +1,13 @@
 import dbCon from "./msSqlWrapper";
 
-function saveBearerToken(token, userID, callback){
+function saveBearerToken(token, userID, callback) {
 
   const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
 
   dbCon.query(insertTokenQuery, callback);
 }
 
-function getUserIDFromBearerToken(token, callback){
+function getUserIDFromBearerToken(token, callback) {
 
   const getUserIDQuery = `SELECT * FROM bearer_tokens WHERE token = '${token}';`;
 
