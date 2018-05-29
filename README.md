@@ -2,6 +2,7 @@
 
 1. Node.JS installieren
 2. Repository forken (und Upstream passend einrichten)
-3. Im “backend” Ordner eine Konsole öffnen (oder in Webstorm über den internen Terminal in den backend Ordner navigieren)
+3. Eine Konsole öffnen (z.B. den internen Terminal von WebStorm)
 4. “npm install” ausführen und etwas warten
-5. Per IDE die “index.js” im Root-Ornder starten
+5. Mit “npm start” den Server starten (Er wird zuerst transpiliert und dann gestartet)
+
