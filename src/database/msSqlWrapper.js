@@ -1,14 +1,13 @@
 import {Connection, Request} from "tedious";
 
 let con = {};
-
-let query = "";
+let queryString = "";
 let queryCallback = null;
 
-function initConnection(queryString, callback){
+function initConnection(query, callback) {
   console.log("Initializing DB connection");
 
-  query = queryString;
+  queryString = query;
   queryCallback = callback;
 
   con = new Connection({
@@ -17,49 +16,48 @@ function initConnection(queryString, callback){
     server: 'vini.database.windows.net',
     options: {
       encrypt: true,
-      database: 'testdb'
+      database: 'vini-database'
     }
   });
 
   con.on('connect', function (err) {
-    if(err){
-      throw err;
+    if (err) {
+      console.log("Unable to connect to database!", err);
     }
-    else{
+    else {
       console.log("Successfully connected to DB");
-      execute(query, queryCallback);
+      executeSql();
     }
   });
 }
 
 let resultValues = [];
 
-function execute(queryString, callback){
+function executeSql() {
 
-  const request = new Request(queryString, function(err, rowCount){
-    if(err){
-      console.log("ERRR", err);
-      throw err;
+  const request = new Request(queryString, function (err, rowCount) {
+    if (err) {
+      console.log("Error while request was performed: ", err);
+      return;
     }
-    else{
-      console.log("Got ", rowCount, " rows");
+    else {
+      console.log("Got ", rowCount, " row(s)");
     }
 
     con.close();
   });
 
   request.on('row', function (columns) {
-    console.log("Got some rows");
-    // This collects all non-null rows in an array and calls the given callback with it
+    // This collects all non-null rows in an array
     columns.forEach(function (column) {
-      if(column.value != null){
+      if (column.value != null) {
         resultValues.push(column.value);
       }
     });
   });
 
   request.on('requestCompleted', function () {
-    callback(resultValues);
+    queryCallback(resultValues);
   });
 
   request.on('error', function (err) {

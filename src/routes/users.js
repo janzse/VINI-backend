@@ -3,10 +3,12 @@ const router = express.Router();
 import userDBHelper from "../database/userDBHelper";
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
 
   // Read user information from req-Object
-  userDBHelper.getUserFromCredentials("user1", "abc", (result) => {res.json(result)});
+  userDBHelper.getUserFromCredentials("user1", "abc", (result) => {
+    res.json(result)
+  });
 
 });
 
