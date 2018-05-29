@@ -32,7 +32,7 @@ app.use(function (err, req, res, next) {
   res.json({"error": err.status});
 });
 
-const port = 4711;
+const port = process.env.port || 4711;
 
 app.listen(port);
 console.log("Server is running on port", port);
