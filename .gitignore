@@ -5,6 +5,7 @@ node_modules
 dist
 TODOs.md
 .vscode
+package-lock.json
 
 **.idea/**
 .idea
