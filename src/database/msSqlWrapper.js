@@ -1,16 +1,21 @@
 import {Connection, Request} from "tedious";
 
-let con = {};
-let queryString = "";
-let queryCallback = null;
+let dbConnection = null;
+
+function query(queryString, callback) {
+
+  if(dbConnection == null){
+    initConnection(queryString, callback);
+  }
+  else{
+    executeSql(queryString, callback);
+  }
+}
 
 function initConnection(query, callback) {
   console.log("Initializing DB connection");
 
-  queryString = query;
-  queryCallback = callback;
-
-  con = new Connection({
+  dbConnection = new Connection({
     userName: 'vini@vini.database.windows.net',
     password: 't51sy9RbdohKsa',
     server: 'vini.database.windows.net',
@@ -20,22 +25,27 @@ function initConnection(query, callback) {
     }
   });
 
-  con.on('connect', function (err) {
+  dbConnection.on('connect', function (err) {
     if (err) {
       console.log("Unable to connect to database!", err);
     }
     else {
       console.log("Successfully connected to DB");
-      executeSql();
+      executeSql(query, callback);
     }
   });
+
+  dbConnection.on('end', function () {
+    console.log("DB connection has been closed.");
+    dbConnection = null;
+  })
 }
 
 let resultValues = [];
 
-function executeSql() {
+function executeSql(query, callback) {
 
-  const request = new Request(queryString, function (err, rowCount) {
+  const request = new Request(query, function (err, rowCount) {
     if (err) {
       console.log("Error while request was performed: ", err);
       return;
@@ -44,7 +54,7 @@ function executeSql() {
       console.log("Got ", rowCount, " row(s)");
     }
 
-    con.close();
+    dbConnection.close();
   });
 
   request.on('row', function (columns) {
@@ -57,22 +67,17 @@ function executeSql() {
   });
 
   request.on('requestCompleted', function () {
-    queryCallback(resultValues);
+    callback(null, resultValues);
   });
 
   request.on('error', function (err) {
-    console.log("Error while executing ", queryString); // Might not be secure
+    console.log("Error while executing ", query); // Might not be secure
     throw err;
   });
 
-  con.execSql(request);
+  dbConnection.execSql(request);
 }
 
-
-con.query = (queryString, callback) => {
-
-  initConnection(queryString, callback);
+module.exports = {
+  "query": query
 };
-
-
-module.exports = con;
