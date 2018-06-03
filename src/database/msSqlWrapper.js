@@ -1,4 +1,4 @@
-import {Connection, Request} from "tedious";
+const tedious  = require('tedious');
 
 let con = {};
 let queryString = "";
@@ -10,7 +10,7 @@ function initConnection(query, callback) {
   queryString = query;
   queryCallback = callback;
 
-  con = new Connection({
+  con = new tedious.Connection({
     userName: 'vini@vini.database.windows.net',
     password: 't51sy9RbdohKsa',
     server: 'vini.database.windows.net',
@@ -35,7 +35,7 @@ let resultValues = [];
 
 function executeSql() {
 
-  const request = new Request(queryString, function (err, rowCount) {
+  const request = new tedious.Request(queryString, function (err, rowCount) {
     if (err) {
       console.log("Error while request was performed: ", err);
       return;

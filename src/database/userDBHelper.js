@@ -1,4 +1,4 @@
-import dbCon from "./msSqlWrapper";
+const dbCon = require('./msSqlWrapper');
 
 function registerUserInDB(username, password, callback) {
 
@@ -15,7 +15,7 @@ function getUserFromCredentials(username, password, callback) {
   dbCon.query(getUserQuery, callback);
 }
 
-export default {
+module.exports =  {
   "registerUserInDB": registerUserInDB,
   "getUserFromCredentials": getUserFromCredentials
 };
