@@ -3,7 +3,8 @@ import express from "express";
 import logger from "morgan";
 import oAuth2Server from "node-oauth2-server";
 import oAuthModel from "./authorisation/accessTokenModel";
-import initAuthRoutes from "./authorisation/authRoutes";
+import initAuthRoutes from "./routes/testRoutes/authRoutes";
+import bodyParser from "body-parser";
 
 const port = process.env.port || 4711;
 const app = express();
@@ -28,6 +29,7 @@ app.use(app.oauth.errorHandler());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 //rest API routes
 app.use('/', require('./routes/root'));
@@ -40,10 +42,10 @@ app.use('/api/car/service', require('./routes/api/car/service'));
 app.use('/api/car/tuev', require('./routes/api/car/tuev'));
 app.use('/api/user/register', require('./routes/api/user_register'));
 app.use('/api/login', require('./routes/api/login'));
-app.use('/auth', authRoutes);
 
 //test routes
-app.use('/users', require('./routes/users'));
+app.use('/users', require('./routes/testRoutes/users'));
+app.use('/auth', authRoutes);
 
 // catch 404 and forward to error handler
 

@@ -8,8 +8,7 @@ const router = express.Router();
 
 /* POST car registration. */
 router.post('/', function(req, res, next) {
-    res.send('Car registred the '+req.query.ownerCount+'th time with mileage: '+req.query.mileage+' at timestamp: '
-        +req.query.timestamp);
+    res.send(req.body);    // echo the result back
 });
 
 module.exports = router;

@@ -8,7 +8,7 @@ const router = express.Router();
 
 /* POST Login. */
 router.post('/', function(req, res, next) {
-    res.send('Login with user: '+req.query.email+' and password: '+req.query.password);
+    res.send(req.body);    // echo the result back
 });
 
 module.exports = router;
