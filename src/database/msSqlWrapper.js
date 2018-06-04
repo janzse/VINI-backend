@@ -67,11 +67,12 @@ function executeSql(query, callback) {
   });
 
   request.on('requestCompleted', function () {
-    callback(null, resultValues);
+    callback(false, resultValues);
   });
 
   request.on('error', function (err) {
     console.log("Error while executing ", query); // Might not be secure
+    callback(true, null);
     throw err;
   });
 
