@@ -8,13 +8,12 @@ const router = express.Router();
 
 /* POST user register. */
 router.post('/', function(req, res, next) {
-    res.send('Register with user: '+req.query.email+' and password: '+req.query.password+' and confirmPassword: '
-        +req.query.confirmPassword);
+    res.send(req.body);    // echo the result back
 });
 
 /* DELETE user register. */
 router.delete('/', function(req, res, next) {
-    res.send('Delete user: '+req.query.email);
+    res.send(req.body);    // echo the result back
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import userDBHelper from "../database/userDBHelper";
+import userDBHelper from "../../database/userDBHelper";
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
