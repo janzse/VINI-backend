@@ -80,13 +80,12 @@ function saveAccessToken(accessToken, clientID, expires, user, callback){
   If you create a user object you can access it in authenticated endpoints in the req.user object.
   If you create a userId you can access it in authenticated endpoints in the req.user.id object.
  */
-function getAccessToken(bearerToken, callback) {
+function getAccessToken(accessToken, callback) {
 
   //try and get the userID from the db using the bearerToken
-  accessTokensDBHelper.getUserIDFromBearerToken(bearerToken, (userID) => {
+  accessTokensDBHelper.getUserIDFromAccessToken(accessToken, (userID) => {
 
-    //create the token using the retrieved userID
-    const accessToken = {
+    const token = {
       user: {
         id: userID,
       },
@@ -94,7 +93,7 @@ function getAccessToken(bearerToken, callback) {
     };
 
     //set the error to true if userID is null, and pass in the token if there is a userID else pass null
-    callback(userID == null, userID == null ? null : accessToken)
+    callback(userID == null, userID == null ? null : token)
   })
 }
 

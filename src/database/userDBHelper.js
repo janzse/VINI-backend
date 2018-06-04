@@ -14,7 +14,14 @@ function getUserFromCredentials(email, password, callback) {
 
   dbConnection.query(getUserQuery, (err, result) => {
 
+    console.log("Err: ", err);
     console.log("Result: ", result);
+
+    if(result.length === 0){
+      console.log("Invalid credentials");
+      callback(true, null);
+      return;
+    }
 
     //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf benötigt wird
     let usersResult = {

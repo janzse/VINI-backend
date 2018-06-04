@@ -41,8 +41,28 @@ function login(registerUserQuery, res){
 
 }
 
+let app;
 
-module.exports =  {
+//TODO: Das herumreichen der "app" Instanz ist sehr unschön. FIXME!
+
+function isAuthorised(req, res, next){
+  const authResult = app.oauth.authorise()(req, res, next);
+
+  if(authResult.bearerToken != null){
+    console.log("TOKEN: ", authResult.bearerToken);
+
+    //TODO: Validierung der Nutzerrechte (authorisation Level)
+  }
+  else{
+    console.log("No valid accessToken found");
+    res.status(403);
+    res.redirect("/");
+  }
+}
+
+module.exports = {
+  "setApp": (expressApp) => {app = expressApp},
   "registerUser": registerUser,
-  "login": login
+  "login": login,
+  "isAuthorised": isAuthorised
 };

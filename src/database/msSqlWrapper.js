@@ -41,9 +41,9 @@ function initConnection(query, callback) {
   })
 }
 
-let resultValues = [];
-
 function executeSql(query, callback) {
+
+  let resultValues = [];
 
   const request = new Request(query, function (err, rowCount) {
     if (err) {
