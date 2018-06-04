@@ -25,11 +25,11 @@ function saveAccessToken(token, userID, callback) {
 
 function getUserIDFromAccessToken(token, callback) {
 
-  const getUserIDQuery = `SELECT * FROM bearer_tokens WHERE token = '${token}';`;
+  const getUserIDQuery = `SELECT user_id FROM bearer_tokens WHERE token = '${token}';`;
 
-  dbConnection.query(getUserIDQuery, (resultValues) => {
+  dbConnection.query(getUserIDQuery, (err, resultValues) => {
 
-    const userID = resultValues != null && resultValues.length === 1 ? resultValues[0].user_id : null;
+    const userID = resultValues != null && resultValues.length === 1 ? resultValues[0] : null;
 
     callback(userID);
   });

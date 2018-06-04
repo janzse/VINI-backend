@@ -1,8 +1,17 @@
 import userDBHelper from "../database/userDBHelper";
 import accessTokensDBHelper from "../database/accessTokensDBHelper";
 
+/* All methods in this file are called by the node-oauth2-server module. They are provided as an object in the "app.js"
+* while instantiating the oAuthServer object.*/
+
+/** This function returns the client application which attempts to get an accessToken. Since we're using the
+ * grant_type "password" we don't need the first two parameters.
+ * @param clientID the ID of the client attempting to get the accessToken
+ * @param clientSecret the secret of the client attempting to get the accessToken
+ * @param callback a function taking an error-indicator and a client object */
 function getClient(clientID, clientSecret, callback){
 
+  // All of the properties can be null
   const client = {
     clientID,
     clientSecret,
@@ -13,11 +22,13 @@ function getClient(clientID, clientSecret, callback){
   callback(false, client);
 }
 
-/* Determines whether or not the client which has to the specified clientID is permitted to use the specified grantType.
-  The callback takes an eror of type truthy, and a boolean which indcates whether the client that has the specified clientID
-  is permitted to use the specified grantType. As we're going to hardcode the response no error can occur
-  hence we return false for the error and as there is there are no clientIDs to check we can just return true to indicate
-  the client has permission to use the grantType. */
+/**
+ * This function determines if a client with a given clientID is allowed to use the specified grantType.
+ * @param clientID the ID of the client attempting to get the accessToken
+ * @param grantType the given grantType ("password" in our use-case)
+ * @param callback a function taking an error-indicator and a boolean, if the client is allowed to use the grantType
+ * or not, as parameter
+ */
 function grantTypeAllowed(clientID, grantType, callback) {
 
   console.log('grantTypeAllowed called and clientID is: ', clientID, ' and grantType is: ', grantType);
@@ -25,20 +36,28 @@ function grantTypeAllowed(clientID, grantType, callback) {
   callback(false, true);
 }
 
+/**
+ * This function attempts to find a user with the given email and password.
+ * @param email the email of the user to search
+ * @param password the password of the user to search
+ * @param callback a function taking an error-indicator and a user object as parameter
+ */
+function getUser(email, password, callback){
 
-/* The method attempts to find a user with the spcecified username and password. The callback takes 2 parameters.
-   This first parameter is an error of type truthy, and the second is a user object. You can decide the structure of
-   the user object as you will be the one accessing the data in the user object in the saveAccessToken() method. The library
-   doesn't access the user object it just supplies it to the saveAccessToken() method */
-function getUser(username, password, callback){
-
-  console.log('getUser() called and username is: ', username, ' and password is: ', password, ' and callback is: ', callback, ' and is userDBHelper null is: ', userDBHelper);
+  console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
 
   //try and get the user using the user's credentials
-  userDBHelper.getUserFromCredentials(username, password, callback)
+  userDBHelper.getUserFromCredentials(email, password, callback)
 }
 
-/* saves the accessToken along with the userID retrieved the specified user */
+/**
+ * This function attempts to save the generated accessToken in the database. The table for this is bearer_token.
+ * @param accessToken the token to be saved
+ * @param clientID the ID of the client attempting to get the accessToken
+ * @param expires the amount of second which the accessToken is valid
+ * @param user the user object
+ * @param callback a function taking an error-indicator and the query results as parameter
+ */
 function saveAccessToken(accessToken, clientID, expires, user, callback){
 
   console.log('saveAccessToken() called and accessToken is: ', accessToken,
@@ -61,13 +80,12 @@ function saveAccessToken(accessToken, clientID, expires, user, callback){
   If you create a user object you can access it in authenticated endpoints in the req.user object.
   If you create a userId you can access it in authenticated endpoints in the req.user.id object.
  */
-function getAccessToken(bearerToken, callback) {
+function getAccessToken(accessToken, callback) {
 
   //try and get the userID from the db using the bearerToken
-  accessTokensDBHelper.getUserIDFromBearerToken(bearerToken, (userID) => {
+  accessTokensDBHelper.getUserIDFromAccessToken(accessToken, (userID) => {
 
-    //create the token using the retrieved userID
-    const accessToken = {
+    const token = {
       user: {
         id: userID,
       },
@@ -75,7 +93,7 @@ function getAccessToken(bearerToken, callback) {
     };
 
     //set the error to true if userID is null, and pass in the token if there is a userID else pass null
-    callback(userID == null, userID == null ? null : accessToken)
+    callback(userID == null, userID == null ? null : token)
   })
 }
 
