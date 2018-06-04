@@ -27,12 +27,11 @@ create table kfz(
     PRIMARY KEY (vin)
 );
 
-create table key_mapping(
-    vin varchar(17) NOT NULL UNIQUE,
-    public_key varchar(255) NOT NULL UNIQUE,
-    PRIMARY KEY (vin),
-    FOREIGN KEY (vin) REFERENCES kfz(vin),
-    FOREIGN KEY (public_key) REFERENCES kfz(publicKey)
+create table bearer_tokens(
+    token varchar(255) NOT NULL UNIQUE,
+    user_id int NOT NULL UNIQUE,
+    PRIMARY KEY (token),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- USER
