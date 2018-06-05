@@ -2,8 +2,6 @@ import dbConnection from "./msSqlWrapper";
 
 function saveAccessToken(token, userID, callback) {
 
-  //TODO: bearer_token Tabelle anlegen (token, user_id)
-  //TODO: Auf msSQL Syntax ändern ("ON DUPLICATE" passt nicht)
   // ON DUPLICATE gibt es in MSSQL nicht, wird durch eine Query ersetzt
   //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
     const insertTokenQuery = `    
@@ -21,6 +19,12 @@ function saveAccessToken(token, userID, callback) {
     commit tran`;
 
   dbConnection.query(insertTokenQuery, callback);
+}
+
+function deleteAccessToken(userID, callback)
+{
+    const insertTokenQuery = `DELETE FROM bearer_token WHERE user_id = '${userID}'`;
+    dbConnection.query(insertTokenQuery, callback);
 }
 
 function getUserIDFromAccessToken(token, callback) {

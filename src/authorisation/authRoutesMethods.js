@@ -35,6 +35,42 @@ function registerUser(req, res){
   })
 }
 
+function deleteUser(req, res)
+{
+    console.log("registerUser: req.body is:", req.body);
+
+    userDBHelper.doesUserExist(req.body.email, (doesUserExist) =>
+    {
+        if (doesUserExist)
+        {
+            userDBHelper.deleteUserFromDB(req.body.email, result =>
+            {
+                if(result.length === 0){
+                    res.status(200);
+                    res.json({
+                        "message": "Deletion was successful"
+                    })
+                }
+                else{
+                    res.status(500);
+                    res.json({
+                        "message": "Failed to delete user due to a server error"
+                    })
+                }
+            })
+        }
+        else
+        {
+            res.status(400);
+            res.json({
+                "message": "User does not exists"
+            })
+
+            return;
+        }
+    })
+}
+
 function login(registerUserQuery, res){
 
   console.log("User login successful");
@@ -64,5 +100,6 @@ module.exports = {
   "setApp": (expressApp) => {app = expressApp},
   "registerUser": registerUser,
   "login": login,
-  "isAuthorised": isAuthorised
+  "isAuthorised": isAuthorised,
+  "deleteUser": deleteUser
 };

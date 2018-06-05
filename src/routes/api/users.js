@@ -13,10 +13,7 @@ function initRoutes(app) {
   router.post('/register', authRoutesMethods.registerUser);
 
   /* DELETE user register. */
-  router.delete('/register', function (req, res, next) {
-    //TODO: Muss noch umgesetzt werden
-    res.send(req.body);    // echo the result back
-  });
+  router.delete('/register', authRoutesMethods.deleteUser);
 }
 
 // The expressApp is needed for the oAuthServer, therefore this asynchronous approach is needed
