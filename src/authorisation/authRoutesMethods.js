@@ -88,6 +88,7 @@ function isAuthorised(req, res, next){
     console.log("TOKEN: ", authResult.bearerToken);
 
     //TODO: Validierung der Nutzerrechte (authorisation Level)
+    //TODO: Prüfen, ob der User deaktiviert ist
   }
   else{
     console.log("No valid accessToken found");

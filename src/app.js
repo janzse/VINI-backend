@@ -6,6 +6,9 @@ import oAuthModel from "./authorisation/accessTokenModel";
 import userRoutes from "./routes/api/users";
 import {isAuthorised} from "./authorisation/authRoutesMethods";
 
+import ethNodeCon from "./blockchain/ethNode";
+ethNodeCon.connectToNode();
+
 const port = process.env.port || 4711;
 const app = express();
 
