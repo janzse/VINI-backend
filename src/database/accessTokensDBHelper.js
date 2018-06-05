@@ -42,5 +42,6 @@ function getUserIDFromAccessToken(token, callback) {
 
 module.exports = {
   "saveAccessToken": saveAccessToken,
-  "getUserIDFromAccessToken": getUserIDFromAccessToken
+  "getUserIDFromAccessToken": getUserIDFromAccessToken,
+    "deleteAccessToken": deleteAccessToken
 };

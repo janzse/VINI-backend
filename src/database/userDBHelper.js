@@ -52,9 +52,9 @@ function doesUserExist(email, callback) {
 function deleteUserFromDB(email, callback)
 {
     const deleteUserQuery = `DELETE FROM users WHERE email = '${email}'`;
-    const sqlCallback = (results) => {
+    const sqlCallback = (error, results) => {
       const isUserDeleted = results !== null ? results.length > 0 : null;
-      callback(isUserDeleted);
+      callback(error, isUserDeleted);
     };
 
     dbConnection.query(deleteUserQuery, sqlCallback);
