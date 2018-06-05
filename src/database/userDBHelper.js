@@ -49,8 +49,20 @@ function doesUserExist(email, callback) {
   dbConnection.query(doesUserExistQuery, sqlCallback)
 }
 
+function deleteUserFromDB(email, callback)
+{
+    const deleteUserQuery = `DELETE FROM users WHERE email = '${email}'`;
+    const sqlCallback = (error, results) => {
+      const isUserDeleted = results !== null ? results.length > 0 : null;
+      callback(error, isUserDeleted);
+    };
+
+    dbConnection.query(deleteUserQuery, sqlCallback);
+}
+
 module.exports =  {
   "registerUserInDB": registerUserInDB,
   "getUserFromCredentials": getUserFromCredentials,
-  "doesUserExist": doesUserExist
+  "doesUserExist": doesUserExist,
+  "deleteUserFromDB": deleteUserFromDB
 };
