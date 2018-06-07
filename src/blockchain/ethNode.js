@@ -14,6 +14,8 @@ function connectToNode() {
     .catch((err) => {
       console.error("Failed to connect to node running on: ", nodeIP, "\n", err);
     });
+
+  //let subscription = web.eth.subscribe(); //might be useful for error handling and such
 }
 
 function sendTransaction(trans) {
