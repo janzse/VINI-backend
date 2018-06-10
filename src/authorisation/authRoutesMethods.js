@@ -17,9 +17,9 @@ function registerUser(req, res){
       return;
     }
 
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked, result => {
+    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked, (hasError, rowCount) => {
 
-      if(result.length === 0){
+      if(!hasError){
         res.status(200);
         res.json({
           "message": "Registration was successful"
