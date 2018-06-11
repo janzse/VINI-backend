@@ -68,7 +68,7 @@ function deleteUserFromDB(email, callback)
 
 function isUserBlocked(userID, callback)
 {
-  const usersBlockedQuery = `SELECT blocked from bearer_tokens WHERE user_id = '${userID}'`;
+  const usersBlockedQuery = `SELECT blocked from users WHERE id = '${userID}'`;
   dbConnection.query(usersBlockedQuery, (error, result) => {
       if(result.length === 0){
           console.log("Invalid credentials");
