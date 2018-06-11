@@ -1,4 +1,5 @@
 import userDBHelper from "../database/userDBHelper";
+import accessTokensDBHelper from "../database/accessTokensDBHelper";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -133,8 +134,27 @@ function isAuthorised(req, res, next) {
   if (authResult.bearerToken != null) {
     console.log("TOKEN: ", authResult.bearerToken);
 
-    //TODO: Validierung der Nutzerrechte (authorisation Level)
-    //TODO: Prüfen, ob der User deaktiviert ist
+      // Validierung der Nutzerrechte (authorisation Level)
+      accessTokensDBHelper.getUserIDFromAccessToken(authResult.bearerToken, (userID) => {
+          if (error)
+          {
+              res.status(500);
+              res.json({
+                  "message": "No compatible UserID for this bearer token"
+              })
+          }
+          // Prüfen, ob der User deaktiviert ist
+          userDBHelper.isUserBlocked(userID, error, result => {
+              if (error)
+              {
+                  res.status(500);
+                  res.json({
+                      "message": "User is blocked"
+                  })
+              }
+              console.log('AUSGABE: ' + result);
+          })
+      })
   }
   else {
     console.log("No valid accessToken found");

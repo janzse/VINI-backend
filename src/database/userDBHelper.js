@@ -66,9 +66,24 @@ function deleteUserFromDB(email, callback)
     dbConnection.query(deleteUserQuery, sqlCallback);
 }
 
+function isUserBlocked(userID, callback)
+{
+  const usersBlockedQuery = `SELECT blocked from bearer_tokens WHERE user_id = '${userID}'`;
+  dbConnection.query(usersBlockedQuery, (error, result) => {
+      if(result.length === 0){
+          console.log("Invalid credentials");
+          callback(true, null);
+          return;
+      }
+      let userBlocked = result[9];
+      callback(false, userBlocked);
+  })
+}
+
 module.exports =  {
   "registerUserInDB": registerUserInDB,
   "getUserFromCredentials": getUserFromCredentials,
   "doesUserExist": doesUserExist,
-  "deleteUserFromDB": deleteUserFromDB
+  "deleteUserFromDB": deleteUserFromDB,
+  "isUserBlocked": isUserBlocked
 };
