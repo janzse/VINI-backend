@@ -3,7 +3,7 @@
 */
 import UserAccount from "./userAccount";
 import CarAccount from "./carAccount";
-import EthNode from "../blockchain/ethNode"
+import EthNode from "../blockchain/initEthNode"
 import { } from "../database/userDBHelper";
 
 //Creates a new eth-private-key, creates a new UserAccount object and stores it in the db.

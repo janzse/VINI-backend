@@ -1,11 +1,17 @@
 import dbConnection from "./msSqlWrapper";
 
-//TODO: Alle Parameter übergeben, um diese in die Datenbank einfügen zu können
-function registerUserInDB(email, password, callback) {
+function registerUserInDB(email, password, privateKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
 
-  const registerUserQuery = `INSERT INTO users (email, password, privateKey, authorityLevel) VALUES ('${email}', '${password}', 'abc123testkey', 1);`;
+  const registerUserQuery = `INSERT INTO users (email, password, privateKey, authorityLevel, forename, surname, companyName, creationDate, blocked) 
+  VALUES ('${email}', '${password}', '${privateKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
-  dbConnection.query(registerUserQuery, callback);
+  const sqlCallback = (error, result) => {
+
+      const isUserRegistered = (result) !== null ? result.length > 0 : null;
+      callback(error, isUserRegistered);
+  };
+
+  dbConnection.query(registerUserQuery, sqlCallback);
 }
 
 function getUserFromCredentials(email, password, callback) {
@@ -14,7 +20,14 @@ function getUserFromCredentials(email, password, callback) {
 
   dbConnection.query(getUserQuery, (err, result) => {
 
+    console.log("Err: ", err);
     console.log("Result: ", result);
+
+    if(result.length === 0){
+      console.log("Invalid credentials");
+      callback(true, null);
+      return;
+    }
 
     //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf benötigt wird
     let usersResult = {
@@ -23,7 +36,7 @@ function getUserFromCredentials(email, password, callback) {
       "password": result[2]
     };
 
-    callback(null, usersResult);
+    callback(false, usersResult);
   });
 }
 
@@ -31,22 +44,31 @@ function doesUserExist(email, callback) {
 
   const doesUserExistQuery = `SELECT * FROM users WHERE email = '${email}'`;
 
-  //holds the results  from the query
+  // holds the results  from the query
   const sqlCallback = (results) => {
 
-    //calculate if user exists or assign null if results is null
     const doesUserExist = results !== null ? results.length > 0 : null;
 
-    //check if there are any users with this username and return the appropriate value
     callback(doesUserExist);
   };
 
-  //execute the query to check if the user exists
   dbConnection.query(doesUserExistQuery, sqlCallback)
+}
+
+function deleteUserFromDB(email, callback)
+{
+    const deleteUserQuery = `DELETE FROM users WHERE email = '${email}'`;
+    const sqlCallback = (error, results) => {
+      const isUserDeleted = results !== null ? results.length > 0 : null;
+      callback(error, isUserDeleted);
+    };
+
+    dbConnection.query(deleteUserQuery, sqlCallback);
 }
 
 module.exports =  {
   "registerUserInDB": registerUserInDB,
   "getUserFromCredentials": getUserFromCredentials,
-  "doesUserExist": doesUserExist
+  "doesUserExist": doesUserExist,
+  "deleteUserFromDB": deleteUserFromDB
 };

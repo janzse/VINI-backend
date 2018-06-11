@@ -3,8 +3,11 @@ import express from "express";
 import logger from "morgan";
 import oAuth2Server from "node-oauth2-server";
 import oAuthModel from "./authorisation/accessTokenModel";
-import initAuthRoutes from "./routes/testRoutes/authRoutes";
-import bodyParser from "body-parser";
+import userRoutes from "./routes/api/users";
+import {isAuthorised} from "./authorisation/authRoutesMethods";
+
+import ethNodeCon from "./blockchain/ethNode";
+ethNodeCon.connectToNode();
 
 const port = process.env.port || 4711;
 const app = express();
@@ -21,7 +24,7 @@ app.oauth = oAuth2Server({
   grants: ['password'],
   debug: true
 });
-const authRoutes = initAuthRoutes(app);
+userRoutes.initRoutes(app);
 
 /* Setup the oAuth error handling */
 app.use(app.oauth.errorHandler());
@@ -29,10 +32,10 @@ app.use(app.oauth.errorHandler());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(bodyParser.json());
 
 //rest API routes
-app.use('/', require('./routes/root'));
+app.use('/', require("./routes/root"));
+app.use("/restricted", isAuthorised, require("./routes/root"));
 app.use('/api/car', require('./routes/api/car/root'));
 app.use('/api/car/applyCancelTransaction', require('./routes/api/car/applyCancelTransaction'));
 app.use('/api/car/cancelTransaction', require('./routes/api/car/cancelTransaction'));
@@ -40,15 +43,9 @@ app.use('/api/car/mileage', require('./routes/api/car/mileage'));
 app.use('/api/car/register', require('./routes/api/car/register'));
 app.use('/api/car/service', require('./routes/api/car/service'));
 app.use('/api/car/tuev', require('./routes/api/car/tuev'));
-app.use('/api/user/register', require('./routes/api/user_register'));
-app.use('/api/login', require('./routes/api/login'));
-
-//test routes
-app.use('/users', require('./routes/testRoutes/users'));
-app.use('/auth', authRoutes);
+app.use('/api/users', userRoutes.router); // This can't be required directly, because of the oAuthServer
 
 // catch 404 and forward to error handler
-
 app.use(function (req, res, next) {
   next(createError(404));
 });

@@ -1,38 +1,50 @@
-const Web3 = require("web3");
+import Web3 from "web3";
 
-export class EthNode {
+let web3;
 
-  userAccounts = [];
+function connectToNode() {
 
-  constructor(){
+  const nodeIP = "http://51.144.115.147:8545";
+  web3 = new Web3(nodeIP);
 
-  }
+  web3.eth.net.isListening()
+    .then(() => {
+      console.log("Successfully connected to node running on: ", nodeIP);
+    })
+    .catch((err) => {
+      console.error("Failed to connect to node running on: ", nodeIP, "\n", err);
+    });
 
-  sendTransaction(trans){
-
-    return true;
-  }
-
-  getTransaction(transHash){
-
-    return new Transaction();
-  }
-
-  getCarTransaction(transHash){
-
-    return new Transaction();
-  }
-
-  createUserAccount(){
-
-    return "privateKey";
-  }
-
-  createCarAccount(vin){
-
-    return "privateKey";
-  }
+  //let subscription = web.eth.subscribe(); //might be useful for error handling and such
 }
 
-const web3 = new Web3("http://localhost:8501");
-web3.eth.isMining().then(function (value) { console.log("Is mining: ", value) });
+function sendTransaction(trans) {
+
+  return true;
+}
+
+function getTransaction(transHash) {
+
+  return new Transaction();
+}
+
+function getCarTransaction(transHash) {
+
+  return new Transaction();
+}
+
+function createUserAccount() {
+
+  return "privateKey";
+}
+
+function createCarAccount(vin) {
+
+
+  return "privateKey";
+}
+
+
+module.exports = {
+  "connectToNode": connectToNode
+};
