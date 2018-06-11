@@ -12,12 +12,15 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car?vin=123",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car?vin=123",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
 						"api",
 						"car"
@@ -33,7 +36,7 @@
 			"response": []
 		},
 		{
-			"name": "api_login",
+			"name": "api_car_applyCancelTransaction",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -44,25 +47,29 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\"\n}"
+					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 				},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/login",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/applyCancelTransaction",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
 						"api",
-						"login"
+						"car",
+						"applyCancelTransaction"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "api_user_register_post",
+			"name": "api_car_cancelTransaction",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -73,49 +80,22 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 				},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/user/register",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/cancelTransaction",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
 						"api",
-						"user",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "api_user_register_delete",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\" : \"Franz\"\n}"
-				},
-				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/user/register",
-					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
-					],
-					"path": [
-						"api",
-						"user",
-						"register"
+						"car",
+						"cancelTransaction"
 					]
 				}
 			},
@@ -136,16 +116,52 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456\n}"
 				},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car/mileage",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/mileage",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
 						"api",
 						"car",
 						"mileage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_car_register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
+				},
+				"url": {
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/register",
+					"host": [
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
+					],
+					"port": "4711",
+					"path": [
+						"api",
+						"car",
+						"register"
 					]
 				}
 			},
@@ -166,12 +182,15 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 				},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car/service",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/service",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -196,139 +215,26 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 				},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car/tuev?timestamp=2018-06-01 15:04:56&mileage=123456&nextCheck=2020-05-31",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/tuev",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
 						"api",
 						"car",
 						"tuev"
-					],
-					"query": [
-						{
-							"key": "timestamp",
-							"value": "2018-06-01 15:04:56"
-						},
-						{
-							"key": "mileage",
-							"value": "123456"
-						},
-						{
-							"key": "nextCheck",
-							"value": "2020-05-31"
-						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "api_car_register",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
-				},
-				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car/register",
-					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
-					],
-					"path": [
-						"api",
-						"car",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "api_car_cancelTransaction",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car/cancelTransaction?timestamp=2018-06-01 15:04:56&transactionId=789",
-					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
-					],
-					"path": [
-						"api",
-						"car",
-						"cancelTransaction"
-					],
-					"query": [
-						{
-							"key": "timestamp",
-							"value": "2018-06-01 15:04:56"
-						},
-						{
-							"key": "transactionId",
-							"value": "789"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "api_car_applyCancelTransaction",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
-				},
-				"url": {
-					"raw": "vini-backend.azurewebsites.net/api/car/applyCancelTransaction?timestamp=2018-06-01 15:04:56&transactionId=789",
-					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
-					],
-					"path": [
-						"api",
-						"car",
-						"applyCancelTransaction"
-					],
-					"query": [
-						{
-							"key": "timestamp",
-							"value": "2018-06-01 15:04:56"
-						},
-						{
-							"key": "transactionId",
-							"value": "789"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "auth_login",
+			"name": "api_users_login",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -373,28 +279,84 @@
 					]
 				},
 				"url": {
-					"raw": "vini-backend.azurewebsites.net/auth/login?",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/users/login",
 					"host": [
-						"vini-backend",
-						"azurewebsites",
-						"net"
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
+					"port": "4711",
 					"path": [
-						"auth",
+						"users",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_users_register_post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+				},
+				"url": {
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/users/register",
+					"host": [
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
 					],
-					"query": [
-						{
-							"key": "email",
-							"value": "Franz",
-							"description": "\n",
-							"disabled": true
-						},
-						{
-							"key": "password",
-							"value": "secret",
-							"disabled": true
-						}
+					"port": "4711",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_users_register_delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\" : \"Franz\"\n}"
+				},
+				"url": {
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/users/register",
+					"host": [
+						"vini-ethereum",
+						"westeurope",
+						"cloudapp",
+						"azure",
+						"com"
+					],
+					"port": "4711",
+					"path": [
+						"api",
+						"users",
+						"register"
 					]
 				}
 			},
