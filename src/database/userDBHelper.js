@@ -33,7 +33,12 @@ function getUserFromCredentials(email, password, callback) {
     let usersResult = {
       "id": result[0],
       "email": result[1],
-      "password": result[2]
+      "password": result[2],
+      "authorityLevel": result[4],
+      "forename": result[5],
+      "surename": result[6],
+      "companyName": result[7],
+      "blocked": result[9]
     };
 
     callback(false, usersResult);
@@ -75,7 +80,7 @@ function isUserBlocked(userID, callback)
           callback(true, null);
           return;
       }
-      let userBlocked = result[9];
+      const userBlocked = result[9];
       callback(false, userBlocked);
   })
 }
