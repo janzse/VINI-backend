@@ -17,7 +17,7 @@ function getUserFromCredentials(email, password, callback) {
     console.log("Err: ", err);
     console.log("Result: ", result);
 
-    if(result.length === 0){
+    if (result.length === 0) {
       console.log("Invalid credentials");
       callback(true, null);
       return;
@@ -49,18 +49,18 @@ function doesUserExist(email, callback) {
   dbConnection.query(doesUserExistQuery, sqlCallback)
 }
 
-function deleteUserFromDB(email, callback)
-{
-    const deleteUserQuery = `DELETE FROM users WHERE email = '${email}'`;
-    const sqlCallback = (error, results) => {
-      const isUserDeleted = results !== null ? results.length > 0 : null;
-      callback(error, isUserDeleted);
-    };
+function deleteUserFromDB(email, callback) {
+  const deleteUserQuery = `DELETE FROM users WHERE email = '${email}'`;
+  const sqlCallback = (error, results) => {
+    const isUserDeleted = results !== null ? results.length > 0 : null;
+    callback(error, isUserDeleted);
+  };
 
-    dbConnection.query(deleteUserQuery, sqlCallback);
+  dbConnection.query(deleteUserQuery, sqlCallback);
 }
 
-module.exports =  {
+
+module.exports = {
   "registerUserInDB": registerUserInDB,
   "getUserFromCredentials": getUserFromCredentials,
   "doesUserExist": doesUserExist,

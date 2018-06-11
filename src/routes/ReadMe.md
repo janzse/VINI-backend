@@ -34,7 +34,7 @@ Stand 10.06.2018
 
 - [POST] VERALTET De siehe /api/users/login
 
-## /api/users/register
+## /api/register
 
 - [DEL] VERALTET De siehe /api/users/register
 - [POST] VERALTET De siehe /api/users/register

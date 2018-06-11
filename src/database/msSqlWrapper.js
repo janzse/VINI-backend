@@ -79,6 +79,7 @@ function executeSql(query, callback) {
   dbConnection.execSql(request);
 }
 
+
 module.exports = {
   "query": query
 };

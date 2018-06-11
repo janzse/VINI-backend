@@ -20,7 +20,7 @@
 
 https://vini-ethereum.westeurope.cloudapp.azure.com:4711
 
-[Update 18-06-09] Die Web-App wurde auf anderen Server verschoben, so dass eine neue URL benutzt werden muss. Die
+[Update 18-06-09] Die Web-App wurde auf einen anderen Server verschoben, so dass eine neue URL benutzt werden muss. Die
 ursprüngliche URL (https://vini-backend.azurewebsites.net) wird zukünftig nicht mehr benötigt.
 
 ## RestAPI Routen

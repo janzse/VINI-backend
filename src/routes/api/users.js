@@ -16,6 +16,7 @@ function initRoutes(app) {
   router.delete('/register', authRoutesMethods.deleteUser);
 }
 
+
 // The expressApp is needed for the oAuthServer, therefore this asynchronous approach is needed
 module.exports = {
   "router": router,
