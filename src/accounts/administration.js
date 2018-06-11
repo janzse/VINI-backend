@@ -4,7 +4,7 @@
 import UserAccount from "./userAccount";
 import CarAccount from "./carAccount";
 import EthNode from "../blockchain/initEthNode"
-import { } from "../database/userDBHelper";
+import { } from "../database/dbHelper";
 
 //Creates a new eth-private-key, creates a new UserAccount object and stores it in the db.
 function createUserAccount(email, password, authorityLevel, forename, surname, companyName) {

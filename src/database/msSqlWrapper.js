@@ -2,6 +2,8 @@ import {Connection, Request} from "tedious";
 
 let dbConnection = null;
 
+//TODO: Datenbankverbindung offen halten, statt jedes Mal zu schließen?
+
 function query(queryString, callback) {
 
   if(dbConnection == null){
@@ -78,6 +80,7 @@ function executeSql(query, callback) {
 
   dbConnection.execSql(request);
 }
+
 
 module.exports = {
   "query": query

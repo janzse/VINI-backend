@@ -1,4 +1,6 @@
-import userDBHelper from "../database/userDBHelper";
+import userDBHelper from "../database/dbHelper";
+import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
+
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -17,7 +19,13 @@ function registerUser(req, res) {
       return;
     }
 
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked, (hasError, rowCount) => {
+    const userKeys = createUserAccount();
+
+    //TODO: Alle Werte in die DB schreiben
+    //TODO: ER-Diagramm mit publicKey des Users erweitern (muss zum Nachvollziehen in DB gespeichert werden)
+    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel,
+      req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
+      (hasError, rowCount) => {
 
       if (!hasError) {
         res.status(200);
@@ -40,14 +48,15 @@ function deleteUser(req, res) {
 
   userDBHelper.doesUserExist(req.body.email, (doesUserExist) => {
     if (doesUserExist) {
-      userDBHelper.deleteUserFromDB(req.body.email, result => {
-        if (result.length === 0) {
+      userDBHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
+        if (isUserDeleted) {
           res.status(200);
           res.json({
             "message": "Deletion was successful"
           })
         }
         else {
+          console.log("Error while deleting user: ", err);
           res.status(500);
           res.json({
             "message": "Failed to delete user due to a server error"
@@ -59,12 +68,11 @@ function deleteUser(req, res) {
       res.status(400);
       res.json({
         "message": "User does not exists"
-      })
-
-      return;
+      });
     }
   })
 }
+
 
 //DUMMY FUNCTION!!!!
 //VINI.de/api/users/get
@@ -78,7 +86,7 @@ function getUser(req, res) {
     surname: "Mustermann",
     authorityLevel: "tuev",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "TUEV"
   };
   var payloadItem2 = {
@@ -87,7 +95,7 @@ function getUser(req, res) {
     surname: "Mustermann",
     authorityLevel: "zws",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "KFZ Bongard"
   };
   var payloadItem3 = {
@@ -96,7 +104,7 @@ function getUser(req, res) {
     surname: "Mustermann",
     authorityLevel: "stva",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "Amt X"
   };
   var payloadItem4 = {
@@ -105,7 +113,7 @@ function getUser(req, res) {
     surname: "Mustermann",
     authorityLevel: "astva",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "Amt Y"
   };
 
@@ -115,7 +123,8 @@ function getUser(req, res) {
   transactionPayload.push(payloadItem4);
 
   res.send(JSON.stringify(transactionPayload));
-  }
+}
+
 
 function login(registerUserQuery, res) {
 
@@ -125,7 +134,7 @@ function login(registerUserQuery, res) {
 
 let app;
 
-//TODO: Das herumreichen der "app" Instanz ist sehr unschön. FIXME!
+//FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 
 function isAuthorised(req, res, next) {
   const authResult = app.oauth.authorise()(req, res, next);
@@ -144,7 +153,9 @@ function isAuthorised(req, res, next) {
 }
 
 module.exports = {
-  "setApp": (expressApp) => { app = expressApp },
+  "setApp": (expressApp) => {
+    app = expressApp
+  },
   "registerUser": registerUser,
   "login": login,
   "isAuthorised": isAuthorised,
