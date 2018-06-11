@@ -115,8 +115,7 @@ function getUser(req, res) {
   transactionPayload.push(payloadItem4);
 
   res.send(JSON.stringify(transactionPayload));
-  return;
-}
+  }
 
 function login(registerUserQuery, res) {
 
@@ -149,5 +148,6 @@ module.exports = {
   "registerUser": registerUser,
   "login": login,
   "isAuthorised": isAuthorised,
-  "deleteUser": deleteUser
+  "deleteUser": deleteUser,
+  "getUser": getUser
 };
