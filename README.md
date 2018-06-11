@@ -18,7 +18,9 @@
 
 ## Adresse für die Web-App
 
-https://vini-ethereum.westeurope.cloudapp.azure.com:4711
+https://vini-ethereum.westeurope.cloudapp.azure.com
+
+[Update 18-06-11] Server Port wurde angepasst, so dass nur noch die URL angegeben werden muss.
 
 [Update 18-06-09] Die Web-App wurde auf anderen Server verschoben, so dass eine neue URL benutzt werden muss. Die
 ursprüngliche URL (https://vini-backend.azurewebsites.net) wird zukünftig nicht mehr benötigt.
