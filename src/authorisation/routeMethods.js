@@ -23,9 +23,11 @@ function registerUser(req, res) {
 
     //TODO: Alle Werte in die DB schreiben
     //TODO: ER-Diagramm mit publicKey des Users erweitern (muss zum Nachvollziehen in DB gespeichert werden)
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, (err, result) => {
+    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel,
+      req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
+      (hasError, rowCount) => {
 
-      if (result.length === 0) {
+      if (!hasError) {
         res.status(200);
         res.json({
           "message": "Registration was successful"
@@ -71,6 +73,59 @@ function deleteUser(req, res) {
   })
 }
 
+
+//DUMMY FUNCTION!!!!
+//VINI.de/api/users/get
+function getUser(req, res) {
+  var transactionPayload = [];
+
+
+  var payloadItem1 = {
+    date: "11.06.2008",
+    forename: "Ernst",
+    surname: "Mustermann",
+    authorityLevel: "tuev",
+    action: "dummy",
+    email: "queryMail",
+    company: "TUEV"
+  };
+  var payloadItem2 = {
+    date: "11.06.2018",
+    forename: "Brigitte",
+    surname: "Mustermann",
+    authorityLevel: "zws",
+    action: "dummy",
+    email: "queryMail",
+    company: "KFZ Bongard"
+  };
+  var payloadItem3 = {
+    date: "11.06.2018",
+    forename: "Johnathan",
+    surname: "Mustermann",
+    authorityLevel: "stva",
+    action: "dummy",
+    email: "queryMail",
+    company: "Amt X"
+  };
+  var payloadItem4 = {
+    date: "12.06.2018",
+    forename: "Gabi",
+    surname: "Mustermann",
+    authorityLevel: "astva",
+    action: "dummy",
+    email: "queryMail",
+    company: "Amt Y"
+  };
+
+  transactionPayload.push(payloadItem1);
+  transactionPayload.push(payloadItem2);
+  transactionPayload.push(payloadItem3);
+  transactionPayload.push(payloadItem4);
+
+  res.send(JSON.stringify(transactionPayload));
+}
+
+
 function login(registerUserQuery, res) {
 
   console.log("User login successful");
@@ -104,5 +159,6 @@ module.exports = {
   "registerUser": registerUser,
   "login": login,
   "isAuthorised": isAuthorised,
-  "deleteUser": deleteUser
+  "deleteUser": deleteUser,
+  "getUser": getUser
 };

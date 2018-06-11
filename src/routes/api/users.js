@@ -14,6 +14,9 @@ function initRoutes(app) {
 
   /* DELETE user register. */
   router.delete('/register', authRoutesMethods.deleteUser);
+  
+  /* GET User */
+  router.get('/get', authRoutesMethods.getUser);
 }
 
 

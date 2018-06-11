@@ -1,6 +1,6 @@
 # RestAPI Routen
 
-Stand 10.06.2018
+Stand 11.06.2018
 
 ## /api/car
 
@@ -41,7 +41,7 @@ Stand 10.06.2018
 
 ## /api/users/login
 
-- [POST] Liefert zurzeit noch eine HTTP Fehlermeldung zurück.
+- [POST] Liefert das bearerToken zurück. [Update]
 
 ## /api/users/register
 
