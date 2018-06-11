@@ -5,11 +5,11 @@ function registerUserInDB(email, password, privateKey, authorityLevel, forename,
   const registerUserQuery = `INSERT INTO users (email, password, privateKey, authorityLevel, forename, surname, companyName, creationDate, blocked) 
   VALUES ('${email}', '${password}', '${privateKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
-  const sqlCallback = (error, result) => {
+    const sqlCallback = (error, result) => {
 
-      const isUserRegistered = (result) !== null ? result.length > 0 : null;
-      callback(error, isUserRegistered);
-  };
+        const isUserRegistered = (result) !== null ? result.length > 0 : null;
+        callback(error, isUserRegistered);
+    };
 
   dbConnection.query(registerUserQuery, sqlCallback);
 }
