@@ -1,4 +1,6 @@
-import userDBHelper from "../database/userDBHelper";
+import userDBHelper from "../database/dbHelper";
+import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
+
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -17,7 +19,11 @@ function registerUser(req, res) {
       return;
     }
 
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, result => {
+    const userKeys = createUserAccount();
+
+    //TODO: Alle Werte in die DB schreiben
+    //TODO: ER-Diagramm mit publicKey des Users erweitern (muss zum Nachvollziehen in DB gespeichert werden)
+    userDBHelper.registerUserInDB(req.body.email, req.body.password, (err, result) => {
 
       if (result.length === 0) {
         res.status(200);
@@ -73,7 +79,7 @@ function login(registerUserQuery, res) {
 
 let app;
 
-//TODO: Das herumreichen der "app" Instanz ist sehr unschön. FIXME!
+//FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 
 function isAuthorised(req, res, next) {
   const authResult = app.oauth.authorise()(req, res, next);
