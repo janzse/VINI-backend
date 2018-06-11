@@ -1,11 +1,17 @@
 import dbConnection from "./msSqlWrapper";
 
-//TODO: Alle Parameter übergeben, um diese in die Datenbank einfügen zu können
-function registerUserInDB(email, password, callback) {
+function registerUserInDB(email, password, privateKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
 
-  const registerUserQuery = `INSERT INTO users (email, password, privateKey, authorityLevel) VALUES ('${email}', '${password}', 'abc123testkey', 1);`;
+  const registerUserQuery = `INSERT INTO users (email, password, privateKey, authorityLevel, forename, surname, companyName, creationDate, blocked) 
+  VALUES ('${email}', '${password}', '${privateKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
-  dbConnection.query(registerUserQuery, callback);
+    const sqlCallback = (error, result) => {
+
+        const isUserRegistered = (result) !== null ? result.length > 0 : null;
+        callback(error, isUserRegistered);
+    };
+
+  dbConnection.query(registerUserQuery, sqlCallback);
 }
 
 function getUserFromCredentials(email, password, callback) {

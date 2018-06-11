@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car?vin=123",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car?vin=123",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -20,7 +20,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car"
@@ -50,7 +49,7 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/applyCancelTransaction",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/applyCancelTransaction",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -58,7 +57,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -83,7 +81,7 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/cancelTransaction",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/cancelTransaction",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -91,7 +89,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -116,7 +113,7 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/mileage",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/mileage",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -124,7 +121,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -149,7 +145,7 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/register",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/register",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -157,7 +153,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -182,7 +177,7 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/service",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/service",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -190,7 +185,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -215,7 +209,7 @@
 					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/car/tuev",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/tuev",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -223,7 +217,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"car",
@@ -279,7 +272,7 @@
 					]
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/users/login",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/users/login",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -287,8 +280,8 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
+						"api",
 						"users",
 						"login"
 					]
@@ -311,7 +304,7 @@
 					"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/users/register",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/users/register",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -319,7 +312,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"users",
@@ -344,7 +336,7 @@
 					"raw": "{\n  \"email\" : \"Franz\"\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com:4711/api/users/register",
+					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/users/register",
 					"host": [
 						"vini-ethereum",
 						"westeurope",
@@ -352,7 +344,6 @@
 						"azure",
 						"com"
 					],
-					"port": "4711",
 					"path": [
 						"api",
 						"users",

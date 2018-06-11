@@ -14,6 +14,10 @@ function initRoutes(app) {
 
   /* DELETE user register. */
   router.delete('/register', authRoutesMethods.deleteUser);
+  
+  /* GET User */
+  router.get('/get',authRoutesMethods.getUser);
+  
 }
 
 // The expressApp is needed for the oAuthServer, therefore this asynchronous approach is needed
