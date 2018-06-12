@@ -33,7 +33,12 @@ function getUserFromCredentials(email, password, callback) {
     let usersResult = {
       "id": result[0],
       "email": result[1],
-      "password": result[2]
+      "password": result[2],
+      "authorityLevel": result[4],
+      "forename": result[5],
+      "surename": result[6],
+      "companyName": result[7],
+      "blocked": result[9]
     };
 
     callback(false, usersResult);
@@ -66,9 +71,24 @@ function deleteUserFromDB(email, callback)
     dbConnection.query(deleteUserQuery, sqlCallback);
 }
 
+function isUserBlocked(userID, callback)
+{
+  const usersBlockedQuery = `SELECT blocked from users WHERE id = '${userID}'`;
+  dbConnection.query(usersBlockedQuery, (error, result) => {
+      if(result.length === 0){
+          console.log("Invalid credentials");
+          callback(true, null);
+          return;
+      }
+      const userBlocked = result[9];
+      callback(false, userBlocked);
+  })
+}
+
 module.exports =  {
   "registerUserInDB": registerUserInDB,
   "getUserFromCredentials": getUserFromCredentials,
   "doesUserExist": doesUserExist,
-  "deleteUserFromDB": deleteUserFromDB
+  "deleteUserFromDB": deleteUserFromDB,
+  "isUserBlocked": isUserBlocked
 };
