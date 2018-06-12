@@ -74,7 +74,7 @@ function deleteUser(req, res) {
 
 
 //DUMMY FUNCTION!!!!
-//VINI.de/api/users/get
+//VINI.de/api/users
 function getUser(req, res) {
   var transactionPayload = [];
 
@@ -83,7 +83,7 @@ function getUser(req, res) {
     date: "11.06.2008",
     forename: "Ernst",
     surname: "Mustermann",
-    authorityLevel: "tuev",
+    authorityLevel: "TUEV",
     action: "dummy",
     email: "queryMail",
     company: "TUEV"
@@ -92,7 +92,7 @@ function getUser(req, res) {
     date: "11.06.2018",
     forename: "Brigitte",
     surname: "Mustermann",
-    authorityLevel: "zws",
+    authorityLevel: "ZWS",
     action: "dummy",
     email: "queryMail",
     company: "KFZ Bongard"
@@ -101,7 +101,7 @@ function getUser(req, res) {
     date: "11.06.2018",
     forename: "Johnathan",
     surname: "Mustermann",
-    authorityLevel: "stva",
+    authorityLevel: "STVA",
     action: "dummy",
     email: "queryMail",
     company: "Amt X"
@@ -110,7 +110,7 @@ function getUser(req, res) {
     date: "12.06.2018",
     forename: "Gabi",
     surname: "Mustermann",
-    authorityLevel: "astva",
+    authorityLevel: "ASTVA",
     action: "dummy",
     email: "queryMail",
     company: "Amt Y"
@@ -120,8 +120,8 @@ function getUser(req, res) {
   transactionPayload.push(payloadItem2);
   transactionPayload.push(payloadItem3);
   transactionPayload.push(payloadItem4);
-
-  res.send(JSON.stringify(transactionPayload));
+  const msg = JSON.stringify({transactionPayload});
+  res.send(msg);
 }
 
 
