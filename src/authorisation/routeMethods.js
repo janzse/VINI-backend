@@ -1,4 +1,4 @@
-import userDBHelper from "../database/dbHelper";
+import dbHelper from "../database/dbHelper";
 import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
 
 
@@ -8,7 +8,7 @@ function registerUser(req, res) {
 
   console.log("registerUser: req.body is:", req.body);
 
-  userDBHelper.doesUserExist(req.body.email, (doesUserExist) => {
+  dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
 
     if (doesUserExist) {
       res.status(400);
@@ -22,7 +22,7 @@ function registerUser(req, res) {
     const userKeys = createUserAccount();
 
     //TODO: Alle Werte in die DB schreiben
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.publicKey, req.body.authorityLevel,
+    dbHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.publicKey, req.body.authorityLevel,
       req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
       (hasError, rowCount) => {
 
@@ -45,9 +45,9 @@ function registerUser(req, res) {
 function deleteUser(req, res) {
   console.log("registerUser: req.body is:", req.body);
 
-  userDBHelper.doesUserExist(req.body.email, (doesUserExist) => {
+  dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
     if (doesUserExist) {
-      userDBHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
+      dbHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
         if (isUserDeleted) {
           res.status(200);
           res.json({

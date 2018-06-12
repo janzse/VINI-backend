@@ -1,7 +1,7 @@
 import dbConnection from "./msSqlWrapper";
 
 //TODO: Alle Parameter übergeben, um diese in die Datenbank einfügen zu können
-function registerUserInDB(email, password, callback) {
+function registerUserInDB(email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
 
   const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
   creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
@@ -21,16 +21,14 @@ function getUserFromCredentials(email, password, callback) {
 
   dbConnection.query(queryString, (err, result) => {
 
-    console.log("Err: ", err);
-    console.log("Result: ", result);
-
     if (result.length === 0) {
       console.log("Invalid credentials");
       callback(true, null);
       return;
     }
 
-    //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf benötigt wird
+    //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf
+    // benötigt wird
     let usersResult = {
       "id": result[0],
       "email": result[1],
