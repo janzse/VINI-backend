@@ -22,8 +22,7 @@ function registerUser(req, res) {
     const userKeys = createUserAccount();
 
     //TODO: Alle Werte in die DB schreiben
-    //TODO: ER-Diagramm mit publicKey des Users erweitern (muss zum Nachvollziehen in DB gespeichert werden)
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel,
+    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.publicKey, req.body.authorityLevel,
       req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
       (hasError, rowCount) => {
 

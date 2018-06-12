@@ -1,6 +1,8 @@
+import routeMethods from "../../car/routeMethods";
+
 /**
  *
- * @author lstuckstette
+ * @author mteuber, lstuckstette
  */
 
 const express = require('express');
@@ -114,5 +116,33 @@ router.get('/', function (req, res, next) {
     res.send(JSON.stringify(jsonResponse));
 
 */
+
+/* POST apply cancel transaction. */
+router.post('/applyCancelTransaction', function(req, res, next) {
+    res.send(req.body);    // echo the result back
+});
+
+/* POST cancel transaction. */
+router.post('/cancelTransaction', function(req, res, next) {
+    res.send(req.body);    // echo the result back
+});
+
+/* POST Mileage. */
+router.post('/mileage', routeMethods.updateMileage);
+
+/* POST cancel transaction. */
+router.post('/register', function(req, res, next) {
+    res.send(req.body);    // echo the result back
+});
+
+/* POST cancel transaction. */
+router.post('/service', function(req, res, next) {
+    res.send(req.body);    // echo the result back
+});
+
+/* POST cancel transaction. */
+router.post('/tuev', function(req, res, next) {
+    res.send(req.body);    // echo the result back
+});
 
 module.exports = router;
