@@ -134,8 +134,7 @@ function isAuthorised(req, res, next) {
 
   if (authResult.bearerToken != null) {
       // Validierung der Nutzerrechte (authorisation Level)
-      let token = '3333IIII';
-      accessTokensDBHelper.getUserIDFromAccessToken(token, (userID) => {
+      accessTokensDBHelper.getUserIDFromAccessToken(authResult.bearerToken, (userID) => {
           console.log('userID: ' + userID);
           if (userID === 0)
           {
