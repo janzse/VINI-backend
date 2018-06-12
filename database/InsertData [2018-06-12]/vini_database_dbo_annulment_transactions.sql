@@ -1,0 +1,6 @@
+INSERT INTO [vini-database].dbo.annulment_transactions (id, transactionHash, executed, creationDate) VALUES (1, '365A559E74309D24989172144B89689F995B119AA93F221530CAB6FEFEF06798', 0, '2018-06-03 13:18:12.687');
+INSERT INTO [vini-database].dbo.annulment_transactions (id, transactionHash, executed, creationDate) VALUES (2, 'F9D8F6A7FB712D4364B89A44D919299B6D9C29F9F239A75874D82581897E89DD', 0, '2018-06-03 13:18:12.687');
+INSERT INTO [vini-database].dbo.annulment_transactions (id, transactionHash, executed, creationDate) VALUES (3, '4098B16C94A28B7ECB1D6FAA1BB38974B1D19466549F61FF37ECFA5427ABB5D3', 0, '2018-06-03 13:18:12.703');
+INSERT INTO [vini-database].dbo.annulment_transactions (id, transactionHash, executed, creationDate) VALUES (4, '3D16EE64F696A5D4E85BB36A5002CAA78EA3F87B8CBCD5BF62F8F7B7B6C45F38', 0, '2018-06-03 13:18:12.703');
+INSERT INTO [vini-database].dbo.annulment_transactions (id, transactionHash, executed, creationDate) VALUES (5, '84EB8AE690F0E48BF4EE7D84A19D2CCB18B0B1D1DE02BC61CF14994877AC15CC', 0, '2018-06-03 13:18:12.717');
+INSERT INTO [vini-database].dbo.annulment_transactions (id, transactionHash, executed, creationDate) VALUES (6, '4A2D176F6DEBAC37EA31C148D10F20249CB83D083F761225F5F9A6D5ED8CD32F', 0, '2018-06-03 13:18:12.717');
