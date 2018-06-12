@@ -43,13 +43,7 @@ Pfaden die mit /api beginnen die Rechte geprüft.
 //rest API routes
 app.use('/', require("./routes/root"));
 app.use("/restricted", isAuthorised, require("./routes/root"));
-app.use('/api/car', require('./routes/api/car/root'));
-app.use('/api/car/applyCancelTransaction', require('./routes/api/car/applyCancelTransaction'));
-app.use('/api/car/cancelTransaction', require('./routes/api/car/cancelTransaction'));
-app.use('/api/car/mileage', require('./routes/api/car/mileage'));
-app.use('/api/car/register', require('./routes/api/car/register'));
-app.use('/api/car/service', require('./routes/api/car/service'));
-app.use('/api/car/tuev', require('./routes/api/car/tuev'));
+app.use('/api/car', require('./routes/api/car'));
 app.use('/api/users', userRoutes.router); // This can't be required directly, because of the oAuthServer
 
 // catch 404 and forward to error handler
