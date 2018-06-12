@@ -1,5 +1,11 @@
+<<<<<<< HEAD:src/authorisation/authRoutesMethods.js
 import userDBHelper from "../database/userDBHelper";
 import accessTokensDBHelper from "../database/accessTokensDBHelper";
+=======
+import dbHelper from "../database/dbHelper";
+import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
+
+>>>>>>> upstream/master:src/authorisation/routeMethods.js
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -7,7 +13,7 @@ function registerUser(req, res) {
 
   console.log("registerUser: req.body is:", req.body);
 
-  userDBHelper.doesUserExist(req.body.email, (doesUserExist) => {
+  dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
 
     if (doesUserExist) {
       res.status(400);
@@ -18,7 +24,12 @@ function registerUser(req, res) {
       return;
     }
 
-    userDBHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked, (hasError, rowCount) => {
+    const userKeys = createUserAccount();
+
+    //TODO: Alle Werte in die DB schreiben
+    dbHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.publicKey, req.body.authorityLevel,
+      req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
+      (hasError, rowCount) => {
 
       if (!hasError) {
         res.status(200);
@@ -39,16 +50,17 @@ function registerUser(req, res) {
 function deleteUser(req, res) {
   console.log("registerUser: req.body is:", req.body);
 
-  userDBHelper.doesUserExist(req.body.email, (doesUserExist) => {
+  dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
     if (doesUserExist) {
-      userDBHelper.deleteUserFromDB(req.body.email, result => {
-        if (result.length === 0) {
+      dbHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
+        if (isUserDeleted) {
           res.status(200);
           res.json({
             "message": "Deletion was successful"
           })
         }
         else {
+          console.log("Error while deleting user: ", err);
           res.status(500);
           res.json({
             "message": "Failed to delete user due to a server error"
@@ -60,15 +72,14 @@ function deleteUser(req, res) {
       res.status(400);
       res.json({
         "message": "User does not exists"
-      })
-
-      return;
+      });
     }
   })
 }
 
+
 //DUMMY FUNCTION!!!!
-//VINI.de/api/users/get
+//VINI.de/api/users
 function getUser(req, res) {
   var transactionPayload = [];
 
@@ -77,36 +88,36 @@ function getUser(req, res) {
     date: "11.06.2008",
     forename: "Ernst",
     surname: "Mustermann",
-    authorityLevel: "tuev",
+    authorityLevel: "TUEV",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "TUEV"
   };
   var payloadItem2 = {
     date: "11.06.2018",
     forename: "Brigitte",
     surname: "Mustermann",
-    authorityLevel: "zws",
+    authorityLevel: "ZWS",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "KFZ Bongard"
   };
   var payloadItem3 = {
     date: "11.06.2018",
     forename: "Johnathan",
     surname: "Mustermann",
-    authorityLevel: "stva",
+    authorityLevel: "STVA",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "Amt X"
   };
   var payloadItem4 = {
     date: "12.06.2018",
     forename: "Gabi",
     surname: "Mustermann",
-    authorityLevel: "astva",
+    authorityLevel: "ASTVA",
     action: "dummy",
-    email: queryMail,
+    email: "queryMail",
     company: "Amt Y"
   };
 
@@ -114,9 +125,10 @@ function getUser(req, res) {
   transactionPayload.push(payloadItem2);
   transactionPayload.push(payloadItem3);
   transactionPayload.push(payloadItem4);
+  const msg = JSON.stringify({transactionPayload});
+  res.send(msg);
+}
 
-  res.send(JSON.stringify(transactionPayload));
-  }
 
 function login(registerUserQuery, res) {
 
@@ -126,7 +138,7 @@ function login(registerUserQuery, res) {
 
 let app;
 
-//TODO: Das herumreichen der "app" Instanz ist sehr unschön. FIXME!
+//FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 
 function isAuthorised(req, res, next) {
   const authResult = app.oauth.authorise()(req, res, next);
@@ -164,7 +176,9 @@ function isAuthorised(req, res, next) {
 }
 
 module.exports = {
-  "setApp": (expressApp) => { app = expressApp },
+  "setApp": (expressApp) => {
+    app = expressApp
+  },
   "registerUser": registerUser,
   "login": login,
   "isAuthorised": isAuthorised,
