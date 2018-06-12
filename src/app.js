@@ -9,7 +9,19 @@ import {isAuthorised} from "./authorisation/routeMethods";
 import ethNodeCon from "./blockchain/ethNode";
 
 const port = process.env.port || 4711;
+const httpsPort = process.env.port || 4712;
 const app = express();
+
+import fs from 'fs';
+
+var https = require('https');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
+
+var httpsServer = https.createServer(credentials, app);
+httpsServer.listen(httpsPort);
 
 // Allow Cross-Origin Header
 app.use(function (req, res, next) {
