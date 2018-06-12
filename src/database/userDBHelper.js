@@ -29,7 +29,6 @@ function getUserFromCredentials(email, password, callback) {
       return;
     }
 
-    //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf benötigt wird
     let usersResult = {
       "id": result[0],
       "email": result[1],
@@ -73,15 +72,14 @@ function deleteUserFromDB(email, callback)
 
 function isUserBlocked(userID, callback)
 {
-  const usersBlockedQuery = `SELECT blocked from users WHERE id = '${userID}'`;
-  dbConnection.query(usersBlockedQuery, (error, result) => {
+  const userBlockedQuery = `SELECT blocked from users WHERE id = '${userID}'`;
+  dbConnection.query(userBlockedQuery, (error, result) => {
       if(result.length === 0){
           console.log("Invalid credentials");
           callback(true, null);
           return;
       }
-      const userBlocked = result[9];
-      callback(false, userBlocked);
+      callback(false, result);
   })
 }
 
