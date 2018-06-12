@@ -3,8 +3,8 @@ import dbConnection from "./msSqlWrapper";
 //TODO: Alle Parameter übergeben, um diese in die Datenbank einfügen zu können
 function registerUserInDB(email, password, callback) {
 
-  const queryString = `INSERT INTO users (email, password, privateKey, authorityLevel, forename, surname, companyName,
-  creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
+  const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
+  creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
   const sqlCallback = (error, result) => {
 
@@ -60,7 +60,7 @@ function deleteUserFromDB(email, callback) {
   const query = `DELETE FROM users WHERE email = '${email}'`;
   const sqlCallback = (err, results) => {
     const isUserDeleted = results !== null ? results.length > 0 : null;
-    callback(error, isUserDeleted);
+    callback(err, isUserDeleted);
   };
 
   dbConnection.query(query, sqlCallback);

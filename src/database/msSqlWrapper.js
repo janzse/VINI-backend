@@ -69,6 +69,7 @@ function executeSql(query, callback) {
   });
 
   request.on('requestCompleted', function () {
+    console.log(callback);
     callback(false, resultValues);
   });
 
