@@ -9,7 +9,7 @@ const express = require('express');
 const router = express.Router();
 
 
-var getTimestamp = function () {
+var getTimestamp = () => {
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
@@ -23,7 +23,7 @@ var getTimestamp = function () {
 };
 
 /* GET car by VIN. */
-router.get('/', function (req, res, next) {
+router.get('/', (req, res, next) => {
     var transactionPayload = [];
 
     var payloadItem1 = {
@@ -31,44 +31,52 @@ router.get('/', function (req, res, next) {
         mileage: 1337,
         service1: false,
         service2: true,
-        oilchange: false,
+        oilChange: false,
+        mainInspection: true,
         nextcheck: getTimestamp(),
         ownerCount: 4,
         entrant: "d@d.de",
-        state: "valid"
+        state: "valid",
+        transactionId: "123456"
     };
     var payloadItem2 = {
         timestamp: getTimestamp(),
         mileage: 1338,
         service1: true,
         service2: true,
-        oilchange: false,
+        oilChange: false,
+        mainInspection: true,
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "c@c.de",
-        state: "invalid"
+        state: "invalid",
+        transactionId: "123457"
     };
     var payloadItem3 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
         service2: true,
-        oilchange: true,
+        oilChange: true,
+        mainInspection: false,
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "b@b.de",
-        state: "rejected"
+        state: "rejected",
+        transactionId: "123458"
     };
     var payloadItem4 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
         service2: true,
-        oilchange: true,
+        oilChange: true,
+        mainInspection: false,
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "a@a.de",
-        state: "open"
+        state: "open",
+        transactionId: "123459"
     };
 
     transactionPayload.push(payloadItem1);
@@ -118,12 +126,12 @@ router.get('/', function (req, res, next) {
 */
 
 /* POST apply cancel transaction. */
-router.post('/applyCancelTransaction', function(req, res, next) {
+router.post('/applyCancelTransaction', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
-router.post('/cancelTransaction', function(req, res, next) {
+router.post('/cancelTransaction', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
@@ -131,17 +139,17 @@ router.post('/cancelTransaction', function(req, res, next) {
 router.post('/mileage', routeMethods.updateMileage);
 
 /* POST cancel transaction. */
-router.post('/register', function(req, res, next) {
+router.post('/register', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
-router.post('/service', function(req, res, next) {
+router.post('/service', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
-router.post('/tuev', function(req, res, next) {
+router.post('/tuev', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 

@@ -27,55 +27,54 @@ function initConnection(query, callback) {
         }
     });
 
-    dbConnection.on('connect', function (err) {
-        if (err) {
-            console.log("Unable to connect to database!", err);
-        }
-        else {
-            console.log("Successfully connected to DB");
-            executeSql(query, callback);
-        }
-    });
+  dbConnection.on('connect', (err) => {
+    if (err) {
+      console.log("Unable to connect to database!", err);
+    }
+    else {
+      console.log("Successfully connected to DB");
+      executeSql(query, callback);
+    }
+  });
 
-    dbConnection.on('end', function () {
-        console.log("DB connection has been closed.");
-        dbConnection = null;
-    })
+  dbConnection.on('end', () => {
+    console.log("DB connection has been closed.");
+    dbConnection = null;
+  })
 }
 
 function executeSql(query, callback) {
+  let resultValues = [];
 
-    let resultValues = [];
+  const request = new Request(query, (err, rowCount) => {
+    if (err) {
+      console.log("Error while request was performed: ", err);
+      return;
+    }
+    else {
+      console.log("Got ", rowCount, " row(s)");
+    }
 
-    const request = new Request(query, function (err, rowCount) {
-        if (err) {
-            console.log("Error while request was performed: ", err);
-            return;
-        }
-        else {
-            console.log("Got ", rowCount, " row(s)");
-        }
-        dbConnection.close();
+    dbConnection.close();
+  });
+
+  request.on('row', (columns) => {
+    // This collects all non-null rows in an array
+    columns.forEach((column) => {
+      if (column.value != null) {
+        resultValues.push(column.value);
+      }
     });
 
-    request.on('row', function (columns) {
-        // This collects all non-null rows in an array
-        columns.forEach(function (column) {
-            if (column.value != null) {
-                resultValues.push(column.value);
-            }
-        });
-    });
+  request.on('requestCompleted', () => {
+    callback(false, resultValues);
+  });
 
-    request.on('requestCompleted', function () {
-        callback(false, resultValues);
-    });
-
-    request.on('error', function (err) {
-        console.log("Error while executing ", query); // Might not be secure
-        callback(true, null);
-        throw err;
-    });
+  request.on('error', (err) => {
+    console.log("Error while executing ", query); // Might not be secure
+    callback(true, null);
+    throw err;
+  });
 
     dbConnection.execSql(request);
 }
