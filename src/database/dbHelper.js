@@ -98,7 +98,7 @@ function getUserInfoFromToken(token, callback) {
 
 function checkUserAuthorization(token, callback)
 {
-    const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.bearer_tokens = '${token}'`;
+    const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.token = '${token}'`;
 
     const sqlCallback = (err, result) => {
         if (result.length === 0) {
