@@ -31,44 +31,52 @@ router.get('/', (req, res, next) => {
         mileage: 1337,
         service1: false,
         service2: true,
-        oilchange: false,
+        oilChange: false,
+        mainInspection: true,
         nextcheck: getTimestamp(),
         ownerCount: 4,
         entrant: "d@d.de",
-        state: "valid"
+        state: "valid",
+        transactionId: "123456"
     };
     var payloadItem2 = {
         timestamp: getTimestamp(),
         mileage: 1338,
         service1: true,
         service2: true,
-        oilchange: false,
+        oilChange: false,
+        mainInspection: true,
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "c@c.de",
-        state: "invalid"
+        state: "invalid",
+        transactionId: "123457"
     };
     var payloadItem3 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
         service2: true,
-        oilchange: true,
+        oilChange: true,
+        mainInspection: false,
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "b@b.de",
-        state: "rejected"
+        state: "rejected",
+        transactionId: "123458"
     };
     var payloadItem4 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
         service2: true,
-        oilchange: true,
+        oilChange: true,
+        mainInspection: false,
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "a@a.de",
-        state: "open"
+        state: "open",
+        transactionId: "123459"
     };
 
     transactionPayload.push(payloadItem1);
