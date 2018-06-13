@@ -1,6 +1,6 @@
 import dbConnection from "./msSqlWrapper";
 
-function saveAccessToken(token, userID, callback) {
+function saveAccessToken(token, userID, expiration, callback) {
 
   // ON DUPLICATE gibt es in MSSQL nicht, wird durch eine Query ersetzt
   //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
@@ -14,7 +14,7 @@ function saveAccessToken(token, userID, callback) {
     end
     else
     begin
-    insert into bearer_tokens (token, user_id) values ('${token}', ${userID});
+    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, ${expiration});
     end
     commit tran`;
 
@@ -43,5 +43,5 @@ function getUserIDFromAccessToken(token, callback) {
 module.exports = {
   "saveAccessToken": saveAccessToken,
   "getUserIDFromAccessToken": getUserIDFromAccessToken,
-    "deleteAccessToken": deleteAccessToken
+  "deleteAccessToken": deleteAccessToken
 };

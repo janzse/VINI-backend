@@ -1,32 +1,34 @@
-import {TransactionPayload} from "./transactionPayload";
+class Transaction {
 
+  from; //String: sender address where the TX originated from (STVAWallet)
+  to; //String: recipient address (a carWallet)
+  data;
 
-export class Transaction {
+  constructor(from, to) {
 
-    constructor(){
+    this.from = from;
+    this.to = to;
+    this.data = {
+      "email": null,
+      "timestamp": null,
+      "preTransaction": null,
+      "preOwner": null,
+      "mileage": null,
+      "serviceOne": null,
+      "serviceTwo": null,
+      "oilChange": null,
+      "inspection": null,
+      "annulment": null
+    };
+  }
 
-        let hash; //String: the hash value of the TX
-        let timestamp; //date: creation date of the TX
-        let from; //String: sender address where the TX originated from (STVAWallet)
-        let to; //String: recipient address (a carWallet)
-        let isValid; //boolean: describes if a TX is still valid(true) or got annulled (false)
+  setEmail(email){
+    this.data.email = email;
+  }
 
-        let payload; // = new TransactionPayload(); //TransactionPayload: the payload for this TX
-
-    }
-
-    sendTransactionTUEV(){
-        this.payload = new TransactionPayload();
-    }
-
-    sendTransactionSTVA(){
-        this.payload = new TransactionPayload();
-    }
-    sendTransactionZWS(){
-        this.payload = new TransactionPayload();
-    }
-
-    sendAnnulment(){
-        this.payload = new TransactionPayload();
-    }
+  setMileage(mileage) {
+    this.data.mileage = mileage;
+  }
 }
+
+module.exports = Transaction;

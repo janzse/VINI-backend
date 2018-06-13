@@ -1,4 +1,4 @@
-import userDBHelper from "../database/userDBHelper";
+import userDBHelper from "../database/dbHelper";
 import accessTokensDBHelper from "../database/accessTokensDBHelper";
 
 /* All methods in this file are called by the node-oauth2-server module. They are provided as an object in the "app.js"
@@ -9,7 +9,7 @@ import accessTokensDBHelper from "../database/accessTokensDBHelper";
  * @param clientID the ID of the client attempting to get the accessToken
  * @param clientSecret the secret of the client attempting to get the accessToken
  * @param callback a function taking an error-indicator and a client object */
-function getClient(clientID, clientSecret, callback){
+function getClient(clientID, clientSecret, callback) {
 
   // All of the properties can be null
   const client = {
@@ -42,7 +42,7 @@ function grantTypeAllowed(clientID, grantType, callback) {
  * @param password the password of the user to search
  * @param callback a function taking an error-indicator and a user object as parameter
  */
-function getUser(email, password, callback){
+function getUser(email, password, callback) {
 
   console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
 
@@ -58,13 +58,13 @@ function getUser(email, password, callback){
  * @param user the user object
  * @param callback a function taking an error-indicator and the query results as parameter
  */
-function saveAccessToken(accessToken, clientID, expires, user, callback){
+function saveAccessToken(accessToken, clientID, expires, user, callback) {
 
   console.log('saveAccessToken() called and accessToken is: ', accessToken,
-    ' and clientID is: ',clientID, ' and user is: ', user, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
+    ' and clientID is: ', clientID, ' and user is: ', user, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
 
   //save the accessToken along with the user.id
-  accessTokensDBHelper.saveAccessToken(accessToken, user.id, callback)
+  accessTokensDBHelper.saveAccessToken(accessToken, user.id, expires, callback)
 }
 
 /* This method is called when a user is using a bearerToken they've already got as authentication
@@ -97,7 +97,7 @@ function getAccessToken(accessToken, callback) {
   })
 }
 
-module.exports =  {
+module.exports = {
   "getClient": getClient,
   "saveAccessToken": saveAccessToken,
   "getUser": getUser,

@@ -1,5 +1,5 @@
 import express from "express";
-import authRoutesMethods from "../../authorisation/authRoutesMethods";
+import authRoutesMethods from "../../authorisation/routeMethods";
 
 const router = express.Router();
 
@@ -16,9 +16,9 @@ function initRoutes(app) {
   router.delete('/register', authRoutesMethods.deleteUser);
   
   /* GET User */
-  router.get('/get',authRoutesMethods.getUser);
-  
+  router.get('/', authRoutesMethods.getUser);
 }
+
 
 // The expressApp is needed for the oAuthServer, therefore this asynchronous approach is needed
 module.exports = {
