@@ -147,7 +147,7 @@ function isAuthorised(req, res, next) {
                 console.log("Error: ", error);
             else
             {
-
+                console.log("checkUserAuthorization RESULT: ", result)
             }
         })
     }
