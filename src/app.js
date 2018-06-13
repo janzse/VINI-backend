@@ -7,21 +7,22 @@ import userRoutes from "./routes/api/users";
 import {isAuthorised} from "./authorisation/routeMethods";
 
 import ethNodeCon from "./blockchain/ethNode";
+import fs from 'fs';
+import https from 'https';
 
 const port = process.env.port || 4711;
-const httpsPort = process.env.port || 4712;
+const httpsPort = (process.env.port + 1) || 4712;
 const app = express();
 
-import fs from 'fs';
 
-var https = require('https');
-var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+// TODO: Key + Certificate direkt auf den Server packen und evtl kein Self-Signed Zertifikat nehmen
+const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 
-var credentials = {key: privateKey, cert: certificate};
-
-var httpsServer = https.createServer(credentials, app);
+const credentials = {key: privateKey, cert: certificate};
+const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(httpsPort);
+console.log("HTTPS-Server is running on", "https://localhost:" + httpsPort, " or", "<TODO>");
 
 // Allow Cross-Origin Header
 app.use((req, res, next) => {
@@ -64,7 +65,8 @@ app.use((req, res, next) => {
 });
 
 app.listen(port);
-console.log("Server is running on port", port);
+console.log("HTTP-Server is running on", "http://localhost:" + port, " or", "http://vini-ethereum.westeurope.cloudapp.azure.com/\n");
+
 
 ethNodeCon.connectToNode();
 
