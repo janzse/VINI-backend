@@ -9,6 +9,7 @@ import {isAuthorised} from "./authorisation/routeMethods";
 import ethNodeCon from "./blockchain/ethNode";
 import fs from 'fs';
 import https from 'https';
+import cors from 'cors';
 
 const port = process.env.port || 4711;
 const httpsPort = (process.env.port + 1) || 4712;
@@ -16,7 +17,7 @@ const app = express();
 
 
 // TODO: Key + Certificate direkt auf den Server packen und evtl kein Self-Signed Zertifikat nehmen
-const privateKey  = fs.readFileSync('../sslcert/server.key', 'utf8');
+const privateKey = fs.readFileSync('../sslcert/server.key', 'utf8');
 const certificate = fs.readFileSync('../sslcert/server.crt', 'utf8');
 
 const credentials = {key: privateKey, cert: certificate};
@@ -37,6 +38,8 @@ app.oauth = oAuth2Server({
   debug: true
 });
 userRoutes.initRoutes(app);
+
+app.use(cors());
 
 /* Setup the oAuth error handling */
 app.use(app.oauth.errorHandler());

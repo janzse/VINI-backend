@@ -6,10 +6,10 @@ let dbConnection = null;
 
 function query(queryString, callback) {
 
-  if(dbConnection == null){
+  if (dbConnection == null) {
     initConnection(queryString, callback);
   }
-  else{
+  else {
     executeSql(queryString, callback);
   }
 }
@@ -66,16 +66,16 @@ function executeSql(query, callback) {
         resultValues.push(column.value);
       }
     });
-  });
 
-  request.on('requestCompleted', () => {
-    callback(false, resultValues);
-  });
+    request.on('requestCompleted', () => {
+      callback(false, resultValues);
+    });
 
-  request.on('error', (err) => {
-    console.log("Error while executing ", query); // Might not be secure
-    callback(true, null);
-    throw err;
+    request.on('error', (err) => {
+      console.log("Error while executing ", query); // Might not be secure
+      callback(true, null);
+      throw err;
+    });
   });
 
   dbConnection.execSql(request);
