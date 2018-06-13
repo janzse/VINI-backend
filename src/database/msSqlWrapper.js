@@ -55,7 +55,6 @@ function executeSql(query, callback) {
         else {
             console.log("Got ", rowCount, " row(s)");
         }
-
         dbConnection.close();
     });
 

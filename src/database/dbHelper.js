@@ -1,6 +1,5 @@
 import dbConnection from "./msSqlWrapper";
 
-//TODO: Alle Parameter übergeben, um diese in die Datenbank einfügen zu können
 function registerUserInDB(email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
 
     const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
