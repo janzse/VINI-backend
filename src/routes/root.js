@@ -4,7 +4,7 @@ import restrictedAreaRoutesMethods from "../authorisation/restrictedAreaRoutesMe
 const router = express.Router();
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', (req, res, next) => {
   res.send('My fancy page')
 });
 

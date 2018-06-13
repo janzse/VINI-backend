@@ -1,4 +1,4 @@
-import userDBHelper from "../database/dbHelper";
+import dbHelper from "../database/dbHelper";
 import accessTokensDBHelper from "../database/accessTokensDBHelper";
 
 /* All methods in this file are called by the node-oauth2-server module. They are provided as an object in the "app.js"
@@ -47,7 +47,7 @@ function getUser(email, password, callback) {
   console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
 
   //try and get the user using the user's credentials
-  userDBHelper.getUserFromCredentials(email, password, callback)
+  dbHelper.getUserFromCredentials(email, password, callback)
 }
 
 /**

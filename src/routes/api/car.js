@@ -9,7 +9,7 @@ const express = require('express');
 const router = express.Router();
 
 
-var getTimestamp = function () {
+var getTimestamp = () => {
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
@@ -23,7 +23,7 @@ var getTimestamp = function () {
 };
 
 /* GET car by VIN. */
-router.get('/', function (req, res, next) {
+router.get('/', (req, res, next) => {
     var transactionPayload = [];
 
     var payloadItem1 = {
@@ -118,12 +118,12 @@ router.get('/', function (req, res, next) {
 */
 
 /* POST apply cancel transaction. */
-router.post('/applyCancelTransaction', function(req, res, next) {
+router.post('/applyCancelTransaction', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
-router.post('/cancelTransaction', function(req, res, next) {
+router.post('/cancelTransaction', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
@@ -131,17 +131,17 @@ router.post('/cancelTransaction', function(req, res, next) {
 router.post('/mileage', routeMethods.updateMileage);
 
 /* POST cancel transaction. */
-router.post('/register', function(req, res, next) {
+router.post('/register', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
-router.post('/service', function(req, res, next) {
+router.post('/service', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
-router.post('/tuev', function(req, res, next) {
+router.post('/tuev', (req, res, next) => {
     res.send(req.body);    // echo the result back
 });
 
