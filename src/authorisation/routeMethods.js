@@ -141,8 +141,15 @@ function isAuthorised(req, res, next) {
     if (authResult.bearerToken != null) {
         console.log("TOKEN: ", authResult.bearerToken);
 
-        //TODO: Validierung der Nutzerrechte (authorisation Level)
-        //TODO: Prüfen, ob der User deaktiviert ist
+        // Prüfen, ob der User deaktiviert ist und
+        dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
+            if (error)
+                console.log("Error: ", error);
+            else
+            {
+
+            }
+        })
     }
     else {
         console.log("No valid accessToken found");

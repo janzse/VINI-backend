@@ -96,6 +96,20 @@ function getUserInfoFromToken(token, callback) {
     dbConnection.query(queryString, sqlCallback);
 }
 
+function checkUserAuthorization(token, callback)
+{
+    const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.bearer_tokens = '${token}'`;
+
+    const sqlCallback = (err, result) => {
+        if (result.length === 0) {
+            console.log("Could not find user by bearerToken: ", token);
+        }
+        else {
+            callback(err, result);
+        }
+    };
+    dbConnection.query(queryString, sqlCallback);
+}
 
 module.exports = {
     "registerUserInDB": registerUserInDB,
@@ -103,5 +117,6 @@ module.exports = {
     "doesUserExist": doesUserExist,
     "deleteUserFromDB": deleteUserFromDB,
     "getCarAddressFromVin": getCarAddressFromVin,
-    "getUserInfoFromToken": getUserInfoFromToken
+    "getUserInfoFromToken": getUserInfoFromToken,
+    "checkUserAuthorization": checkUserAuthorization
 };
