@@ -16,8 +16,8 @@ const app = express();
 
 
 // TODO: Key + Certificate direkt auf den Server packen und evtl kein Self-Signed Zertifikat nehmen
-const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+const privateKey  = fs.readFileSync('../sslcert/server.key', 'utf8');
+const certificate = fs.readFileSync('../sslcert/server.crt', 'utf8');
 
 const credentials = {key: privateKey, cert: certificate};
 const httpsServer = https.createServer(credentials, app);
