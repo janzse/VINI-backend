@@ -35,7 +35,8 @@ router.get('/', (req, res, next) => {
         nextcheck: getTimestamp(),
         ownerCount: 4,
         entrant: "d@d.de",
-        state: "valid"
+        state: "valid",
+        transactionId: "123456"
     };
     var payloadItem2 = {
         timestamp: getTimestamp(),
@@ -46,7 +47,8 @@ router.get('/', (req, res, next) => {
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "c@c.de",
-        state: "invalid"
+        state: "invalid",
+        transactionId: "123457"
     };
     var payloadItem3 = {
         timestamp: getTimestamp(),
@@ -57,7 +59,8 @@ router.get('/', (req, res, next) => {
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "b@b.de",
-        state: "rejected"
+        state: "rejected",
+        transactionId: "123458"
     };
     var payloadItem4 = {
         timestamp: getTimestamp(),
@@ -68,7 +71,8 @@ router.get('/', (req, res, next) => {
         nextcheck: getTimestamp(),
         ownerCount: 5,
         entrant: "a@a.de",
-        state: "open"
+        state: "open",
+        transactionId: "123459"
     };
 
     transactionPayload.push(payloadItem1);
