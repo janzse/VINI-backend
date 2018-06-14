@@ -136,26 +136,26 @@ let app;
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 
 function isAuthorised(req, res, next) {
-    const authResult = app.oauth.authorise()(req, res, next);
-
-    if (authResult.bearerToken != null) {
-        console.log("TOKEN: ", authResult.bearerToken);
-
-        // Prüfen, ob der User deaktiviert ist und
-        dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
-            if (error)
-                console.log("Error: ", error);
-            else
-            {
-                console.log("checkUserAuthorization RESULT: ", result)
-            }
-        })
-    }
-    else {
-        console.log("No valid accessToken found");
-        res.status(403);
-        res.redirect("/");
-    }
+    app.oauth.authorise()(req, res, () => {
+        if (authResult.bearerToken != null) {
+            console.log("TOKEN: ", authResult.bearerToken);
+    
+            // Prüfen, ob der User deaktiviert ist und
+            dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
+                if (error)
+                    console.log("Error: ", error);
+                else
+                {
+                    console.log("checkUserAuthorization RESULT: ", result)
+                }
+            })
+        }
+        else {
+            console.log("No valid accessToken found");
+            res.status(403);
+            res.redirect("/");
+        }
+    })
 }
 
 module.exports = {
