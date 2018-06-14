@@ -146,7 +146,11 @@ function isAuthorised(req, res, next) {
                     console.log("Error: ", error);
                 else
                 {
-                    console.log("checkUserAuthorization RESULT: ", result)
+                    if (result.length === 0)
+                    {
+                        if (result[0] == false)
+                            console.log("User is blocked");
+                    }
                 }
             })
         }
