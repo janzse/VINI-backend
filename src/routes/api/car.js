@@ -16,11 +16,11 @@ const getTimestamp = () => {
     let day = today.getDate();
     day = day < 10 ? "0" + day : day
 
-    var hours = today.getHours();
+    let hours = today.getHours();
     hours = hours < 10 ? "0" + hours : hours;
-    var minute = today.getMinutes();
+    let minute = today.getMinutes();
     minute = minute < 10 ? "0" + minute : minute;
-    var seconds = today.getSeconds();
+    let seconds = today.getSeconds();
     seconds = seconds < 10 ? "0" + seconds : seconds;
     return todayStr + "-" + month + "-" + day +  "T" + hours + ":" + minute + ":" + seconds;
 }
@@ -28,11 +28,11 @@ const getTimestamp = () => {
 /* GET car by VIN. */
 router.get('/', (req, res, next) => {
     console.log(req.body);
-    var transactionPayload = [];
+    let transactionPayload = [];
 
     // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
     // mit einer 0 auffüllen)
-    var payloadItem1 = {
+    let payloadItem1 = {
         timestamp: getTimestamp(),
         mileage: 1337,
         service1: false,
@@ -45,7 +45,7 @@ router.get('/', (req, res, next) => {
         state: "valid",
         transactionId: "123456"
     };
-    var payloadItem2 = {
+    let payloadItem2 = {
         timestamp: getTimestamp(),
         mileage: 1338,
         service1: true,
@@ -58,7 +58,7 @@ router.get('/', (req, res, next) => {
         state: "invalid",
         transactionId: "123457"
     };
-    var payloadItem3 = {
+    let payloadItem3 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
@@ -71,7 +71,7 @@ router.get('/', (req, res, next) => {
         state: "rejected",
         transactionId: "123458"
     };
-    var payloadItem4 = {
+    let payloadItem4 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
@@ -90,7 +90,7 @@ router.get('/', (req, res, next) => {
     transactionPayload.push(payloadItem3);
     transactionPayload.push(payloadItem4);
 
-    var jsonResponse = {
+    let jsonResponse = {
         vin: req.params.vin,
         transactionPayload
     };
