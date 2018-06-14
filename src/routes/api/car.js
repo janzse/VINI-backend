@@ -8,25 +8,31 @@ import routeMethods from "../../car/routeMethods";
 const express = require('express');
 const router = express.Router();
 
+const getTimestamp = () => {
+    const today = new Date()
+    const todayStr = today.getFullYear();
+    let month = today.getMonth() + 1;
+    month = month < 10 ? "0" + month : month;
+    let day = today.getDate();
+    day = day < 10 ? "0" + day : day
 
-var getTimestamp = () => {
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var hours = date.getHours();
-    var minute = date.getMinutes();
-    var seconds = date.getSeconds();
-
-    return "" + year + "-" + month + "-" + day + "T"
-        + hours + ":" + minute + ":" + seconds;
-};
+    let hours = today.getHours();
+    hours = hours < 10 ? "0" + hours : hours;
+    let minute = today.getMinutes();
+    minute = minute < 10 ? "0" + minute : minute;
+    let seconds = today.getSeconds();
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    return todayStr + "-" + month + "-" + day +  "T" + hours + ":" + minute + ":" + seconds;
+}
 
 /* GET car by VIN. */
 router.get('/', (req, res, next) => {
-    var transactionPayload = [];
+    console.log(req.body);
+    let transactionPayload = [];
 
-    var payloadItem1 = {
+    // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
+    // mit einer 0 auffüllen)
+    let payloadItem1 = {
         timestamp: getTimestamp(),
         mileage: 1337,
         service1: false,
@@ -39,7 +45,7 @@ router.get('/', (req, res, next) => {
         state: "valid",
         transactionId: "123456"
     };
-    var payloadItem2 = {
+    let payloadItem2 = {
         timestamp: getTimestamp(),
         mileage: 1338,
         service1: true,
@@ -52,7 +58,7 @@ router.get('/', (req, res, next) => {
         state: "invalid",
         transactionId: "123457"
     };
-    var payloadItem3 = {
+    let payloadItem3 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
@@ -65,7 +71,7 @@ router.get('/', (req, res, next) => {
         state: "rejected",
         transactionId: "123458"
     };
-    var payloadItem4 = {
+    let payloadItem4 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
@@ -84,7 +90,7 @@ router.get('/', (req, res, next) => {
     transactionPayload.push(payloadItem3);
     transactionPayload.push(payloadItem4);
 
-    var jsonResponse = {
+    let jsonResponse = {
         vin: req.params.vin,
         transactionPayload
     };
@@ -127,11 +133,13 @@ router.get('/', (req, res, next) => {
 
 /* POST apply cancel transaction. */
 router.post('/applyCancelTransaction', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
 router.post('/cancelTransaction', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
@@ -140,16 +148,19 @@ router.post('/mileage', routeMethods.updateMileage);
 
 /* POST cancel transaction. */
 router.post('/register', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
 router.post('/service', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
 router.post('/tuev', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 

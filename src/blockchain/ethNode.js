@@ -5,7 +5,7 @@ let isConnected = false;
 
 function connectToNode() {
 
-  const nodeIP = "http://51.144.115.147:8545";
+  const nodeIP = "https://vini-ethnode.westeurope.cloudapp.azure.com:8899";
   web3 = new Web3(nodeIP);
 
   web3.eth.net.isListening()
