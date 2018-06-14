@@ -143,10 +143,14 @@ function isAuthorised(req, res, next) {
             // Prüfen, ob der User deaktiviert ist und
             dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
                 if (error)
-                    console.log("Error: ", error);
+                    console.log("User authorization error: ", error);
                 else
                 {
                     if (result.length === 0)
+                    {
+                        console.log("No result from user authorization");
+                    }
+                    else
                     {
                         if (result[0] == false)
                             console.log("User is blocked");
