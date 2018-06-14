@@ -27,6 +27,7 @@ const getTimestamp = () => {
 
 /* GET car by VIN. */
 router.get('/', (req, res, next) => {
+    console.log(req.body);
     var transactionPayload = [];
 
     // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
@@ -132,11 +133,13 @@ router.get('/', (req, res, next) => {
 
 /* POST apply cancel transaction. */
 router.post('/applyCancelTransaction', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
 router.post('/cancelTransaction', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
@@ -145,16 +148,19 @@ router.post('/mileage', routeMethods.updateMileage);
 
 /* POST cancel transaction. */
 router.post('/register', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
 router.post('/service', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
 /* POST cancel transaction. */
 router.post('/tuev', (req, res, next) => {
+    console.log(req.body);
     res.send(req.body);    // echo the result back
 });
 
