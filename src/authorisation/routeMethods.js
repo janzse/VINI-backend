@@ -136,7 +136,7 @@ let app;
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 
 function isAuthorised(req, res, next) {
-    app.oauth.authorise()(req, res, () => {
+    const authResult = app.oauth.authorise()(req, res, () => {
         if (authResult.bearerToken != null) {
             console.log("TOKEN: ", authResult.bearerToken);
     
