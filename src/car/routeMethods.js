@@ -15,6 +15,12 @@ function updateMileage(req, res) {
     }
     console.log(req.get("Authorization").slice("Bearer ".length));
     getCarAddressFromVin(req.body.vin, (carAddress) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
         getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
@@ -186,7 +192,13 @@ function shopService(req, res) {
 
     }
 
-    getCarAddressFromVin(req.body.vin, (carAddress) => {
+    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
         getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
@@ -228,6 +240,12 @@ function tuevEntry(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
         getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
@@ -267,6 +285,12 @@ function stvaRegister(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
         getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
