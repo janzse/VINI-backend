@@ -19,8 +19,8 @@ let pathToKey = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.c
 let pathToCert = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/fullchain.pem";
 
 if(process.platform === "win32" || process.platform === "darwin" || process.env['HOME'] == null || process.env['HOME'] === undefined){
-  pathToKey = "../sslcert/server.key";
-  pathToCert = "../sslcert/server.crt";
+  pathToKey = "./sslcert/server.key";
+  pathToCert = "./sslcert/server.crt";
 }
 
 const privateKey = fs.readFileSync(pathToKey, 'utf8');
