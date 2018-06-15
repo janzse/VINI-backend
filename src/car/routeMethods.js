@@ -1,3 +1,29 @@
+
+Skip to content
+
+Pull requests
+Issues
+Marketplace
+Explore
+
+@janzse
+
+3
+0
+
+7
+
+SGSE18/VINI-backend
+Code
+Issues 0
+Pull requests 0
+Projects 0
+Wiki
+Insights
+VINI-backend/src/car/routeMethods.js
+095edaf 22 minutes ago
+L. Stuckstette fixed /car-routes error with non-existing vin request (inf.loop)
+328 lines (285 sloc) 10.6 KB
 import {getCarAddressFromVin, getUserInfoFromToken} from "../database/dbHelper";
 import Transaction from "../blockchain/transaction";
 import {sendTransaction} from "../blockchain/ethNode";
@@ -13,10 +39,15 @@ function updateMileage(req, res) {
             "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
         });
     }
-    const token = req.get("Authorization").slice("Bearer ".length);
-    console.log(token);
+    console.log(req.get("Authorization").slice("Bearer ".length));
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(token, (userKey, email) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
+        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -131,11 +162,8 @@ function getCarByVin(req, res) {
 
     /*
     import EthNode from "../../../blockchain/ethNode";
-
     var transactions = EthNode.getCarTransactions(req.params.vin);
-
     var transactionPayload = [];
-
     transactions.array.forEach(element => {
         var payloadItem = {
             timestamp: element.timestamp,
@@ -148,17 +176,13 @@ function getCarByVin(req, res) {
             entrant: element.payload.entrant,
             state: element.payload.state
         };
-
         transactionPayload.push(payloadItem);
     });
-
     var jsonResponse = {
         vin: req.params.vin,
         transactionPayload
     };
-
     res.send(JSON.stringify(jsonResponse));
-
 */
 }
 
@@ -175,8 +199,7 @@ function applyCancelTransaction(req, res) {
 function shopService(req, res) {
     console.log(req.body);
 
-    const token = req.get("Authorization").slice("Bearer ".length);
-    if (req.body.vin == null || token == null || req.body.timestamp == null ||
+    if (req.body.vin == null || req.get("Authorization").slice("Bearer ".length) == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
         req.body.oilChange == null) {
         console.log("Invalid request on shop service: ", req.body);
@@ -188,8 +211,14 @@ function shopService(req, res) {
 
     }
 
-    getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(token, (userKey, email) => {
+    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
+        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -218,9 +247,8 @@ function shopService(req, res) {
 
 function tuevEntry(req, res) {
     console.log(req.body);
-    const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (req.body.vin == null || token == null || req.body.timestamp == null ||
+    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.nextCheck == null) {
         console.log("Invalid request on tuev-report: ", req.body);
         res.status(400);
@@ -231,7 +259,13 @@ function tuevEntry(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(token, (userKey, email) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
+        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -258,9 +292,8 @@ function tuevEntry(req, res) {
 
 function stvaRegister(req, res) {
     console.log(req.body);
-    const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (req.body.vin == null || token == null || req.body.timestamp == null ||
+    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.ownerCount == null) {
         console.log("Invalid request on stva-register: ", req.body);
         res.status(400);
@@ -271,7 +304,13 @@ function stvaRegister(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(token, (userKey, email) => {
+        if(carAddress === null){
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
+        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -305,3 +344,19 @@ module.exports = {
     "stvaRegister": stvaRegister,
     "getCarByVin": getCarByVin
 };
+
+    © 2018 GitHub, Inc.
+    Terms
+Privacy
+Security
+Status
+Help
+
+Contact GitHub
+API
+Training
+Shop
+Blog
+About
+
+Press h to open a hovercard with more details.
