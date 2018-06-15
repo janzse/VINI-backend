@@ -75,11 +75,11 @@ function deleteUser(req, res) {
 
 //DUMMY FUNCTION!!!!
 //VINI.de/api/users
-function getUsers(req, res) {
-    let transactionPayload = [];
+function getUser(req, res) {
+    var transactionPayload = [];
 
 
-    const payloadItem1 = {
+    var payloadItem1 = {
         date: "11.06.2008",
         forename: "Ernst",
         surname: "Mustermann",
@@ -88,7 +88,7 @@ function getUsers(req, res) {
         email: "queryMail",
         company: "TUEV"
     };
-    const payloadItem2 = {
+    var payloadItem2 = {
         date: "11.06.2018",
         forename: "Brigitte",
         surname: "Mustermann",
@@ -97,7 +97,7 @@ function getUsers(req, res) {
         email: "queryMail",
         company: "KFZ Bongard"
     };
-    const payloadItem3 = {
+    var payloadItem3 = {
         date: "11.06.2018",
         forename: "Johnathan",
         surname: "Mustermann",
@@ -106,7 +106,7 @@ function getUsers(req, res) {
         email: "queryMail",
         company: "Amt X"
     };
-    const payloadItem4 = {
+    var payloadItem4 = {
         date: "12.06.2018",
         forename: "Gabi",
         surname: "Mustermann",
@@ -136,19 +136,34 @@ let app;
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 
 function isAuthorised(req, res, next) {
-    const authResult = app.oauth.authorise()(req, res, next);
-
-    if (authResult.bearerToken != null) {
-        console.log("TOKEN: ", authResult.bearerToken);
-
-        //TODO: Validierung der Nutzerrechte (authorisation Level)
-        //TODO: Prüfen, ob der User deaktiviert ist
-    }
-    else {
-        console.log("No valid accessToken found");
-        res.status(403);
-        res.redirect("/");
-    }
+    const authResult = app.oauth.authorise()(req, res, () => {
+        if (authResult.bearerToken != null) {
+            console.log("TOKEN: ", authResult.bearerToken);
+    
+            // Prüfen, ob der User deaktiviert ist und
+            dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
+                if (error)
+                    console.log("User authorization error: ", error);
+                else
+                {
+                    if (result.length === 0)
+                    {
+                        console.log("No result from user authorization");
+                    }
+                    else
+                    {
+                        if (result[0] == false)
+                            console.log("User is blocked");
+                    }
+                }
+            })
+        }
+        else {
+            console.log("No valid accessToken found");
+            res.status(403);
+            res.redirect("/");
+        }
+    })
 }
 
 module.exports = {
@@ -159,5 +174,5 @@ module.exports = {
     "login": login,
     "isAuthorised": isAuthorised,
     "deleteUser": deleteUser,
-    "getUsers": getUsers
+    "getUser": getUser
 };
