@@ -15,15 +15,21 @@ const port = process.env.port || 4711;
 const httpsPort = (process.env.port + 1) || 4712;
 const app = express();
 
+let pathToKey = "/etc/letsencrypt/live/vini-ethnode.westeurope.cloudapp.azure.com/privkey.pem";
+let pathToCert = "/etc/letsencrypt/live/vini-ethnode.westeurope.cloudapp.azure.com/fullchain.pem";
 
-// TODO: Key + Certificate direkt auf den Server packen und evtl kein Self-Signed Zertifikat nehmen
-const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+if(process.env['HOME'] == null || process.env['HOME'] === undefined){
+  pathToKey = "../sslcert/server.key";
+  pathToCert = "../sslcert/server.crt";
+}
+
+const privateKey = fs.readFileSync(pathToKey, 'utf8');
+const certificate = fs.readFileSync(pathToCert, 'utf8');
 
 const credentials = {key: privateKey, cert: certificate};
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(httpsPort);
-console.log("HTTPS-Server is running on", "https://localhost:" + httpsPort, " or", "<TODO>");
+console.log("HTTPS-Server is running on", "https://localhost:" + httpsPort, " or", "https://vini-ethnode.westeurope.cloudapp.azure.com/");
 
 // Allow Cross-Origin Header
 app.use((req, res, next) => {
