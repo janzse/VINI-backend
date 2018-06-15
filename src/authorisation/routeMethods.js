@@ -75,7 +75,7 @@ function deleteUser(req, res) {
 
 //DUMMY FUNCTION!!!!
 //VINI.de/api/users
-function getUser(req, res) {
+function getUsers(req, res) {
     var transactionPayload = [];
 
 
@@ -174,5 +174,5 @@ module.exports = {
     "login": login,
     "isAuthorised": isAuthorised,
     "deleteUser": deleteUser,
-    "getUser": getUser
+    "getUsers": getUsers
 };
