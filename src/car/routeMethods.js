@@ -121,7 +121,6 @@ function getCarByVin(req, res) {
     transactionPayload.push(payloadItem4);
 
 
-
     let jsonResponse = {
         "vin": req.query.vin,
         transactionPayload
@@ -174,17 +173,123 @@ function applyCancelTransaction(req, res) {
 
 function shopService(req, res) {
     console.log(req.body);
-    res.send(req.body);    // echo the result back
+
+    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
+        req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
+        req.body.oilChange == null) {
+        console.log("Invalid request on shop service: ", req.body);
+        res.status(400);
+        res.json({
+            "message": "Request has to include: vin, bearer_token, timestamp, mileage, service1," +
+            " service2 + oilchange"
+        });
+
+    }
+
+    getCarAddressFromVin(req.body.vin, (carAddress) => {
+        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+
+            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            transaction.setMileage(req.body.mileage);
+            transaction.setServiceOne(req.body.service1);
+            transaction.setServiceTwo(req.body.service1);
+            transaction.setOilchange(req.body.oilChange);
+            transaction.setEmail(email);
+
+            sendTransaction(transaction, (err) => {
+                if (err) {
+                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
+                    res.status(500);
+                    res.json({
+                        "message": "Entering shop-service failed"
+                    });
+                } else {
+                    res.status(200);
+                    res.json({
+                        "message": "Successfully entered shop-service"
+                    });
+                }
+            });
+        });
+    });
 }
 
 function tuevEntry(req, res) {
     console.log(req.body);
-    res.send(req.body);    // echo the result back
+
+    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
+        req.body.mileage == null || req.body.nextCheck == null) {
+        console.log("Invalid request on tuev-report: ", req.body);
+        res.status(400);
+        res.json({
+            "message": "Request has to include: vin, bearer_token, timestamp, mileage + nextCheck "
+        });
+
+    }
+
+    getCarAddressFromVin(req.body.vin, (carAddress) => {
+        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+
+            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            transaction.setMileage(req.body.mileage);
+            transaction.setNextCheck(req.body.nextCheck);
+            transaction.setEmail(email);
+
+            sendTransaction(transaction, (err) => {
+                if (err) {
+                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
+                    res.status(500);
+                    res.json({
+                        "message": "Entering tuev-report failed"
+                    });
+                } else {
+                    res.status(200);
+                    res.json({
+                        "message": "Successfully entered tuev-report"
+                    });
+                }
+            });
+        });
+    });
 }
 
 function stvaRegister(req, res) {
     console.log(req.body);
-    res.send(req.body);    // echo the result back
+
+    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
+        req.body.mileage == null || req.body.ownerCount == null) {
+        console.log("Invalid request on stva-register: ", req.body);
+        res.status(400);
+        res.json({
+            "message": "Request has to include: vin, bearer_token, timestamp, mileage + ownerCount "
+        });
+
+    }
+
+    getCarAddressFromVin(req.body.vin, (carAddress) => {
+        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+
+            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            transaction.setMileage(req.body.mileage);
+            transaction.setpreOwner(req.body.ownerCount);
+            transaction.setEmail(email);
+
+            sendTransaction(transaction, (err) => {
+                if (err) {
+                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
+                    res.status(500);
+                    res.json({
+                        "message": "Entering stva-register failed"
+                    });
+                } else {
+                    res.status(200);
+                    res.json({
+                        "message": "Successfully entered stva-register"
+                    });
+                }
+            });
+        });
+    });
 }
 
 module.exports = {
