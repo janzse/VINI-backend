@@ -10,7 +10,7 @@ function updateMileage(req, res) {
         console.log("Invalid request on updating mileage: ", req.body);
         res.status(400);
         res.json({
-            "message": "Request has to include: vin, bearer_token, timestamp and a mileage value"
+            "message": "Request has to include: vin, timestamp and a mileage value"
         });
     }
 
