@@ -134,26 +134,33 @@ function login(registerUserQuery, res) {
 let app;
 
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
-
-function isAuthorised(req, res, next) {
+// success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
+// TODO: Fehlerfälle
+function isAuthorised(req, res, success, error) {
     const authResult = app.oauth.authorise()(req, res, () => {
         if (authResult.bearerToken != null) {
             console.log("TOKEN: ", authResult.bearerToken);
     
             // Prüfen, ob der User deaktiviert ist und
             dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
-                if (error)
+                if (error) {
                     console.log("User authorization error: ", error);
+                    error(); // TODO
+                }
                 else
                 {
                     if (result.length === 0)
                     {
                         console.log("No result from user authorization");
+                        error(); // TODO
                     }
                     else
                     {
-                        if (result[0] == false)
+                        if (result[0] == false) {
                             console.log("User is blocked");
+                            error(); // TODO
+                        }
+                        success();
                     }
                 }
             })
@@ -162,6 +169,7 @@ function isAuthorised(req, res, next) {
             console.log("No valid accessToken found");
             res.status(403);
             res.redirect("/");
+            // TODO error(); ??
         }
     })
 }
