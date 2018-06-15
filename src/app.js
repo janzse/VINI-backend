@@ -15,8 +15,8 @@ const port = process.env.port || 4711;
 const httpsPort = (process.env.port + 1) || 4712;
 const app = express();
 
-let pathToKey = "/etc/letsencrypt/live/vini-ethnode.westeurope.cloudapp.azure.com/privkey.pem";
-let pathToCert = "/etc/letsencrypt/live/vini-ethnode.westeurope.cloudapp.azure.com/fullchain.pem";
+let pathToKey = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/privkey.pem";
+let pathToCert = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/fullchain.pem";
 
 if(process.env['HOME'] == null || process.env['HOME'] === undefined){
   pathToKey = "../sslcert/server.key";
