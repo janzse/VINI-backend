@@ -22,7 +22,7 @@ function updateMileage(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -193,7 +193,7 @@ function shopService(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -241,7 +241,7 @@ function tuevEntry(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -287,7 +287,7 @@ function stvaRegister(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
