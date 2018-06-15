@@ -96,8 +96,7 @@ function getUserInfoFromToken(token, callback) {
     dbConnection.query(queryString, sqlCallback);
 }
 
-function checkUserAuthorization(token, callback)
-{
+function checkUserAuthorization(token, callback) {
     const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.token = '${token}'`;
 
     const sqlCallback = (err, result) => {
@@ -111,6 +110,16 @@ function checkUserAuthorization(token, callback)
     dbConnection.query(queryString, sqlCallback);
 }
 
+function getAllUsers(callback){
+    const queryString = 'SELECT * FROM users';
+
+    const sqlCallback = (err, results) => {
+        callback(err,results);
+    };
+
+    dbConnection.query(queryString, sqlCallback)
+}
+
 module.exports = {
     "registerUserInDB": registerUserInDB,
     "getUserFromCredentials": getUserFromCredentials,
@@ -118,5 +127,6 @@ module.exports = {
     "deleteUserFromDB": deleteUserFromDB,
     "getCarAddressFromVin": getCarAddressFromVin,
     "getUserInfoFromToken": getUserInfoFromToken,
-    "checkUserAuthorization": checkUserAuthorization
+    "checkUserAuthorization": checkUserAuthorization,
+    "getAllUsers": getAllUsers
 };
