@@ -6,7 +6,7 @@ import {sendTransaction} from "../blockchain/ethNode";
 
 function updateMileage(req, res) {
 
-    if (req.body.vin == null || /*req.body.bearer_token == null || */ req.body.timestamp == null || req.body.mileage == null) {
+    if (req.body.vin == null || req.body.timestamp == null || req.body.mileage == null) {
         console.log("Invalid request on updating mileage: ", req.body);
         res.status(400);
         res.json({
