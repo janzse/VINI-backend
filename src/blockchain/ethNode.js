@@ -35,7 +35,7 @@ function sendTransaction(transaction, callback) {
       web3.eth.sendTransaction({
         "from": transaction.to,
         "to": transaction.from,
-        "gas": 1000,
+        "gas": 100000,
         "data": web3.utils.toHex(JSON.stringify(transaction.data))
       }, (err, hash) => {
         callback(err)
