@@ -9,24 +9,24 @@ const express = require('express');
 const router = express.Router();
 
 
-var getTimestamp = () => {
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var hours = date.getHours();
-    var minute = date.getMinutes();
-    var seconds = date.getSeconds();
+function getTimestamp() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minute = date.getMinutes();
+    const seconds = date.getSeconds();
 
     return "" + year + "-" + month + "-" + day + "T"
         + hours + ":" + minute + ":" + seconds;
-};
+}
 
 /* GET car by VIN. */
-router.get('/', (req, res, next) => {
-    var transactionPayload = [];
+router.get('/', (req, res) => {
+    let transactionPayload = [];
 
-    var payloadItem1 = {
+    let payloadItem1 = {
         timestamp: getTimestamp(),
         mileage: 1337,
         service1: false,
@@ -37,7 +37,7 @@ router.get('/', (req, res, next) => {
         entrant: "d@d.de",
         state: "valid"
     };
-    var payloadItem2 = {
+    let payloadItem2 = {
         timestamp: getTimestamp(),
         mileage: 1338,
         service1: true,
@@ -48,7 +48,7 @@ router.get('/', (req, res, next) => {
         entrant: "c@c.de",
         state: "invalid"
     };
-    var payloadItem3 = {
+    let payloadItem3 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
@@ -59,7 +59,7 @@ router.get('/', (req, res, next) => {
         entrant: "b@b.de",
         state: "rejected"
     };
-    var payloadItem4 = {
+    let payloadItem4 = {
         timestamp: getTimestamp(),
         mileage: 1339,
         service1: false,
@@ -76,13 +76,12 @@ router.get('/', (req, res, next) => {
     transactionPayload.push(payloadItem3);
     transactionPayload.push(payloadItem4);
 
-    var jsonResponse = {
+    let jsonResponse = {
         vin: req.params.vin,
         transactionPayload
     };
 
     res.send(JSON.stringify(jsonResponse));
-    return;
 });
 
 /*
