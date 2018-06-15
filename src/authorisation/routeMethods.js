@@ -76,10 +76,25 @@ function deleteUser(req, res) {
 //DUMMY FUNCTION!!!!
 //VINI.de/api/users
 function getUsers(req, res) {
-    var transactionPayload = [];
+
+    //CHECK DB-Connection: if available - return select all result; if not return dummy values
+    /*
+    dbHelper.getAllUsers((err, results) => {
+            if(result.length > 0){
+
+                //TODO convert results to appropriate JSON
+                res.send(results);
+                return true;
+            }
+        }
+    );
+*/
+    //DUMMY
+
+    let transactionPayload = [];
 
 
-    var payloadItem1 = {
+    const payloadItem1 = {
         date: "11.06.2008",
         forename: "Ernst",
         surname: "Mustermann",
@@ -88,7 +103,7 @@ function getUsers(req, res) {
         email: "queryMail",
         company: "TUEV"
     };
-    var payloadItem2 = {
+    const payloadItem2 = {
         date: "11.06.2018",
         forename: "Brigitte",
         surname: "Mustermann",
@@ -97,7 +112,7 @@ function getUsers(req, res) {
         email: "queryMail",
         company: "KFZ Bongard"
     };
-    var payloadItem3 = {
+    const payloadItem3 = {
         date: "11.06.2018",
         forename: "Johnathan",
         surname: "Mustermann",
@@ -106,7 +121,7 @@ function getUsers(req, res) {
         email: "queryMail",
         company: "Amt X"
     };
-    var payloadItem4 = {
+    const payloadItem4 = {
         date: "12.06.2018",
         forename: "Gabi",
         surname: "Mustermann",
@@ -136,8 +151,8 @@ let app;
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
-function isAuthorised(req, res, success, error) {
-    const authResult = app.oauth.authorise()(req, res, () => {
+function isAuthorised(req, res, success) {
+    app.oauth.authorise()(req, res, (authResult) => {
         if (authResult.bearerToken != null) {
             console.log("TOKEN: ", authResult.bearerToken);
     
