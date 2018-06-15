@@ -152,7 +152,7 @@ let app;
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
 function isAuthorised(req, res, success) {
-    const authResult = app.oauth.authorise()(req, res, () => {
+    app.oauth.authorise()(req, res, (authResult) => {
         if (authResult.bearerToken != null) {
             console.log("TOKEN: ", authResult.bearerToken);
     
