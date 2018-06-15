@@ -18,7 +18,7 @@ const app = express();
 let pathToKey = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/privkey.pem";
 let pathToCert = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/fullchain.pem";
 
-if(process.env['HOME'] == null || process.env['HOME'] === undefined){
+if(process.platform === "win32" || process.platform === "darwin" || process.env['HOME'] == null || process.env['HOME'] === undefined){
   pathToKey = "../sslcert/server.key";
   pathToCert = "../sslcert/server.crt";
 }
