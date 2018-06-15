@@ -13,9 +13,10 @@ function updateMileage(req, res) {
             "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
         });
     }
-    console.log(req.get("Authorization").slice("Bearer ".length));
+    const token = req.get("Authorization").slice("Bearer ".length);
+    console.log(token);
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -174,7 +175,8 @@ function applyCancelTransaction(req, res) {
 function shopService(req, res) {
     console.log(req.body);
 
-    if (req.body.vin == null || req.get("Authorization").slice("Bearer ".length) == null || req.body.timestamp == null ||
+    const token = req.get("Authorization").slice("Bearer ".length);
+    if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
         req.body.oilChange == null) {
         console.log("Invalid request on shop service: ", req.body);
@@ -187,7 +189,7 @@ function shopService(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
