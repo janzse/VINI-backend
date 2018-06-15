@@ -120,8 +120,10 @@ function getCarByVin(req, res) {
     transactionPayload.push(payloadItem3);
     transactionPayload.push(payloadItem4);
 
+
+
     let jsonResponse = {
-        vin: req.params.vin,
+        "vin": req.query.vin,
         transactionPayload
     };
 
