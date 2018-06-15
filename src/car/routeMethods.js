@@ -7,14 +7,13 @@ import {sendTransaction} from "../blockchain/ethNode";
 function updateMileage(req, res) {
 
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null || req.body.mileage == null) {
-        console.log("Invalid request on updating mileage: ", req.body, req.header);
+        console.log("Invalid request on updating mileage: ", req.body, req.get("Authorization"));
         res.status(400);
         res.json({
             "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
         });
     }
-    const token = req.get("Authorization").slice("Bearer ".length);
-    console.log(token);
+    console.log(req.get("Authorization").slice("Bearer ".length));
     getCarAddressFromVin(req.body.vin, (carAddress) => {
         if(carAddress === null){
             console.log("vin not found! aborting.");
@@ -36,6 +35,7 @@ function updateMileage(req, res) {
                         "message": "Updating mileage failed"
                     });
                 } else {
+                    console.log("Transaction was sent: ", transaction);
                     res.status(200);
                     res.json({
                         "message": "Successfully updated mileage"
@@ -177,7 +177,7 @@ function shopService(req, res) {
     if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
         req.body.oilChange == null) {
-        console.log("Invalid request on shop service: ", req.body);
+        console.log("Invalid request on shop service: ", req.body, req.get("Authorization"));
         res.status(400);
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage, service1," +
@@ -210,6 +210,7 @@ function shopService(req, res) {
                         "message": "Entering shop-service failed"
                     });
                 } else {
+                    console.log("Transaction was sent: ", transaction);
                     res.status(200);
                     res.json({
                         "message": "Successfully entered shop-service"
@@ -226,7 +227,7 @@ function tuevEntry(req, res) {
 
     if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.nextCheck == null) {
-        console.log("Invalid request on tuev-report: ", req.body);
+        console.log("Invalid request on tuev-report: ", req.body, req.get("Authorization"));
         res.status(400);
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage + nextCheck "
@@ -256,6 +257,7 @@ function tuevEntry(req, res) {
                         "message": "Entering tuev-report failed"
                     });
                 } else {
+                    console.log("Transaction was sent: ", transaction);
                     res.status(200);
                     res.json({
                         "message": "Successfully entered tuev-report"
@@ -272,7 +274,7 @@ function stvaRegister(req, res) {
 
     if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.ownerCount == null) {
-        console.log("Invalid request on stva-register: ", req.body);
+        console.log("Invalid request on stva-register: ", req.body, req.get("Authorization"));
         res.status(400);
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage + ownerCount "
@@ -302,6 +304,7 @@ function stvaRegister(req, res) {
                         "message": "Entering stva-register failed"
                     });
                 } else {
+                    console.log("Transaction was sent: ", transaction);
                     res.status(200);
                     res.json({
                         "message": "Successfully entered stva-register"
