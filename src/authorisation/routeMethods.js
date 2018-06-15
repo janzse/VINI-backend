@@ -153,11 +153,11 @@ let app;
 // TODO: Fehlerfälle
 function isAuthorised(req, res, success) {
     app.oauth.authorise()(req, res, (authResult) => {
-        if (authResult.bearerToken != null) {
-            console.log("TOKEN: ", authResult.bearerToken);
-    
+        if (authResult != null) {
+            console.log("TOKEN: ", req.header.bearerToken);
+
             // Prüfen, ob der User deaktiviert ist und
-            dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
+            dbHelper.checkUserAuthorization(req.header.bearerToken, (error, result) => {
                 if (error) {
                     console.log("User authorization error: ", error);
                     //error(); // TODO
@@ -172,7 +172,7 @@ function isAuthorised(req, res, success) {
                     }
                     else
                     {
-                        if (result[0] == false) {
+                        if (result[0] === false) {
                             console.log("User is blocked");
                             error(); // TODO
                         }

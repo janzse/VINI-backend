@@ -15,7 +15,7 @@ function updateMileage(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(req.header.bearerToken, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
