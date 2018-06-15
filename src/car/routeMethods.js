@@ -6,28 +6,16 @@ import {sendTransaction} from "../blockchain/ethNode";
 
 function updateMileage(req, res) {
 
-<<<<<<< HEAD
-    if (req.body.vin == null || req.body.timestamp == null || req.body.mileage == null) {
-        console.log("Invalid request on updating mileage: ", req.body);
-        res.status(400);
-        res.json({
-            "message": "Request has to include: vin, timestamp and a mileage value"
-=======
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null || req.body.mileage == null) {
         console.log("Invalid request on updating mileage: ", req.body, req.header);
         res.status(400);
         res.json({
             "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
->>>>>>> upstream/master
         });
     }
     console.log(req.get("Authorization").slice("Bearer ".length));
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-<<<<<<< HEAD
-        getUserInfoFromToken(req.header.bearerToken, (userKey, email) => {
-=======
         getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
->>>>>>> upstream/master
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
