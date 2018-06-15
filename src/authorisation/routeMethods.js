@@ -161,7 +161,7 @@ function isAuthorised(req, res, success) {
                             console.log("User is blocked");
                             error(); // TODO
                         }
-                        //success();
+                        success();
                     }
                 }
             })
