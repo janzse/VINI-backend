@@ -136,7 +136,7 @@ let app;
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
-function isAuthorised(req, res, success, error) {
+function isAuthorised(req, res, success) {
     const authResult = app.oauth.authorise()(req, res, () => {
         if (authResult.bearerToken != null) {
             console.log("TOKEN: ", authResult.bearerToken);
@@ -145,7 +145,7 @@ function isAuthorised(req, res, success, error) {
             dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
                 if (error) {
                     console.log("User authorization error: ", error);
-                    error(); // TODO
+                    //error(); // TODO
                 }
                 else
                 {
@@ -153,7 +153,7 @@ function isAuthorised(req, res, success, error) {
                     {
                         console.log("No result from user authorization");
 
-                        error(); // TODO
+                        //error(); // TODO
                     }
                     else
                     {
@@ -161,7 +161,7 @@ function isAuthorised(req, res, success, error) {
                             console.log("User is blocked");
                             error(); // TODO
                         }
-                        success();
+                        //success();
                     }
                 }
             })
