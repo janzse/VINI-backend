@@ -218,8 +218,9 @@ function shopService(req, res) {
 
 function tuevEntry(req, res) {
     console.log(req.body);
+    const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
+    if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.nextCheck == null) {
         console.log("Invalid request on tuev-report: ", req.body);
         res.status(400);
@@ -230,7 +231,7 @@ function tuevEntry(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -257,8 +258,9 @@ function tuevEntry(req, res) {
 
 function stvaRegister(req, res) {
     console.log(req.body);
+    const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (req.body.vin == null || req.body.bearer_token == null || req.body.timestamp == null ||
+    if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.ownerCount == null) {
         console.log("Invalid request on stva-register: ", req.body);
         res.status(400);
@@ -269,7 +271,7 @@ function stvaRegister(req, res) {
     }
 
     getCarAddressFromVin(req.body.vin, (carAddress) => {
-        getUserInfoFromToken(req.body.bearer_token, (userKey, email) => {
+        getUserInfoFromToken(token, (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
