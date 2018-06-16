@@ -4,49 +4,6 @@ import {sendTransaction} from "../blockchain/ethNode";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
-
-function updatePreowner(req, res) {
-
-    if (req.body.vin == null || req.get("Authorization") == null || req.body.preOwner == null || req.body.timestamp == null) {
-        console.log("Invalid request on updating preowner: ", req.body, req.get("Authorization"));
-        res.status(400);
-        res.json({
-            "message": "Request has to include: vin, timestamp and preower value in body and bearer_token in header.Authorization"
-        });
-        return false;
-    }
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
-        }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
-
-            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
-            transaction.setpreOwner(req.body.preOwner);
-            transaction.setEmail(email);
-
-            sendTransaction(transaction, (err) => {
-                if (err) {
-                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
-                    res.status(500);
-                    res.json({
-                        "message": "Updating mileage failed"
-                    });
-                } else {
-                    console.log("Transaction was sent: ", transaction);
-                    res.status(200);
-                    res.json({
-                        "message": "Successfully updated preowner"
-                    });
-                }
-            });
-        });
-    });
-}
-
 function updateMileage(req, res) {
 
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null || req.body.mileage == null) {
@@ -360,6 +317,5 @@ module.exports = {
     "shopService": shopService,
     "tuevEntry": tuevEntry,
     "stvaRegister": stvaRegister,
-    "getCarByVin": getCarByVin,
-    "updatePreowner" : updatePreowner
+    "getCarByVin": getCarByVin
 };

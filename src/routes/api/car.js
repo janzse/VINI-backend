@@ -21,9 +21,6 @@ router.post('/cancelTransaction', routeMethods.cancelTransaction);
 /* POST updateMileage. */
 router.post('/mileage', routeMethods.updateMileage);
 
-/* POST preowner. */
-router.post('/preowner', routeMethods.updatePreowner);
-
 /* POST stva register. */
 router.post('/register', routeMethods.stvaRegister);
 
