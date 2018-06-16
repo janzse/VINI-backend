@@ -6,18 +6,17 @@ function saveAccessToken(token, userID, expiration, callback) {
     //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
     const insertTokenQuery = `    
     begin tran
-    if exists (select * from bearer_tokens with (updlock,serializable) where token = '${token}')
+    if exists (select * from bearer_tokens with (updlock,serializable) where token LIKE '${token}' or user_id LIKE '${userID}')
     begin
     update bearer_tokens
-    set token = '${token}'
-        where token = '${token}';
+    set token = '${token}', expiration = '${expiration.toLocaleTimeString()}'
+        where user_id = '${userID}';
     end
     else
     begin
-    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, ${expiration});
+    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, '${expiration.toLocaleTimeString()}');
     end
     commit tran`;
-
     dbConnection.query(insertTokenQuery, callback);
 }
 
