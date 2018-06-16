@@ -4,15 +4,15 @@ class Transaction {
     to; //String: recipient address (a carWallet)
     data;
 
-    constructor(from, to) {
+    constructor(from, to, timestamp) {
 
         this.from = from;
         this.to = to;
         this.data = {
             "email": null,
-            "timestamp": null,
             "preTransaction": null,
             "preOwner": null,
+            "timestamp": timestamp,
             "mileage": null,
             "serviceOne": null,
             "serviceTwo": null,
