@@ -199,13 +199,13 @@ function isAuthorised(req, res, success) {
                         errorHandling(res, 401, "User is blocked");
                     else {
                         const body = {
-                            "id": result[1],
-                            "blocked": result[0],
-                            "authorityLevel": result[2],
-                            "expiration": result[3]
+                            id: result[1],
+                            blocked: result[0],
+                            authorityLevel: result[2],
+                            expiration: result[3]
                         };
                         const msg = JSON.stringify({body});
-                        success(msg);
+                        res.json(body);
                     }
                 }
             }
@@ -221,19 +221,6 @@ function errorHandling(response, status, message)
     console.log(message);
     response.status(status);
     response.redirect('/');
-}
-
-function successHand(result)
-{
-    console.log("Authorization succeeded");
-    const tempBody = {
-        id: result[1],
-        blocked: ersult[0],
-        authorityLevel: result[2],
-        expiration: result[3]
-    };
-    const msg = JSON.stringify({tempBody});
-    res.send(msg);
 }
 
 module.exports = {
