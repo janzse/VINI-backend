@@ -65,7 +65,8 @@ function deleteUserFromDB(email, callback) {
     COMMIT TRANSACTION
     `;
     const sqlCallback = (err, results) => {
-        const isUserDeleted = results !== null ? results.length > 0 : null;
+        const isUserDeleted = results != null;
+        console.log("deleteUserFromDB - sqlCallback")
         callback(err, isUserDeleted);
     };
 
