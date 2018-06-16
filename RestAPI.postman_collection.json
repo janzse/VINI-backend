@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "ec40c325-d54d-4cb9-9ecb-aec9f8f01939",
-		"name": "VINI Rest API Local Server",
+		"_postman_id": "d253ac19-fa25-4c0a-9b2c-ab468bf775de",
+		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -178,6 +178,57 @@
 						"api",
 						"car",
 						"mileage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_car_preowner",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2f55ee90-eb2e-41f8-8d2e-f79bc4c98601",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"preOwner\" : 7,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/car/preowner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"car",
+						"preowner"
 					]
 				}
 			},
@@ -465,7 +516,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+					"raw": "{\n\t\"email\" : \"Udo\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
 				},
 				"url": {
 					"raw": "{{url}}/api/users/register",
@@ -542,14 +593,14 @@
 	],
 	"variable": [
 		{
-			"id": "cda079e0-a115-4bf4-9b48-44f6df33474f",
+			"id": "efa00ba1-6486-4375-9d6e-8218b29eaa52",
 			"key": "bearer_token",
 			"value": "a74b0debd96954f807451074ac3eefe7918f1b7b",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "f854c843-46a0-44c0-8c99-519c4a5ab927",
+			"id": "8f26947f-ad4c-4770-8b33-8eb425acd31d",
 			"key": "url",
 			"value": "127.0.0.1:4711",
 			"type": "string",
@@ -557,7 +608,7 @@
 			"description": ""
 		},
 		{
-			"id": "bfef3247-ade6-4d30-a2c0-111e99ef3716",
+			"id": "d17fbea7-d889-4efd-8b14-09a7d2115841",
 			"key": "url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
