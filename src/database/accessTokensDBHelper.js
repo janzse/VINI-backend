@@ -17,6 +17,7 @@ function saveAccessToken(token, userID, expiration, callback) {
     insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, '${expiration.toISOString()}');
     end
     commit tran`;
+    console.log(insertTokenQuery);
     dbConnection.query(insertTokenQuery, callback);
 }
 
