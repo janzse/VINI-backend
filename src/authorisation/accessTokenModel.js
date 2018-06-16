@@ -31,7 +31,7 @@ function getClient(clientID, clientSecret, callback) {
  */
 function grantTypeAllowed(clientID, grantType, callback) {
 
-    console.log('grantTypeAllowed called and clientID is: ', clientID, ' and grantType is: ', grantType);
+    console.log('grantTypeAllowed called: clientID is: ', clientID, ' and grantType is: ', grantType);
 
     callback(false, true);
 }

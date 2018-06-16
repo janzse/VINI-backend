@@ -22,7 +22,7 @@ function getUserFromCredentials(email, password, callback) {
 
         if (result == null || result.length === 0) {
             console.log("Invalid credentials");
-            callback(true, null);
+            callback(true, null); //FIXME stürzt ab POST /api/users/login 500 279.160 ms - 2531 OAuth2Error: false
             return;
         }
 
