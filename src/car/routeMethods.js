@@ -12,6 +12,7 @@ function updateMileage(req, res) {
         res.json({
             "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
         });
+        return false;
     }
     getCarAddressFromVin(req.body.vin, (err, carAddress) => {
         if(carAddress === null){

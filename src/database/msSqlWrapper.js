@@ -44,7 +44,7 @@ function initConnection(query, callback) {
 }
 
 function executeSql(query, callback) {
-
+  console.log("Begin query.");
   let resultValues = [];
 
   const request = new Request(query, (err, rowCount) => {
@@ -54,7 +54,7 @@ function executeSql(query, callback) {
     }
     else {
       console.log("Got ", rowCount, " row(s)");
-      if(rowCount == 0){
+      if(rowCount === 0){
         callback(err, null);
       }
     }
@@ -82,6 +82,7 @@ function executeSql(query, callback) {
   });
 
   dbConnection.execSql(request);
+  console.log("End query.")
 }
 
 

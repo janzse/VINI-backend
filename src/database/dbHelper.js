@@ -54,7 +54,16 @@ function doesUserExist(email, callback) {
 }
 
 function deleteUserFromDB(email, callback) {
-    const query = `DELETE FROM users WHERE email = '${email}'`;
+    const query = `
+    BEGIN TRANSACTION
+    IF EXISTS (SELECT * FROM bearer_tokens WITH (updlock,serializable) 
+    WHERE user_id LIKE (SELECT id FROM users WHERE email LIKE '${email}'))
+    BEGIN
+    DELETE FROM bearer_tokens WHERE user_id LIKE (SELECT id FROM users WHERE email LIKE '${email}')
+    END
+    DELETE FROM users WHERE email = '${email}'
+    COMMIT TRANSACTION
+    `;
     const sqlCallback = (err, results) => {
         const isUserDeleted = results !== null ? results.length > 0 : null;
         callback(err, isUserDeleted);
@@ -119,6 +128,19 @@ function getAllUsers(callback){
     };
 
     dbConnection.query(queryString, sqlCallback)
+}
+function addAnnulmentTransaction(email, password, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
+
+    const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
+  creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
+
+    const sqlCallback = (error, result) => {
+
+        const isUserRegistered = (result) !== null ? result.length > 0 : null;
+        callback(error, isUserRegistered);
+    };
+
+    dbConnection.query(queryString, sqlCallback);
 }
 
 module.exports = {

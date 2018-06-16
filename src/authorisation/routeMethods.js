@@ -6,49 +6,69 @@ import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
   The req body should contain an email and a password. */
 function registerUser(req, res) {
 
-    console.log("registerUser: req.body is:", req.body);
+    if (req.body.email == null || req.get("Authorization") == null || req.body.password == null ||
+        req.body.authorityLevel == null || req.body.forename == null || req.body.surname == null ||
+        req.body.companyName == null || req.body.creationDate == null) {
+        console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
+        res.status(400);
+        res.json({
+            "message": "Request has to include: email, password, authorityLevel, forename," +
+            "surname, companyName & creationDate in the body and bearer_token in the header"
+        });
+        return false;
+    }
 
     dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
-
-        if (doesUserExist) {
+        console.log("UserExist: ", doesUserExist);
+        if (doesUserExist !== null) {
             res.status(400);
             res.json({
                 "message": "User already exists"
             });
 
-            return;
+            return false;
         }
-
+        console.log("test");
         const userKeys = createUserAccount();
-
+        console.log("test2");
         //TODO: Alle Werte in die DB schreiben
-        dbHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.publicKey, req.body.authorityLevel,
-            req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
-            (hasError, rowCount) => {
+        dbHelper.registerUserInDB(req.body.email, req.body.password, userKeys.privateKey, userKeys.publicKey,
+            req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
+            req.body.blocked, (hasError, rowCount) => {
 
-                if (!hasError) {
-                    res.status(200);
-                    res.json({
-                        "message": "Registration was successful"
-                    })
-                }
-                else {
-                    res.status(500);
-                    res.json({
-                        "message": "Failed to register user due to a server error"
-                    })
-                }
-            })
+            if (!hasError) {
+                res.status(200);
+                res.json({
+                    "message": "Registration was successful"
+                })
+            }
+            else {
+                res.status(500);
+                res.json({
+                    "message": "Failed to register user due to a server error"
+                })
+            }
+        });
+        console.log("test3");
     })
 }
 
 function deleteUser(req, res) {
-    console.log("registerUser: req.body is:", req.body);
+
+    if (req.body.email == null || req.get("Authorization") == null) {
+        console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
+        res.status(400);
+        res.json({
+            "message": "Request has to include: email in the body and bearer_token in the header"
+        });
+        return false;
+    }
 
     dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
-        if (doesUserExist) {
+        if (doesUserExist !== null) {
             dbHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
-                if (isUserDeleted) {
+                console.log("isUserDeleted: ", isUserDeleted);
+                if (isUserDeleted !== null) {
                     res.status(200);
                     res.json({
                         "message": "Deletion was successful"
@@ -180,7 +200,7 @@ function isAuthorised(req, res, success) {
                     }
                     else
                     {
-                        if (result[0] == false) {
+                        if (result[0] === false) {
                             console.log("User is blocked");
                             error(); // TODO
                         }
