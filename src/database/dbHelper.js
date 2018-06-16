@@ -130,15 +130,14 @@ function getAllUsers(callback){
 
     dbConnection.query(queryString, sqlCallback)
 }
-function addAnnulmentTransaction(email, password, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
+function addAnnulmentTransaction(transactionHash, timestamp) {
 
-    const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
-  creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
+    const queryString = `INSERT INTO annulment_transactions (transactionHash, creationDate, executed) VALUES ('${transactionHash}', '${timestamp}', 'false');`;
 
     const sqlCallback = (error, result) => {
 
         const isUserRegistered = (result) !== null ? result.length > 0 : null;
-        callback(error, isUserRegistered);
+        callback(error, isAnnulementRequested);
     };
 
     dbConnection.query(queryString, sqlCallback);
