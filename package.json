@@ -7,7 +7,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "cors": "^2.8.4",
     "babel-polyfill": "^6.26.0",
     "debug": "^3.1.0",
     "express": "~4.16.0",
