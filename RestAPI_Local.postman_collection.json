@@ -184,57 +184,6 @@
 			"response": []
 		},
 		{
-			"name": "api_car_preowner",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "2f55ee90-eb2e-41f8-8d2e-f79bc4c98601",
-						"type": "text/javascript",
-						"exec": [
-							"var moment = require('moment');",
-							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
-						]
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{bearer_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"preOwner\" : 7,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
-				},
-				"url": {
-					"raw": "{{url}}/api/car/preowner",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"car",
-						"preowner"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "api_car_register",
 			"event": [
 				{
@@ -478,7 +427,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\" : \"Franz\"\n}"
+					"raw": "{\n  \"email\" : \"testemail@email.de\"\n}"
 				},
 				"url": {
 					"raw": "{{url}}/api/users/register",
@@ -516,7 +465,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\" : \"Udo\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+					"raw": "{\n\t\"email\" : \"udo@mercedes_schmidt.de\",\n\t\"password\" : \"secret\",\n\t\"authorityLevel\" : 2,\n\t\"forename\" : \"Udo\",\n\t\"surname\" : \"Jürgens\",\n\t\"companyName\" : \"Mercedes Schmidt, Osnabrück\",\n\t\"creationDate\" : \"2018-05-01\"\n}"
 				},
 				"url": {
 					"raw": "{{url}}/api/users/register",
@@ -593,21 +542,21 @@
 	],
 	"variable": [
 		{
-			"id": "807980c2-b956-43b3-839c-1241e43474e9",
+			"id": "e4d3ca0c-7736-4261-b8b0-3b3faa5e765a",
 			"key": "bearer_token",
 			"value": "a74b0debd96954f807451074ac3eefe7918f1b7b",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "69f0fbc4-b331-47ff-a1e2-3cbd63aa983b",
+			"id": "b589b9d0-5606-4840-b49d-f8d2e4d20b14",
 			"key": "url",
 			"value": "127.0.0.1:4711",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "62b3643d-890a-4d1d-87e8-04905f709c04",
+			"id": "51f1926d-5d10-4390-85dd-7bd2ffe5ad93",
 			"key": "url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
