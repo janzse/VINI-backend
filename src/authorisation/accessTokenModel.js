@@ -61,7 +61,7 @@ function getUser(email, password, callback) {
 function saveAccessToken(accessToken, clientID, expires, user, callback) {
 
     console.log('saveAccessToken() called and accessToken is: ', accessToken,
-        ' and clientID is: ', clientID, ' and user is: ', user, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
+        ' and clientID is: ', clientID, ' and user is: ', user, ' and expires is: ', expires, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
 
     //save the accessToken along with the user.id
     accessTokensDBHelper.saveAccessToken(accessToken, user.id, expires, callback)
