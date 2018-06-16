@@ -129,6 +129,19 @@ function getAllUsers(callback){
 
     dbConnection.query(queryString, sqlCallback)
 }
+function addAnnulmentTransaction(email, password, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
+
+    const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
+  creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
+
+    const sqlCallback = (error, result) => {
+
+        const isUserRegistered = (result) !== null ? result.length > 0 : null;
+        callback(error, isUserRegistered);
+    };
+
+    dbConnection.query(queryString, sqlCallback);
+}
 
 module.exports = {
     "registerUserInDB": registerUserInDB,
