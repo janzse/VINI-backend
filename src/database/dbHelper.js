@@ -20,9 +20,9 @@ function getUserFromCredentials(email, password, callback) {
 
     dbConnection.query(queryString, (err, result) => {
 
-        if (result.length === 0) {
+        if (result == null || result.length === 0) {
             console.log("Invalid credentials");
-            callback(true, null);
+            callback(true, null); //FIXME stürzt ab POST /api/users/login 500 279.160 ms - 2531 OAuth2Error: false
             return;
         }
 
@@ -54,9 +54,19 @@ function doesUserExist(email, callback) {
 }
 
 function deleteUserFromDB(email, callback) {
-    const query = `DELETE FROM users WHERE email = '${email}'`;
+    const query = `
+    BEGIN TRANSACTION
+    IF EXISTS (SELECT * FROM bearer_tokens WITH (updlock,serializable) 
+    WHERE user_id LIKE (SELECT id FROM users WHERE email LIKE '${email}'))
+    BEGIN
+    DELETE FROM bearer_tokens WHERE user_id LIKE (SELECT id FROM users WHERE email LIKE '${email}')
+    END
+    DELETE FROM users WHERE email = '${email}'
+    COMMIT TRANSACTION
+    `;
     const sqlCallback = (err, results) => {
-        const isUserDeleted = results !== null ? results.length > 0 : null;
+        const isUserDeleted = results != null;
+        console.log("deleteUserFromDB - sqlCallback")
         callback(err, isUserDeleted);
     };
 
@@ -101,7 +111,7 @@ function checkUserAuthorization(token, callback) {
     const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.token = '${token}'`;
 
     const sqlCallback = (err, result) => {
-        if (result.length === 0) {
+        if (result == null || result.length === 0) {
             console.log("Could not find user by bearerToken: ", token);
         }
         else {
@@ -119,6 +129,18 @@ function getAllUsers(callback){
     };
 
     dbConnection.query(queryString, sqlCallback)
+}
+function addAnnulmentTransaction(transactionHash, timestamp) {
+
+    const queryString = `INSERT INTO annulment_transactions (transactionHash, creationDate, executed) VALUES ('${transactionHash}', '${timestamp}', 'false');`;
+
+    const sqlCallback = (error, result) => {
+
+        const isUserRegistered = (result) !== null ? result.length > 0 : null;
+        callback(error, isAnnulementRequested);
+    };
+
+    dbConnection.query(queryString, sqlCallback);
 }
 
 module.exports = {

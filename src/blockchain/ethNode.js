@@ -46,14 +46,67 @@ function sendTransaction(transaction, callback) {
     });
 }
 
-function getTransaction(transHash) {
+function getTransaction(transHash, callback) {
 
-  return false;
+    if (!isConnected) {
+        console.log("Not connected to node!");
+        callback({
+            "err": "Not connected to node"
+        });
+        return;
+    }
+
+    web3.eth.net.isListening()
+        .then(() => {
+            web3.eth.getTransaction(transHash, (err, transaction) => {
+                callback(err, transaction)
+            });
+        })
+        .catch((err) => {
+            console.error("Error while getting Transaction: ", "\n", err);
+        });
 }
 
-function getCarTransaction(transHash) {
+function getBlock(blockNumber, callback) {
 
-  return false;
+    if (!isConnected) {
+        console.log("Not connected to node!");
+        callback({
+            "err": "Not connected to node"
+        });
+        return;
+    }
+
+    web3.eth.net.isListening()
+        .then(() => {
+            web3.eth.getBlock(transHash, (err, block) => {
+                callback(err, block)
+            });
+        })
+        .catch((err) => {
+            console.error("Error while getting Block: ", "\n", err);
+        });
+}
+
+function getBlockNumber(callback) {
+
+    if (!isConnected) {
+        console.log("Not connected to node!");
+        callback({
+            "err": "Not connected to node"
+        });
+        return;
+    }
+
+    web3.eth.net.isListening()
+        .then(() => {
+            web3.eth.getBlockNumber((err, number) => {
+                callback(err, number)
+            });
+        })
+        .catch((err) => {
+            console.error("Error while getting Blocknumber: ", "\n", err);
+        });
 }
 
 function createUserAccount() {
@@ -86,7 +139,10 @@ function createCarAccount() {
 
 module.exports = {
   "connectToNode": connectToNode,
-  "createUserAccount": createUserAccount,
-  "createCarAccount": createCarAccount,
-  "sendTransaction": sendTransaction
+    "createUserAccount": createUserAccount,
+    "createCarAccount": createCarAccount,
+    "sendTransaction": sendTransaction,
+    "getBlockNumber" : getBlockNumber,
+    "getTransaction" : getTransaction,
+    "getBlock" : getBlock
 };

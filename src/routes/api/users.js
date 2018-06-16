@@ -7,7 +7,9 @@ function initRoutes(app) {
   authRoutesMethods.setApp(app);
 
   /* POST Login. */
-  router.post('/login', app.oauth.grant(), authRoutesMethods.login);
+  router.post('/token', app.oauth.grant());
+
+  router.get('/login', authRoutesMethods.login);
 
   /* POST user register. */
   router.post('/register', authRoutesMethods.registerUser);

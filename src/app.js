@@ -67,6 +67,7 @@ app.use('/', require("./routes/root"));
 app.use("/restricted", isAuthorised, require("./routes/root"));
 app.use('/api/car', require('./routes/api/car'));
 app.use('/api/users', userRoutes.router); // This can't be required directly, because of the oAuthServer
+app.use('/ethTest', require('./routes/ethTest'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
