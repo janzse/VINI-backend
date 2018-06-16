@@ -193,7 +193,7 @@ function isAuthorised(req, res, success) {
                     }
                     else
                     {
-                        if (result[0] == false) {
+                        if (result[0] === false) {
                             console.log("User is blocked");
                             error(); // TODO
                         }
