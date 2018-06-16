@@ -195,7 +195,7 @@ function isAuthorised(req, res, next) {
                 if (result.length === 0)
                     errorHandling(res, 403, "No result from user authorization");
                 else {
-                    if (result[0] === false)
+                    if (result[0] === true)
                         errorHandling(res, 401, "User is blocked");
                     else {
                         const body = {
