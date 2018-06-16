@@ -20,9 +20,9 @@ function getUserFromCredentials(email, password, callback) {
 
     dbConnection.query(queryString, (err, result) => {
 
-        if (result.length === 0) {
+        if (result == null || result.length === 0) {
             console.log("Invalid credentials");
-            callback(true, null);
+            callback(true, null); //FIXME stürzt ab POST /api/users/login 500 279.160 ms - 2531 OAuth2Error: false
             return;
         }
 
@@ -101,7 +101,7 @@ function checkUserAuthorization(token, callback) {
     const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.token = '${token}'`;
 
     const sqlCallback = (err, result) => {
-        if (result.length === 0) {
+        if (result == null || result.length === 0) {
             console.log("Could not find user by bearerToken: ", token);
         }
         else {

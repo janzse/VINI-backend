@@ -7,7 +7,9 @@ function initRoutes(app) {
   authRoutesMethods.setApp(app);
 
   /* POST Login. */
-  router.post('/login', app.oauth.grant(), authRoutesMethods.login);
+  router.post('/login', app.oauth.grant(), authRoutesMethods.login); // FIXME authRoutesMethods.login not beeing called
+
+  router.post('/loginTEMP', authRoutesMethods.login); // TODO DELETE ME WHEN GRANT IS WORKING
 
   /* POST user register. */
   router.post('/register', authRoutesMethods.registerUser);

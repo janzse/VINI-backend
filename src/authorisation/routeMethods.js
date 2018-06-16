@@ -143,7 +143,7 @@ function getUsers(req, res) {
 function login(registerUserQuery, res) {
 
     console.log("User login successful");
-
+    res.send(JSON.parse('{"temp": "User login successful" }')); // TODO
 }
 
 let app;
