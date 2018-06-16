@@ -9,14 +9,15 @@ function saveAccessToken(token, userID, expiration, callback) {
     if exists (select * from bearer_tokens with (updlock,serializable) where user_id LIKE '${userID}')
     begin
     update bearer_tokens
-    set token = '${token}', expiration = '${expiration.toLocaleTimeString()}'
+    set token = '${token}', expiration = '${expiration.toISOString()}'
         where user_id = '${userID}';
     end
     else
     begin
-    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, '${expiration.toLocaleTimeString()}');
+    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, '${expiration.toISOString()}');
     end
     commit tran`;
+    console.log(insertTokenQuery);
     dbConnection.query(insertTokenQuery, callback);
 }
 

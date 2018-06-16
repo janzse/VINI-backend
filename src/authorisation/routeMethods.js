@@ -58,7 +58,7 @@ function deleteUser(req, res) {
     if (req.body.email == null || req.get("Authorization") == null) {
         console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
         res.status(400);
-        res.json({
+        res.send({
             "message": "Request has to include: email in the body and bearer_token in the header"
         });
         return false;
@@ -70,24 +70,25 @@ function deleteUser(req, res) {
                 console.log("isUserDeleted: ", isUserDeleted);
                 if (isUserDeleted !== null) {
                     res.status(200);
-                    res.json({
-                        "message": "Deletion was successful"
-                    })
+                    res.send(({"message": "Deletion was successful"}))
+                    return;
                 }
                 else {
                     console.log("Error while deleting user: ", err);
                     res.status(500);
-                    res.json({
+                    res.send({
                         "message": "Failed to delete user due to a server error"
                     })
+                    return;
                 }
             })
         }
         else {
             res.status(400);
-            res.json({
+            res.send({
                 "message": "User does not exists"
             });
+            return;
         }
     })
 }
