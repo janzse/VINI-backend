@@ -46,22 +46,22 @@ function initConnection(query, callback) {
 function executeSql(query, callback) {
   console.log("Begin query.");
   let resultValues = [];
-
+  let hasError = false;
   const request = new Request(query, (err, rowCount) => {
+    hasError = err;
     if (err) {
       console.log("Error while request was performed: ", err);
       return;
     }
     else {
-      console.log("Got ", rowCount, " row(s)");
-      if(rowCount === 0){
-        callback(err, null);
-      }
+      console.log("Got", rowCount, "row(s)");
     }
-
     dbConnection.close();
   });
-
+  request.on('requestCompleted', () => {
+    console.log('requestCompleted')
+    callback(hasError, resultValues);
+  });
   request.on('row', (columns) => {
     // This collects all non-null rows in an array
     columns.forEach((column) => {
@@ -69,18 +69,13 @@ function executeSql(query, callback) {
         resultValues.push(column.value);
       }
     });
-
-    request.on('requestCompleted', () => {
-      callback(false, resultValues);
-    });
-
+ 
     request.on('error', (err) => {
       console.log("Error while executing ", query); // Might not be secure
-      callback(true, null);
-      throw err;
+      hasError = true
     });
   });
-
+  
   dbConnection.execSql(request);
   console.log("End query.")
 }
