@@ -163,7 +163,14 @@ function getUsers(req, res) {
 function login(registerUserQuery, res) {
 
     console.log("User login successful");
-    res.send(JSON.parse('{"temp": "User login successful" }')); // TODO
+
+    const tempBody = {
+        loginStatus: "success",
+        token: "a74b0debd96954f807451074ac3eefe7918f1b7b",
+        authorityLevel: 1
+    }
+
+    res.send(tempBody); // TODO
 }
 
 let app;
