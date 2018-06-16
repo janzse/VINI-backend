@@ -69,11 +69,12 @@ function getCarAddressFromVin(vin, callback) {
 
     const sqlCallback = (err, results) => {
 
-        if (results.length === 0) {
+        if (results === null) {
             console.log("Could not find vin: ", vin);
+            callback(err,null);
         }
         else {
-            callback(results[0]);
+            callback(err,results[0]);
         }
     };
 

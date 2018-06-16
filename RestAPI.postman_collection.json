@@ -1,24 +1,214 @@
 {
 	"info": {
-		"_postman_id": "6c9f773a-39d2-4b9f-b323-c79b6ff07374",
-		"name": "VINI Rest API",
+		"_postman_id": "9e3afc2f-c4f1-4fdd-820f-87157ea3a2af",
+		"name": "VINI Rest API Server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "api_users_register_delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\" : \"Franz\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/users/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_car_applyCancelTransaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c38c94c4-361c-456b-9301-8ad3f7f91d07",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/car/applyCancelTransaction",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"car",
+						"applyCancelTransaction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_car_mileage",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2f55ee90-eb2e-41f8-8d2e-f79bc4c98601",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/car/mileage",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"car",
+						"mileage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_car_cancelTransaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6e454506-6e89-46fc-90a5-612a0c03a8a5",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/car/cancelTransaction",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"car",
+						"cancelTransaction"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "api_car",
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car?vin=123",
+					"raw": "{{url}}/api/car?vin=123",
 					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -35,104 +225,31 @@
 			"response": []
 		},
 		{
-			"name": "api_car_applyCancelTransaction",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
-				},
-				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/applyCancelTransaction",
-					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
-					],
-					"path": [
-						"api",
-						"car",
-						"applyCancelTransaction"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "api_car_cancelTransaction",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
-				},
-				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/cancelTransaction",
-					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
-					],
-					"path": [
-						"api",
-						"car",
-						"cancelTransaction"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "api_car_mileage",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456\n}"
-				},
-				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/mileage",
-					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
-					],
-					"path": [
-						"api",
-						"car",
-						"mileage"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "api_car_register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c1bde849-f1ba-4a28-a157-423f0f7d4152",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -142,16 +259,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
+					"raw": "{\n\t\"timestamp\" : \"$timestamp\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/register",
+					"raw": "{{url}}/api/car/register",
 					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -164,7 +277,30 @@
 		},
 		{
 			"name": "api_car_service",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "26f24d52-7257-4f01-bf18-bd60c9af2f71",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -174,16 +310,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
+					"raw": "{\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/service",
+					"raw": "{{url}}/api/car/service",
 					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -195,40 +327,18 @@
 			"response": []
 		},
 		{
-			"name": "api_car_tuev",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"timestamp\" : \"2018-06-01 15:04:56\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
-				},
-				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/car/tuev",
-					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
-					],
-					"path": [
-						"api",
-						"car",
-						"tuev"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "api_users_login",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -242,43 +352,34 @@
 						{
 							"key": "grant_type",
 							"value": "password",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "username",
 							"value": "testuser",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "password",
 							"value": "abc123",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "client_id",
 							"value": "null",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "client_secret",
 							"value": "null",
-							"description": "",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/users/login",
+					"raw": "{{url}}/api/users/login",
 					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -290,8 +391,69 @@
 			"response": []
 		},
 		{
+			"name": "api_car_tuev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/car/tuev",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"car",
+						"tuev"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "api_users_register_post",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -304,13 +466,9 @@
 					"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/users/register",
+					"raw": "{{url}}/api/users/register",
 					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -322,9 +480,19 @@
 			"response": []
 		},
 		{
-			"name": "api_users_register_delete",
+			"name": "restricted",
 			"request": {
-				"method": "DELETE",
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -333,25 +501,57 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\" : \"Franz\"\n}"
+					"raw": ""
 				},
 				"url": {
-					"raw": "vini-ethereum.westeurope.cloudapp.azure.com/api/users/register",
+					"raw": "{{url}}/restricted",
 					"host": [
-						"vini-ethereum",
-						"westeurope",
-						"cloudapp",
-						"azure",
-						"com"
+						"{{url}}"
 					],
 					"path": [
-						"api",
-						"users",
-						"register"
+						"restricted"
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d5ccdec5-42c8-49c5-908f-9a223d07e88c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "4a3d6cc4-c5ff-4000-b53c-6cc56bce8fc6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "7fe4ef1d-f869-44f9-bff0-ea589cb7a6f1",
+			"key": "bearer_token",
+			"value": "fc8350177096883099b652480299135248d356af",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "bf002a09-196a-4e1c-ba9b-a533e57e615a",
+			"key": "url",
+			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
+			"type": "string",
+			"description": ""
 		}
 	]
 }
