@@ -161,17 +161,19 @@ function getUsers(req, res) {
 }
 
 
-function login(registerUserQuery, res) {
+function login(req, res) {
 
+    // read bearertoken from 
+    // TODO check user in db, auth level etc.
     console.log("User login successful");
-
-    const tempBody = {
-        loginStatus: "success",
+    
+    const dummyBody = {
+        loginStatus: "success", // could not log in --> "failure"
         token: "a74b0debd96954f807451074ac3eefe7918f1b7b",
         authorityLevel: 1
     }
 
-    res.send(tempBody); // TODO
+    res.send(dummyBody); // TODO
 }
 
 let app;
