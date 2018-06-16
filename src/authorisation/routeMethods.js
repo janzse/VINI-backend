@@ -182,43 +182,45 @@ let app;
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
 function isAuthorised(req, res, success) {
-    app.oauth.authorise()(req, res, (authResult) => {
+    const token = req.get("Authorization").slice("Bearer ".length)
 
-        if (authResult.bearerToken != null) {
-            console.log("TOKEN: ", authResult.bearerToken);
+    if (token != null) {
+        console.log("TOKEN: ", token);
 
-            // Prüfen, ob der User deaktiviert ist und
-            dbHelper.checkUserAuthorization(authResult.bearerToken, (error, result) => {
-                if (error) {
-                    console.log("User authorization error: ", error);
-                    //error(); // TODO
-                }
-                else
-                {
-                    if (result.length === 0)
-                    {
-                        console.log("No result from user authorization");
-
-                        //error(); // TODO
-                    }
-                    else
-                    {
-                        if (result[0] === false) {
-                            console.log("User is blocked");
-                            error(); // TODO
-                        }
-                        success();
+        // Prüfen, ob der User deaktiviert ist
+        dbHelper.checkUserAuthorization(token, (error, result) => {
+            if (error)
+                errorHandling(res, 400, `User authorization error: '${error}'`);
+            else {
+                if (result.length === 0)
+                    errorHandling(res, 403, "No result from user authorization");
+                else {
+                    if (result[0] === false)
+                        errorHandling(res, 401, "User is blocked");
+                    else {
+                        const body = {
+                            id: result[1],
+                            blocked: result[0],
+                            authorityLevel: result[2],
+                            expiration: result[3]
+                        };
+                        const msg = JSON.stringify({body});
+                        res.json(body);
                     }
                 }
-            })
-        }
-        else {
-            console.log("No valid accessToken found");
-            res.status(403);
-            res.redirect("/");
-            // TODO error(); ??
-        }
-    })
+            }
+        })
+    }
+    else {
+        errorHandling(res, 406, "No valid accessToken found")
+    }
+}
+
+function errorHandling(response, status, message)
+{
+    console.log(message);
+    response.status(status);
+    response.redirect('/');
 }
 
 module.exports = {
