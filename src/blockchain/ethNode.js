@@ -109,6 +109,39 @@ function getBlockNumber(callback) {
         });
 }
 
+async function getBlocks(publicKeyCar) {
+    try {
+        block = await getBlock("latest");
+        if (block.transactions.length === 0){
+            if (block.parentHash != null) {
+                nextBlockHash = block.parentHash;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            transactions.forEach(function (transaction) {
+                if (transaction.to === publicKeyCar) {
+                    transactions.add(t);
+                    if (transaction.payload.pretransaction != null) {
+                        nextTransactionHash = transaction.payload.pretransaction;
+                    }
+                    else {
+                        nextTransactionHash = null;
+                    }
+                }
+            })
+        }
+        while (nextBlockHash != null){
+
+        }
+    }
+    catch(err){
+        console.log("Error while getting latest block", err);
+    }
+}
+
 function createUserAccount() {
 
   if (!isConnected) {
@@ -144,5 +177,6 @@ module.exports = {
     "sendTransaction": sendTransaction,
     "getBlockNumber" : getBlockNumber,
     "getTransaction" : getTransaction,
-    "getBlock" : getBlock
+    "getBlock" : getBlock,
+    "getBlocks" : getBlocks
 };
