@@ -1,7 +1,7 @@
 import {getCarAddressFromVin, getUserInfoFromToken} from "../database/dbHelper";
 import Transaction from "../blockchain/transaction";
 import {sendTransaction} from "../blockchain/ethNode";
-import routeMethods from "../authorisation/routeMethods";
+import dbHelper from "../database/dbHelper";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
@@ -311,6 +311,30 @@ function stvaRegister(req, res) {
     });
 }
 
+function getAllAnnulmentTransactions(req, res)
+{
+    dbHelper.getAnnulmentTransactionsFromDB((error, results) => {
+        if (error) {
+            res.status(500);
+            res.json({
+                "message": "Failure at getting annulment transactions"
+            });
+        }
+        else
+        {
+            const trxBody = {
+                id: results[0],
+                transactionHash: results[1],
+                executed: results[2],
+                creationDate: results[3]
+            }
+            req.body = trxBody;
+            res.json(results);
+            //next();
+        }
+    });
+}
+
 module.exports = {
     "updateMileage": updateMileage,
     "cancelTransaction": cancelTransaction,
@@ -318,5 +342,6 @@ module.exports = {
     "shopService": shopService,
     "tuevEntry": tuevEntry,
     "stvaRegister": stvaRegister,
-    "getCarByVin": getCarByVin
+    "getCarByVin": getCarByVin,
+    "getAllAnnulmentTransactions": getAllAnnulmentTransactions
 };
