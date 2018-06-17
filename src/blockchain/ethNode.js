@@ -46,70 +46,72 @@ function sendTransaction(transaction, callback) {
     });
 }
 
-function getTransaction(transHash, callback) {
-
-    if (!isConnected) {
-        console.log("Not connected to node!");
-        callback({
-            "err": "Not connected to node"
-        });
-        return;
+async function getTransaction(transHash) {
+    try {
+        await web3.eth.net.isListening();
+        return await web3.eth.getTransaction(transHash);
     }
-
-    web3.eth.net.isListening()
-        .then(() => {
-            web3.eth.getTransaction(transHash, (err, transaction) => {
-                callback(err, transaction)
-            });
-        })
-        .catch((err) => {
-            console.error("Error while getting Transaction: ", "\n", err);
-        });
+    catch(err) {
+        console.error("Error while getting Transaction: ", "\n", err);
+    }
 }
 
-function getBlock(blockIdentifier, callback) {
-
-    if (!isConnected) {
-        console.log("Not connected to node!");
-        callback({
-            "err": "Not connected to node"
-        });
-        return;
+async function getBlock(blockIdentifier) {
+    try {
+        await web3.eth.net.isListening();
+        return await web3.eth.getBlock(blockIdentifier);
     }
-
-    web3.eth.net.isListening()
-        .then(() => {
-            web3.eth.getBlock(blockIdentifier, (err, block) => {
-                callback(err, block)
-            });
-        })
-        .catch((err) => {
-            console.error("Error while getting Block: ", "\n", err);
-        });
+    catch(err) {
+        console.error("Error while getting Block: ", "\n", err);
+    }
 }
 
-function getBlockNumber(callback) {
-
-    if (!isConnected) {
-        console.log("Not connected to node!");
-        callback({
-            "err": "Not connected to node"
-        });
-        return;
+async function getBlockTransactionCount(blockNumber) {
+    try {
+        await web3.eth.net.isListening();
+        return await web3.eth.getBlockTransactionCount(blockNumber);
     }
-
-    web3.eth.net.isListening()
-        .then(() => {
-            web3.eth.getBlockNumber((err, number) => {
-                callback(err, number)
-            });
-        })
-        .catch((err) => {
-            console.error("Error while getting Blocknumber: ", "\n", err);
-        });
+    catch(err) {
+        console.error("Error while getting Block: ", "\n", err);
+    }
 }
 
-async function getTransactions(publicKeyCar) {
+async function getBlockNumber() {
+    try {
+        await web3.eth.net.isListening();
+        return await web3.eth.getBlockNumber();
+    }
+    catch(err) {
+                console.error("Error while getting Blocknumber: ", "\n", err);
+    }
+}
+
+async function getTransactionCountFirst1000Blocks() {
+    let response = []
+    let callback = function(res) {
+        console.log("Callback response: ", res);
+        response.push(res);
+    };
+    try {
+        await web3.eth.net.isListening();
+        console.log("Listening");
+        let currentBlockNumber = await web3.eth.getBlockNumber();
+        console.log("Current block number", currentBlockNumber);
+        let batchRequest = new web3.eth.BatchRequest();
+        console.log("Batch request: ", batchRequest);
+        for (let i = currentBlockNumber; i >= currentBlockNumber-1000; i--){
+            batchRequest.add(web3.eth.getBlockTransactionCount.request(i, callback));
+        }
+        console.log("Filled batch request: ", batchRequest);
+        await batchRequest.execute();
+        console.log("Response: ", response);
+    }
+    catch(err) {
+        console.error("Error while getting Transactions for first 1000 Blocks: ", "\n", err);
+    }
+}
+
+async function getAllTransactions(publicKeyCar) {
     try {
         let transactions = null;
         let lastTransactionHash = await getLastTransactionHash();
@@ -129,17 +131,27 @@ async function getTransactions(publicKeyCar) {
     }
 }
 
-async function getLastTransactionHash(publicKeyCar) {
-    console.log("Public key car: ", publicKeyCar);
+async function getLastTransactionHash(publicKeyCar, callback) {
     let lastTransactionHash = null;
-    let err = null;
+    let err = false;
     try {
         let latestBlockNumber = await getBlockNumber();
-        let block = await getBlock(latestBlockNumber);
-        console.log("First Block: ",block);
+        latestBlockNumber = latestBlockNumber - 8800;
+        console.log("Latest block number: ", latestBlockNumber);
+        //let block = await getBlock(latestBlockNumber);
+        let transactionCount = await getBlockTransactionCount(latestBlockNumber);
+        //console.log("First Block: ",block);
+        await getTransactionCountFirst1000Blocks();
+/*        let i = 1;
         while (lastTransactionHash == null) {
+            console.log("Schleifendurchlauf ", i);
+            console.log("Block transaction length: ", transactionCount);
+            latestBlockNumber = latestBlockNumber - 1;
+            transactionCount = await getBlockTransactionCount(latestBlockNumber);
+            i++;
             if (block.transactions.length !== 0) {
-                block.transactions.forEach(function (transaction) {
+                block.transactions.reverse().forEach(function (transaction) {
+                    console.log("Transaction: ", transaction);
                     if (lastTransactionHash == null && transaction.to === publicKeyCar) {
                         lastTransactionHash = transaction.payload.pretransaction;
                     }
@@ -150,11 +162,12 @@ async function getLastTransactionHash(publicKeyCar) {
                 block = await getBlock(latestBlockNumber);
             }
             else break;
-        }
+
+        }*/
     }
     catch(e){
-        err = e;
-        console.log("Error while getting last transaction hash", err);
+        err = true;
+        console.log("Error while getting last transaction hash", e);
     }
     return callback(err, lastTransactionHash);
 }
@@ -195,6 +208,6 @@ module.exports = {
     "getBlockNumber" : getBlockNumber,
     "getTransaction" : getTransaction,
     "getBlock" : getBlock,
-    "getTransactions" : getTransactions,
+    "getAllTransactions" : getAllTransactions,
     "getLastTransactionHash" : getLastTransactionHash
 };
