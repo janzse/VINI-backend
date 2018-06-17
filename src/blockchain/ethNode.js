@@ -109,36 +109,49 @@ function getBlockNumber(callback) {
         });
 }
 
-async function getBlocks(publicKeyCar) {
+async function getTransactions(publicKeyCar) {
     try {
-        block = await getBlock("latest");
-        if (block.transactions.length === 0){
-            if (block.parentHash != null) {
-                nextBlockHash = block.parentHash;
+        var transactions = null;
+        var lastTransactionHash = await getLastTransactionHash();
+        while (true){
+            var currentTransaction = await getTransaction(lastTransactionHash);
+            transactions.add = currentTransaction;
+            if (currentTransaction.payload.pretransaction != null){
+                lastTransactionHash = currentTransaction.payload.pretransaction;
             }
             else {
-                return false;
+                return transactions;
             }
-        }
-        else {
-            transactions.forEach(function (transaction) {
-                if (transaction.to === publicKeyCar) {
-                    transactions.add(t);
-                    if (transaction.payload.pretransaction != null) {
-                        nextTransactionHash = transaction.payload.pretransaction;
-                    }
-                    else {
-                        nextTransactionHash = null;
-                    }
-                }
-            })
-        }
-        while (nextBlockHash != null){
-
         }
     }
     catch(err){
-        console.log("Error while getting latest block", err);
+        console.log("Error while getting transactions", err);
+    }
+}
+
+async function getLastTransactionHash(publicKeyCar) {
+    try {
+        var latestBlockNumber = await getBlockNumber();
+        var block = await getBlock(latestBlockNumber);
+        var lastTransactionHash = null;
+        while (lastTransactionHash == null) {
+            if (block.transactions.length !== 0) {
+                block.transactions.forEach(function (transaction) {
+                    if (lastTransactionHash == null && transaction.to === publicKeyCar) {
+                        lastTransactionHash = transaction.payload.pretransaction;
+                    }
+                })
+            }
+            if (latestBlockNumber !== 1) {
+                latestBlockNumber = latestBlockNumber - 1;
+                block = await getBlock(latestBlockNumber);
+            }
+            else break;
+        }
+        return lastTransactionHash;
+    }
+    catch(err){
+        console.log("Error while getting last transaction hash", err);
     }
 }
 
@@ -178,5 +191,6 @@ module.exports = {
     "getBlockNumber" : getBlockNumber,
     "getTransaction" : getTransaction,
     "getBlock" : getBlock,
-    "getBlocks" : getBlocks
+    "getTransactions" : getTransactions,
+    "getLastTransactionHash" : getLastTransactionHash
 };
