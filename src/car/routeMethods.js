@@ -1,6 +1,7 @@
 import {getCarAddressFromVin, getUserInfoFromToken} from "../database/dbHelper";
 import Transaction from "../blockchain/transaction";
 import {sendTransaction} from "../blockchain/ethNode";
+import routeMethods from "../authorisation/routeMethods";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 

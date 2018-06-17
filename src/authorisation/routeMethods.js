@@ -162,18 +162,16 @@ function getUsers(req, res) {
 
 
 function login(req, res) {
-
-    // read bearertoken from 
-    // TODO check user in db, auth level etc.
     console.log("User login successful");
-    
-    const dummyBody = {
-        loginStatus: "success", // could not log in --> "failure"
-        token: "a74b0debd96954f807451074ac3eefe7918f1b7b",
-        authorityLevel: 1
+    let status = req.body.blocked !== null && req.body.blocked == 1 ? "success" : "failure";
+    let authLevel = req.body.authorityLevel !== null ? req.body.authorityLevel : 0;
+
+    const loginBody = {
+        loginStatus: status,
+        authorityLevel: authLevel
     }
 
-    res.send(dummyBody); // TODO
+    res.send(loginBody);
 }
 
 let app;
@@ -198,13 +196,14 @@ function isAuthorised(req, res, next) {
                     if (result[0] === true)
                         errorHandling(res, 401, "User is blocked");
                     else {
-                        const body = {
+                        const userBody = {
                             id: result[1],
                             blocked: result[0],
                             authorityLevel: result[2],
                             expiration: result[3]
                         }
-                        res.json(body);
+                        req.body = userBody;
+                        next();
                     }
                 }
             }
@@ -217,9 +216,6 @@ function isAuthorised(req, res, next) {
 
 function errorHandling(response, status, message)
 {
-    console.log(message);
-    response.status(status);
-
     const url = require('url');
     const query = url.format({
         pathname: '/error',
@@ -240,5 +236,6 @@ module.exports = {
     "login": login,
     "isAuthorised": isAuthorised,
     "deleteUser": deleteUser,
-    "getUsers": getUsers
+    "getUsers": getUsers,
+    "errorHandling": errorHandling
 };
