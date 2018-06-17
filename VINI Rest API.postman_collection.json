@@ -1,0 +1,1298 @@
+{
+	"info": {
+		"_postman_id": "96498247-0808-4c0b-9f73-9ed6830a1cd5",
+		"name": "VINI Rest API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Lokal",
+			"description": "",
+			"item": [
+				{
+					"name": "api_car",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car?vin=123",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car"
+							],
+							"query": [
+								{
+									"key": "vin",
+									"value": "123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_applyCancelTransaction",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c38c94c4-361c-456b-9301-8ad3f7f91d07",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/applyCancelTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"applyCancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_cancelTransaction",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6e454506-6e89-46fc-90a5-612a0c03a8a5",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/cancelTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"cancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_mileage",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2f55ee90-eb2e-41f8-8d2e-f79bc4c98601",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/mileage",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"mileage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c1bde849-f1ba-4a28-a157-423f0f7d4152",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"$timestamp\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/register",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_service",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "26f24d52-7257-4f01-bf18-bd60c9af2f71",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/service",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_tuev",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/tuev",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/tuev",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_register_delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\" : \"Franz\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/users/register",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_register_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/users/register",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "testuser",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "abc123",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "null",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "null",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}/api/users/token",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_firstBlock",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{local_url}}/ethTest/firstBlock",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"ethTest",
+								"firstBlock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastBlockNumber",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{local_url}}/ethTest/lastBlockNumber",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastBlockNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastTransaction",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "publicKeyCar",
+								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{local_url}}/ethTest/lastTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restricted",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{local_url}}/restricted",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"restricted"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Server",
+			"description": "",
+			"item": [
+				{
+					"name": "api_car",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car?vin=123",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car"
+							],
+							"query": [
+								{
+									"key": "vin",
+									"value": "123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_applyCancelTransaction",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c38c94c4-361c-456b-9301-8ad3f7f91d07",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/applyCancelTransaction",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"applyCancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_cancelTransaction",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6e454506-6e89-46fc-90a5-612a0c03a8a5",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/cancelTransaction",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"cancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_mileage",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2f55ee90-eb2e-41f8-8d2e-f79bc4c98601",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/mileage",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"mileage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c1bde849-f1ba-4a28-a157-423f0f7d4152",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"$timestamp\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/register",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_service",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "26f24d52-7257-4f01-bf18-bd60c9af2f71",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/service",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_car_tuev",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/tuev",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/car/tuev",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_register_delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\" : \"Franz\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/users/register",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_register_post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/users/register",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "testuser",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "abc123",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "null",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "null",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/users/token",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_firstBlock",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{server_url}}/ethTest/lastBlock",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastBlock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastBlockNumber",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{server_url}}/ethTest/lastBlockNumber",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastBlockNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastTransaction",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "publicKeyCar",
+								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{server_url}}/ethTest/lastTransaction",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restricted",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/restricted",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"restricted"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d5ccdec5-42c8-49c5-908f-9a223d07e88c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "4a3d6cc4-c5ff-4000-b53c-6cc56bce8fc6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "b4dec203-df2e-49d3-90c0-381a45c7e18a",
+			"key": "bearer_token",
+			"value": "fc8350177096883099b652480299135248d356afserver",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "52f5d2e1-ed63-4f0e-9739-40a290f46bbc",
+			"key": "server_url",
+			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "8d709d5c-1012-4f7a-a3c7-187fb49fe1e7",
+			"key": "local_url",
+			"value": "http://localhost:4711",
+			"type": "string",
+			"description": ""
+		}
+	]
+}
