@@ -87,23 +87,26 @@ async function getBlockNumber() {
 }
 
 async function getTransactionCountFirst1000Blocks() {
-    let response = []
-    let callback = function(res) {
-        console.log("Callback response: ", res);
-        response.push(res);
+    let response = [];
+    console.log("Response empty: ", response.length);
+    let callback = function(err, res) {
+        if (!err) {
+            console.log("Callback response: ", res);
+            response.push(res);
+        }
+        else {
+            console.log("Error ins batch processing callback.")
+        }
+
     };
     try {
         await web3.eth.net.isListening();
-        console.log("Listening");
         let currentBlockNumber = await web3.eth.getBlockNumber();
-        console.log("Current block number", currentBlockNumber);
         let batchRequest = new web3.eth.BatchRequest();
-        console.log("Batch request: ", batchRequest);
         for (let i = currentBlockNumber; i >= currentBlockNumber-1000; i--){
             batchRequest.add(web3.eth.getBlockTransactionCount.request(i, callback));
         }
-        console.log("Filled batch request: ", batchRequest);
-        await batchRequest.execute();
+        batchRequest.execute();
         console.log("Response: ", response);
     }
     catch(err) {
