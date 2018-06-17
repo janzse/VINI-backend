@@ -113,6 +113,7 @@ function checkUserAuthorization(token, callback) {
     const sqlCallback = (err, result) => {
         if (result == null || result.length === 0) {
             console.log("Could not find user by bearerToken: ", token);
+            callback(err, result);
         }
         else {
             callback(err, result);
