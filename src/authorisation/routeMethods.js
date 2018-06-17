@@ -181,7 +181,7 @@ let app;
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
-function isAuthorised(req, res, success) {
+function isAuthorised(req, res, next) {
     const token = req.get("Authorization").slice("Bearer ".length)
 
     if (token != null) {
@@ -195,7 +195,7 @@ function isAuthorised(req, res, success) {
                 if (result.length === 0)
                     errorHandling(res, 403, "No result from user authorization");
                 else {
-                    if (result[0] === false)
+                    if (result[0] === true)
                         errorHandling(res, 401, "User is blocked");
                     else {
                         const body = {
@@ -203,8 +203,7 @@ function isAuthorised(req, res, success) {
                             blocked: result[0],
                             authorityLevel: result[2],
                             expiration: result[3]
-                        };
-                        const msg = JSON.stringify({body});
+                        }
                         res.json(body);
                     }
                 }
@@ -220,7 +219,17 @@ function errorHandling(response, status, message)
 {
     console.log(message);
     response.status(status);
-    response.redirect('/');
+
+    const url = require('url');
+    const query = url.format({
+        pathname: '/error',
+        query: {
+        "status": status,
+        "message": message
+        }
+    });
+
+    response.redirect(query);
 }
 
 module.exports = {
