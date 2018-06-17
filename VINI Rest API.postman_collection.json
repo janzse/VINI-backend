@@ -381,14 +381,14 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
-							"raw": "{{local_url}}/api/car/tuev",
+							"raw": "{{local_url}}/api/users/login",
 							"host": [
 								"{{local_url}}"
 							],
 							"path": [
 								"api",
-								"car",
-								"tuev"
+								"users",
+								"login"
 							]
 						}
 					},
@@ -1003,14 +1003,14 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/api/car/tuev",
+							"raw": "{{server_url}}/api/users/login",
 							"host": [
 								"{{server_url}}"
 							],
 							"path": [
 								"api",
-								"car",
-								"tuev"
+								"users",
+								"login"
 							]
 						}
 					},
@@ -1274,21 +1274,21 @@
 	],
 	"variable": [
 		{
-			"id": "b4dec203-df2e-49d3-90c0-381a45c7e18a",
+			"id": "8f7f78d1-4f38-4d33-a8bb-afba59bd2fcc",
 			"key": "bearer_token",
 			"value": "fc8350177096883099b652480299135248d356afserver",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "52f5d2e1-ed63-4f0e-9739-40a290f46bbc",
+			"id": "c34144ca-d557-4a8f-a0da-1542be748c3f",
 			"key": "server_url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "8d709d5c-1012-4f7a-a3c7-187fb49fe1e7",
+			"id": "0fd1cb6c-a523-4e12-8cdd-f52939658d6f",
 			"key": "local_url",
 			"value": "http://localhost:4711",
 			"type": "string",
