@@ -19,9 +19,9 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/car?vin=123",
+							"raw": "{{local_url}}/api/car?vin=123",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -75,9 +75,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/applyCancelTransaction",
+							"raw": "{{local_url}}/api/car/applyCancelTransaction",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -126,9 +126,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/cancelTransaction",
+							"raw": "{{local_url}}/api/car/cancelTransaction",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -177,9 +177,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/mileage",
+							"raw": "{{local_url}}/api/car/mileage",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -228,9 +228,9 @@
 							"raw": "{\n\t\"timestamp\" : \"$timestamp\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/register",
+							"raw": "{{local_url}}/api/car/register",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -279,9 +279,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/service",
+							"raw": "{{local_url}}/api/car/service",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -330,9 +330,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/tuev",
+							"raw": "{{local_url}}/api/car/tuev",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -381,9 +381,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/tuev",
+							"raw": "{{local_url}}/api/car/tuev",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -419,9 +419,9 @@
 							"raw": "{\n  \"email\" : \"Franz\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/register",
+							"raw": "{{local_url}}/api/users/register",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -457,9 +457,9 @@
 							"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/register",
+							"raw": "{{local_url}}/api/users/register",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -514,9 +514,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}/api/users/token",
+							"raw": "{{local_url}}/api/users/token",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"api",
@@ -528,18 +528,62 @@
 					"response": []
 				},
 				{
-					"name": "ethTest",
+					"name": "ethTest_firstBlock",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "{{url}}/ethTest",
+							"raw": "{{local_url}}/ethTest/firstBlock",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
-								"ethTest"
+								"ethTest",
+								"firstBlock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastBlockNumber",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{local_url}}/ethTest/lastBlockNumber",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastBlockNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastTransaction",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "publicKeyCar",
+								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{local_url}}/ethTest/lastTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastTransaction"
 							]
 						}
 					},
@@ -570,9 +614,9 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/restricted",
+							"raw": "{{local_url}}/restricted",
 							"host": [
-								"{{url}}"
+								"{{local_url}}"
 							],
 							"path": [
 								"restricted"
@@ -597,9 +641,9 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/car?vin=123",
+							"raw": "{{server_url}}/api/car?vin=123",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -653,9 +697,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/applyCancelTransaction",
+							"raw": "{{server_url}}/api/car/applyCancelTransaction",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -704,9 +748,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/cancelTransaction",
+							"raw": "{{server_url}}/api/car/cancelTransaction",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -755,9 +799,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/mileage",
+							"raw": "{{server_url}}/api/car/mileage",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -806,9 +850,9 @@
 							"raw": "{\n\t\"timestamp\" : \"$timestamp\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/register",
+							"raw": "{{server_url}}/api/car/register",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -857,9 +901,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/service",
+							"raw": "{{server_url}}/api/car/service",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -908,9 +952,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/tuev",
+							"raw": "{{server_url}}/api/car/tuev",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -959,9 +1003,9 @@
 							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/car/tuev",
+							"raw": "{{server_url}}/api/car/tuev",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -997,9 +1041,9 @@
 							"raw": "{\n  \"email\" : \"Franz\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/register",
+							"raw": "{{server_url}}/api/users/register",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -1035,9 +1079,9 @@
 							"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/register",
+							"raw": "{{server_url}}/api/users/register",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -1092,9 +1136,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{url}}/api/users/token",
+							"raw": "{{server_url}}/api/users/token",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"api",
@@ -1106,18 +1150,62 @@
 					"response": []
 				},
 				{
-					"name": "ethTest",
+					"name": "ethTest_firstBlock",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "{{url}}/ethTest",
+							"raw": "{{server_url}}/ethTest/lastBlock",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
-								"ethTest"
+								"ethTest",
+								"lastBlock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastBlockNumber",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{server_url}}/ethTest/lastBlockNumber",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastBlockNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ethTest_lastTransaction",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "publicKeyCar",
+								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{server_url}}/ethTest/lastTransaction",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"ethTest",
+								"lastTransaction"
 							]
 						}
 					},
@@ -1148,9 +1236,9 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/restricted",
+							"raw": "{{server_url}}/restricted",
 							"host": [
-								"{{url}}"
+								"{{server_url}}"
 							],
 							"path": [
 								"restricted"
@@ -1186,21 +1274,21 @@
 	],
 	"variable": [
 		{
-			"id": "009896b7-b879-4eb3-9316-415dfd180656",
+			"id": "b4dec203-df2e-49d3-90c0-381a45c7e18a",
 			"key": "bearer_token",
 			"value": "fc8350177096883099b652480299135248d356afserver",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "eb20c0e2-cab7-423d-8644-5912455c11c9",
+			"id": "52f5d2e1-ed63-4f0e-9739-40a290f46bbc",
 			"key": "server_url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "a147daee-b7a2-425e-9559-305da88d44b7",
+			"id": "8d709d5c-1012-4f7a-a3c7-187fb49fe1e7",
 			"key": "local_url",
 			"value": "http://localhost:4711",
 			"type": "string",

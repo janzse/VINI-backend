@@ -67,7 +67,7 @@ function getTransaction(transHash, callback) {
         });
 }
 
-function getBlock(blockNumber, callback) {
+function getBlock(blockIdentifier, callback) {
 
     if (!isConnected) {
         console.log("Not connected to node!");
@@ -79,7 +79,7 @@ function getBlock(blockNumber, callback) {
 
     web3.eth.net.isListening()
         .then(() => {
-            web3.eth.getBlock(transHash, (err, block) => {
+            web3.eth.getBlock(blockIdentifier, (err, block) => {
                 callback(err, block)
             });
         })
@@ -111,10 +111,10 @@ function getBlockNumber(callback) {
 
 async function getTransactions(publicKeyCar) {
     try {
-        var transactions = null;
-        var lastTransactionHash = await getLastTransactionHash();
+        let transactions = null;
+        let lastTransactionHash = await getLastTransactionHash();
         while (true){
-            var currentTransaction = await getTransaction(lastTransactionHash);
+            let currentTransaction = await getTransaction(lastTransactionHash);
             transactions.add = currentTransaction;
             if (currentTransaction.payload.pretransaction != null){
                 lastTransactionHash = currentTransaction.payload.pretransaction;
@@ -130,10 +130,13 @@ async function getTransactions(publicKeyCar) {
 }
 
 async function getLastTransactionHash(publicKeyCar) {
+    console.log("Public key car: ", publicKeyCar);
+    let lastTransactionHash = null;
+    let err = null;
     try {
-        var latestBlockNumber = await getBlockNumber();
-        var block = await getBlock(latestBlockNumber);
-        var lastTransactionHash = null;
+        let latestBlockNumber = await getBlockNumber();
+        let block = await getBlock(latestBlockNumber);
+        console.log("First Block: ",block);
         while (lastTransactionHash == null) {
             if (block.transactions.length !== 0) {
                 block.transactions.forEach(function (transaction) {
@@ -148,11 +151,12 @@ async function getLastTransactionHash(publicKeyCar) {
             }
             else break;
         }
-        return lastTransactionHash;
     }
-    catch(err){
+    catch(e){
+        err = e;
         console.log("Error while getting last transaction hash", err);
     }
+    return callback(err, lastTransactionHash);
 }
 
 function createUserAccount() {
