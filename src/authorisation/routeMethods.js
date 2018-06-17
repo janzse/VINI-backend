@@ -217,9 +217,6 @@ function isAuthorised(req, res, next) {
 
 function errorHandling(response, status, message)
 {
-    console.log(message);
-    response.status(status);
-
     const url = require('url');
     const query = url.format({
         pathname: '/error',
@@ -240,5 +237,6 @@ module.exports = {
     "login": login,
     "isAuthorised": isAuthorised,
     "deleteUser": deleteUser,
-    "getUsers": getUsers
+    "getUsers": getUsers,
+    "errorHandling": errorHandling
 };

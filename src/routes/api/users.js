@@ -9,7 +9,7 @@ function initRoutes(app) {
   /* POST Login. */
   router.post('/token', app.oauth.grant());
 
-  router.get('/login', authRoutesMethods.login);
+  router.get('/login', authRoutesMethods.isAuthorised, authRoutesMethods.login);
 
   /* POST user register. */
   router.post('/register', authRoutesMethods.registerUser);
