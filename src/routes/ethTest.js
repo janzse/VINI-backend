@@ -28,7 +28,7 @@ router.get('/firstBlock', (req, res) => {ethNode.getBlock(1, (err, block) => {
     }
 })});
 
-router.get('/lastTransaction', (req, res) => {ethNode.getLastTransactionHash(req.params.publicKeyCar, (err, hash) => {
+router.get('/lastTransaction', (req, res) => {ethNode.getLastTransactionHash(req.query.publicKeyCar, (err, hash) => {
     if (!err){
         console.log("Hash of last transaction is: ", hash);
         res.status(200);
