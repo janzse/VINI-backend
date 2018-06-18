@@ -46,4 +46,4 @@ Stand 11.06.2018
 ## /api/users/register
 
 - [DEL] Funktioniert.
-- [POST] Funktioniert..
+- [POST] Funktioniert.

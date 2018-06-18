@@ -161,14 +161,14 @@ function getUsers(req, res) {
 
 
 function login(req, res) {
-    console.log("User login successful");
-    let status = req.body.blocked !== null && req.body.blocked == 1 ? "success" : "failure";
+    console.log("Authorization successful");
+    let status = req.body.blocked !== null && req.body.blocked === false ? "success" : "failure";
     let authLevel = req.body.authorityLevel !== null ? req.body.authorityLevel : 0;
 
     const loginBody = {
         loginStatus: status,
         authorityLevel: authLevel
-    }
+    };
 
     res.send(loginBody);
 }
@@ -179,9 +179,9 @@ let app;
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
 function isAuthorised(req, res, next) {
-    const token = req.get("Authorization").slice("Bearer ".length)
 
-    if (token != null) {
+    if (req.get("Authorization") != null) {
+        const token = req.get("Authorization").slice("Bearer ".length);
         console.log("TOKEN: ", token);
 
         // Prüfen, ob der User deaktiviert ist
@@ -200,7 +200,8 @@ function isAuthorised(req, res, next) {
                             blocked: result[0],
                             authorityLevel: result[2],
                             expiration: result[3]
-                        }
+                        };
+                        console.log("Check user authorization result: ", userBody);
                         req.body = userBody;
                         next();
                     }
