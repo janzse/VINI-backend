@@ -146,13 +146,13 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 
 function getAnnulmentTransactionsFromDB(callback)
 {
-    const queryString = `SELECT * FROM annulment_transactions`;
+    const queryString = `SELECT transactionHash, rejected FROM annulment_transactions`;
 
     const sqlCallback = (error, results) => {
         callback(error, results)
     };
 
-    dbConnection.query(queryString, sqlCallback);
+    dbConnection.query(queryString, sqlCallback, true);
 }
 
 module.exports = {

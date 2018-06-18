@@ -1,7 +1,6 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
 
-
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
 function registerUser(req, res) {
