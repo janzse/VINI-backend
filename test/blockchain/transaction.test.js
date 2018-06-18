@@ -5,5 +5,5 @@ test('Transaction instanciate', () => {
     const Transaction=require("../../src/blockchain/transaction");
 
     let t=new Transaction();
-    expect(t).not.toBe('undefined');
+    expect(t).toBeInstanceOf(Transaction)
 });

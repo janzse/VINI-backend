@@ -116,7 +116,7 @@ async function getTransactionCountFirst1000Blocks() {
 
 async function getAllTransactions(publicKeyCar) {
     try {
-        let transactions = null;
+        let transactions = [];
         let lastTransactionHash = await getLastTransactionHash();
         while (true){
             let currentTransaction = await getTransaction(lastTransactionHash);
