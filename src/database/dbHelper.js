@@ -5,13 +5,28 @@ function registerUserInDB(email, password, privateKey, publicKey, authorityLevel
     const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
   creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
-    const sqlCallback = (error, result) => {
+    const sqlCallback = (err, result) => {
 
         const isUserRegistered = (result) !== null ? result.length > 0 : null;
-        callback(error, isUserRegistered);
+        callback(err, isUserRegistered);
     };
 
     dbConnection.query(queryString, sqlCallback);
+}
+
+function registerCarInDB(vin, privateKey, publicKey, creationDate) {
+
+    return new Promise((resolve) => {
+
+        const queryString = `INSERT INTO kfz (vin, privateKey, publicKey, creationDate) VALUES ('${vin}', '${privateKey}', '${publicKey}', '${creationDate}')`;
+
+        const sqlCallback = (err, result) => {
+            console.log("FINISHED QUERY: ", err, "res ", result);
+            resolve(err === true ? null : result);
+        };
+
+        dbConnection.query(queryString, sqlCallback);
+    });
 }
 
 function getUserFromCredentials(email, password, callback) {
@@ -79,12 +94,12 @@ function getCarAddressFromVin(vin, callback) {
 
     const sqlCallback = (err, results) => {
 
-        if (results === null) {
+        if (results === null || results.length === 0) {
             console.log("Could not find vin: ", vin);
-            callback(err,null);
+            callback(err, null);
         }
         else {
-            callback(err,results[0]);
+            callback(err, results[0]);
         }
     };
 
@@ -93,7 +108,7 @@ function getCarAddressFromVin(vin, callback) {
 
 function getUserInfoFromToken(token, callback) {
 
-    const queryString = `SELECT privateKey,email FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
+    const queryString = `SELECT privateKey, email FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
 
     const sqlCallback = (err, results) => {
         if (results.length === 0) {
@@ -158,6 +173,7 @@ function getAnnulmentTransactionsFromDB(callback)
 
 module.exports = {
     "registerUserInDB": registerUserInDB,
+    "registerCarInDB": registerCarInDB,
     "getUserFromCredentials": getUserFromCredentials,
     "doesUserExist": doesUserExist,
     "deleteUserFromDB": deleteUserFromDB,
