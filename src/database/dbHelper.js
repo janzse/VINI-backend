@@ -146,6 +146,7 @@ function getAllUsers(callback){
 
     dbConnection.query(queryString, sqlCallback,true);
 }
+
 function addAnnulmentTransaction(transactionHash, timestamp) {
 
     const queryString = `INSERT INTO annulment_transactions (transactionHash, creationDate, executed) VALUES ('${transactionHash}', '${timestamp}', 'false');`;
@@ -154,6 +155,31 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 
         const isUserRegistered = (result) !== null ? result.length > 0 : null;
         callback(error, isAnnulementRequested);
+    };
+
+    dbConnection.query(queryString, sqlCallback);
+}
+
+//TODO: Testen
+function getHeadTransactionHash(vin, callback){
+    const queryString = `SELECT headTx FROM kfz WHERE vin = '${vin}'`;
+
+    const sqlCallback = (err, result) => {
+        callback(err,result);
+    };
+
+    dbConnection.query(queryString, sqlCallback,true);
+}
+
+//TODO: Testen
+function updateHeadTransactionHash(vin, headTxHash, callback) {
+
+    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE vin = '${vin}';`;
+
+    const sqlCallback = (error, result) => {
+
+        const isHeadTxUpdated = (result) !== null ? result.length > 0 : null;
+        callback(error, isHeadTxUpdated);
     };
 
     dbConnection.query(queryString, sqlCallback);
@@ -181,5 +207,7 @@ module.exports = {
     "getUserInfoFromToken": getUserInfoFromToken,
     "checkUserAuthorization": checkUserAuthorization,
     "getAllUsers": getAllUsers,
-    "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB
+    "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB,
+    "getHeadTransactionHash": getHeadTransactionHash,
+    "updateHeadTransactionHash": updateHeadTransactionHash
 };
