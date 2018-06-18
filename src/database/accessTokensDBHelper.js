@@ -2,23 +2,23 @@ import dbConnection from "./msSqlWrapper";
 
 function saveAccessToken(token, userID, expiration, callback) {
 
-  // ON DUPLICATE gibt es in MSSQL nicht, wird durch eine Query ersetzt
-  //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
+    // ON DUPLICATE gibt es in MSSQL nicht, wird durch eine Query ersetzt
+    //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
     const insertTokenQuery = `    
     begin tran
-    if exists (select * from bearer_tokens with (updlock,serializable) where token = '${token}')
+    if exists (select * from bearer_tokens with (updlock,serializable) where user_id LIKE '${userID}')
     begin
     update bearer_tokens
-    set token = '${token}'
-        where token = '${token}';
+    set token = '${token}', expiration = '${expiration.toISOString()}'
+        where user_id = '${userID}';
     end
     else
     begin
-    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, ${expiration});
+    insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, '${expiration.toISOString()}');
     end
     commit tran`;
-
-  dbConnection.query(insertTokenQuery, callback);
+    console.log(insertTokenQuery);
+    dbConnection.query(insertTokenQuery, callback);
 }
 
 function deleteAccessToken(userID, callback)
@@ -29,19 +29,19 @@ function deleteAccessToken(userID, callback)
 
 function getUserIDFromAccessToken(token, callback) {
 
-  const getUserIDQuery = `SELECT user_id FROM bearer_tokens WHERE token = '${token}';`;
+    const getUserIDQuery = `SELECT user_id FROM bearer_tokens WHERE token = '${token}';`;
 
-  dbConnection.query(getUserIDQuery, (err, resultValues) => {
+    dbConnection.query(getUserIDQuery, (err, resultValues) => {
 
-    const userID = resultValues != null && resultValues.length === 1 ? resultValues[0] : null;
+        const userID = resultValues != null && resultValues.length === 1 ? resultValues[0] : null;
 
-    callback(userID);
-  });
+        callback(userID);
+    });
 }
 
 
 module.exports = {
-  "saveAccessToken": saveAccessToken,
-  "getUserIDFromAccessToken": getUserIDFromAccessToken,
-  "deleteAccessToken": deleteAccessToken
+    "saveAccessToken": saveAccessToken,
+    "getUserIDFromAccessToken": getUserIDFromAccessToken,
+    "deleteAccessToken": deleteAccessToken
 };

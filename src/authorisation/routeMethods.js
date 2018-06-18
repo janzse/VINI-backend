@@ -1,140 +1,189 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
 function registerUser(req, res) {
 
-  console.log("registerUser: req.body is:", req.body);
-
-  dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
-
-    if (doesUserExist) {
-      res.status(400);
-      res.json({
-        "message": "User already exists"
-      });
-
-      return;
+    if (req.body.email == null || req.get("Authorization") == null || req.body.password == null ||
+        req.body.authorityLevel == null || req.body.forename == null || req.body.surname == null ||
+        req.body.companyName == null || req.body.creationDate == null) {
+        console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
+        res.status(400);
+        res.json({
+            "message": "Request has to include: email, password, authorityLevel, forename," +
+            "surname, companyName & creationDate in the body and bearer_token in the header"
+        });
+        return false;
     }
 
-    const userKeys = createUserAccount();
+    dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
+        console.log("UserExist: ", doesUserExist);
+        if (doesUserExist !== null) {
+            res.status(400);
+            res.json({
+                "message": "User already exists"
+            });
 
-    //TODO: Alle Werte in die DB schreiben
-    dbHelper.registerUserInDB(req.body.email, req.body.password, req.body.privateKey, req.body.publicKey, req.body.authorityLevel,
-      req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate, req.body.blocked,
-      (hasError, rowCount) => {
+            return false;
+        }
+        console.log("test");
+        const userKeys = createUserAccount();
+        console.log("test2");
+        //TODO: Alle Werte in die DB schreiben
+        dbHelper.registerUserInDB(req.body.email, req.body.password, userKeys.privateKey, userKeys.publicKey,
+            req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
+            req.body.blocked, (hasError, rowCount) => {
 
-      if (!hasError) {
-        res.status(200);
-        res.json({
-          "message": "Registration was successful"
-        })
-      }
-      else {
-        res.status(500);
-        res.json({
-          "message": "Failed to register user due to a server error"
-        })
-      }
+            if (!hasError) {
+                res.status(200);
+                res.json({
+                    "message": "Registration was successful"
+                })
+            }
+            else {
+                res.status(500);
+                res.json({
+                    "message": "Failed to register user due to a server error"
+                })
+            }
+        });
+        console.log("test3");
     })
-  })
 }
 
 function deleteUser(req, res) {
-  console.log("registerUser: req.body is:", req.body);
 
-  dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
-    if (doesUserExist) {
-      dbHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
-        if (isUserDeleted) {
-          res.status(200);
-          res.json({
-            "message": "Deletion was successful"
-          })
+    if (req.body.email == null || req.get("Authorization") == null) {
+        console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
+        res.status(400);
+        res.send({
+            "message": "Request has to include: email in the body and bearer_token in the header"
+        });
+        return false;
+    }
+
+    dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
+        if (doesUserExist !== null) {
+            dbHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
+                console.log("isUserDeleted: ", isUserDeleted);
+                if (isUserDeleted !== null) {
+                    res.status(200);
+                    res.send(({"message": "Deletion was successful"}))
+                    return;
+                }
+                else {
+                    console.log("Error while deleting user: ", err);
+                    res.status(500);
+                    res.send({
+                        "message": "Failed to delete user due to a server error"
+                    })
+                    return;
+                }
+            })
         }
         else {
-          console.log("Error while deleting user: ", err);
-          res.status(500);
-          res.json({
-            "message": "Failed to delete user due to a server error"
-          })
+            res.status(400);
+            res.send({
+                "message": "User does not exists"
+            });
+            return;
         }
-      })
-    }
-    else {
-      res.status(400);
-      res.json({
-        "message": "User does not exists"
-      });
-    }
-  })
+    })
 }
 
 
 //DUMMY FUNCTION!!!!
 //VINI.de/api/users
-function getUser(req, res) {
-  var transactionPayload = [];
+function getUsers(req, res) {
+
+    //CHECK DB-Connection: if available - return select all result; if not return dummy values
+    /*
+    dbHelper.getAllUsers((err, results) => {
+            if(result.length > 0){
+
+                //TODO convert results to appropriate JSON
+                res.send(results);
+                return true;
+            }
+        }
+    );
+*/
+    //DUMMY
+
+    let transactionPayload = [];
 
 
-  var payloadItem1 = {
-    date: "11.06.2008",
-    forename: "Ernst",
-    surname: "Mustermann",
-    authorityLevel: "TUEV",
-    action: "dummy",
-    email: "queryMail",
-    company: "TUEV"
-  };
-  var payloadItem2 = {
-    date: "11.06.2018",
-    forename: "Brigitte",
-    surname: "Mustermann",
-    authorityLevel: "ZWS",
-    action: "dummy",
-    email: "queryMail",
-    company: "KFZ Bongard"
-  };
-  var payloadItem3 = {
-    date: "11.06.2018",
-    forename: "Johnathan",
-    surname: "Mustermann",
-    authorityLevel: "STVA",
-    action: "dummy",
-    email: "queryMail",
-    company: "Amt X"
-  };
-  var payloadItem4 = {
-    date: "12.06.2018",
-    forename: "Gabi",
-    surname: "Mustermann",
-    authorityLevel: "ASTVA",
-    action: "dummy",
-    email: "queryMail",
-    company: "Amt Y"
-  };
+    const payloadItem1 = {
+        date: "11.06.2008",
+        forename: "Ernst",
+        surname: "Mustermann",
+        authorityLevel: "TUEV",
+        action: "dummy",
+        email: "queryMail",
+        company: "TUEV"
+    };
+    const payloadItem2 = {
+        date: "11.06.2018",
+        forename: "Brigitte",
+        surname: "Mustermann",
+        authorityLevel: "ZWS",
+        action: "dummy",
+        email: "queryMail",
+        company: "KFZ Bongard"
+    };
+    const payloadItem3 = {
+        date: "11.06.2018",
+        forename: "Johnathan",
+        surname: "Mustermann",
+        authorityLevel: "STVA",
+        action: "dummy",
+        email: "queryMail",
+        company: "Amt X"
+    };
+    const payloadItem4 = {
+        date: "12.06.2018",
+        forename: "Gabi",
+        surname: "Mustermann",
+        authorityLevel: "ASTVA",
+        action: "dummy",
+        email: "queryMail",
+        company: "Amt Y"
+    };
 
-  transactionPayload.push(payloadItem1);
-  transactionPayload.push(payloadItem2);
-  transactionPayload.push(payloadItem3);
-  transactionPayload.push(payloadItem4);
-  const msg = JSON.stringify({transactionPayload});
-  res.send(msg);
+    transactionPayload.push(payloadItem1);
+    transactionPayload.push(payloadItem2);
+    transactionPayload.push(payloadItem3);
+    transactionPayload.push(payloadItem4);
+    const msg = JSON.stringify({transactionPayload});
+    res.send(msg);
 }
 
 
-function login(registerUserQuery, res) {
+function login(req, res) {
+    console.log("User login successful");
+    let status = req.body.blocked !== null && req.body.blocked == 1 ? "success" : "failure";
+    let authLevel = req.body.authorityLevel !== null ? req.body.authorityLevel : 0;
 
-  console.log("User login successful");
+    const loginBody = {
+        loginStatus: status,
+        authorityLevel: authLevel
+    }
 
+    res.send(loginBody);
 }
 
 let app;
 
 //FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
-
+// success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
+// TODO: Fehlerfälle
 function isAuthorised(req, res, next) {
+<<<<<<< HEAD
   const authResult = app.oauth.authorise()(req, res, next);
     console.log('TOKEN: ' + authResult.bearerToken );
 
@@ -168,15 +217,64 @@ function isAuthorised(req, res, next) {
     res.status(403);
     res.redirect("/");
   }
+=======
+    const token = req.get("Authorization").slice("Bearer ".length)
+
+    if (token != null) {
+        console.log("TOKEN: ", token);
+
+        // Prüfen, ob der User deaktiviert ist
+        dbHelper.checkUserAuthorization(token, (error, result) => {
+            if (error)
+                errorHandling(res, 400, `User authorization error: '${error}'`);
+            else {
+                if (result.length === 0)
+                    errorHandling(res, 403, "No result from user authorization");
+                else {
+                    if (result[0] === true)
+                        errorHandling(res, 401, "User is blocked");
+                    else {
+                        const userBody = {
+                            id: result[1],
+                            blocked: result[0],
+                            authorityLevel: result[2],
+                            expiration: result[3]
+                        }
+                        req.body = userBody;
+                        next();
+                    }
+                }
+            }
+        })
+    }
+    else {
+        errorHandling(res, 406, "No valid accessToken found")
+    }
+}
+
+function errorHandling(response, status, message)
+{
+    const url = require('url');
+    const query = url.format({
+        pathname: '/error',
+        query: {
+        "status": status,
+        "message": message
+        }
+    });
+
+    response.redirect(query);
+>>>>>>> upstream/master
 }
 
 module.exports = {
-  "setApp": (expressApp) => {
-    app = expressApp
-  },
-  "registerUser": registerUser,
-  "login": login,
-  "isAuthorised": isAuthorised,
-  "deleteUser": deleteUser,
-  "getUser": getUser
+    "setApp": (expressApp) => {
+        app = expressApp
+    },
+    "registerUser": registerUser,
+    "login": login,
+    "isAuthorised": isAuthorised,
+    "deleteUser": deleteUser,
+    "getUsers": getUsers,
+    "errorHandling": errorHandling
 };

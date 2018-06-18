@@ -1,4 +1,4 @@
-import userDBHelper from "../database/dbHelper";
+import dbHelper from "../database/dbHelper";
 import accessTokensDBHelper from "../database/accessTokensDBHelper";
 
 /* All methods in this file are called by the node-oauth2-server module. They are provided as an object in the "app.js"
@@ -11,15 +11,15 @@ import accessTokensDBHelper from "../database/accessTokensDBHelper";
  * @param callback a function taking an error-indicator and a client object */
 function getClient(clientID, clientSecret, callback) {
 
-  // All of the properties can be null
-  const client = {
-    clientID,
-    clientSecret,
-    grants: null,
-    redirectUris: null
-  };
+    // All of the properties can be null
+    const client = {
+        clientID,
+        clientSecret,
+        grants: null,
+        redirectUris: null
+    };
 
-  callback(false, client);
+    callback(false, client);
 }
 
 /**
@@ -31,9 +31,9 @@ function getClient(clientID, clientSecret, callback) {
  */
 function grantTypeAllowed(clientID, grantType, callback) {
 
-  console.log('grantTypeAllowed called and clientID is: ', clientID, ' and grantType is: ', grantType);
+    console.log('grantTypeAllowed called: clientID is: ', clientID, ' and grantType is: ', grantType);
 
-  callback(false, true);
+    callback(false, true);
 }
 
 /**
@@ -44,10 +44,10 @@ function grantTypeAllowed(clientID, grantType, callback) {
  */
 function getUser(email, password, callback) {
 
-  console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
+    console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
 
   //try and get the user using the user's credentials
-  userDBHelper.getUserFromCredentials(email, password, callback)
+  dbHelper.getUserFromCredentials(email, password, callback)
 }
 
 /**
@@ -60,11 +60,11 @@ function getUser(email, password, callback) {
  */
 function saveAccessToken(accessToken, clientID, expires, user, callback) {
 
-  console.log('saveAccessToken() called and accessToken is: ', accessToken,
-    ' and clientID is: ', clientID, ' and user is: ', user, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
+    console.log('saveAccessToken() called and accessToken is: ', accessToken,
+        ' and clientID is: ', clientID, ' and user is: ', user, ' and expires is: ', expires, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
 
-  //save the accessToken along with the user.id
-  accessTokensDBHelper.saveAccessToken(accessToken, user.id, expires, callback)
+    //save the accessToken along with the user.id
+    accessTokensDBHelper.saveAccessToken(accessToken, user.id, expires, callback)
 }
 
 /* This method is called when a user is using a bearerToken they've already got as authentication
@@ -82,25 +82,25 @@ function saveAccessToken(accessToken, clientID, expires, user, callback) {
  */
 function getAccessToken(accessToken, callback) {
 
-  //try and get the userID from the db using the bearerToken
-  accessTokensDBHelper.getUserIDFromAccessToken(accessToken, (userID) => {
+    //try and get the userID from the db using the bearerToken
+    accessTokensDBHelper.getUserIDFromAccessToken(accessToken, (userID) => {
 
-    const token = {
-      user: {
-        id: userID,
-      },
-      expires: null
-    };
+        const token = {
+            user: {
+                id: userID,
+            },
+            expires: null
+        };
 
-    //set the error to true if userID is null, and pass in the token if there is a userID else pass null
-    callback(userID == null, userID == null ? null : token)
-  })
+        //set the error to true if userID is null, and pass in the token if there is a userID else pass null
+        callback(userID == null, userID == null ? null : token)
+    })
 }
 
 module.exports = {
-  "getClient": getClient,
-  "saveAccessToken": saveAccessToken,
-  "getUser": getUser,
-  "grantTypeAllowed": grantTypeAllowed,
-  "getAccessToken": getAccessToken
+    "getClient": getClient,
+    "saveAccessToken": saveAccessToken,
+    "getUser": getUser,
+    "grantTypeAllowed": grantTypeAllowed,
+    "getAccessToken": getAccessToken
 };

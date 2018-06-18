@@ -7,7 +7,9 @@ function initRoutes(app) {
   authRoutesMethods.setApp(app);
 
   /* POST Login. */
-  router.post('/login', app.oauth.grant(), authRoutesMethods.login);
+  router.post('/token', app.oauth.grant());
+
+  router.get('/login', authRoutesMethods.isAuthorised, authRoutesMethods.login);
 
   /* POST user register. */
   router.post('/register', authRoutesMethods.registerUser);
@@ -15,8 +17,8 @@ function initRoutes(app) {
   /* DELETE user register. */
   router.delete('/register', authRoutesMethods.deleteUser);
   
-  /* GET User */
-  router.get('/', authRoutesMethods.getUser);
+  /* GET Users*/
+  router.get('/', authRoutesMethods.getUsers);
 }
 
 

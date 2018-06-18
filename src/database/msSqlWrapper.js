@@ -6,10 +6,10 @@ let dbConnection = null;
 
 function query(queryString, callback) {
 
-  if(dbConnection == null){
+  if (dbConnection == null) {
     initConnection(queryString, callback);
   }
-  else{
+  else {
     executeSql(queryString, callback);
   }
 }
@@ -27,7 +27,7 @@ function initConnection(query, callback) {
     }
   });
 
-  dbConnection.on('connect', function (err) {
+  dbConnection.on('connect', (err) => {
     if (err) {
       console.log("Unable to connect to database!", err);
     }
@@ -37,48 +37,47 @@ function initConnection(query, callback) {
     }
   });
 
-  dbConnection.on('end', function () {
+  dbConnection.on('end', () => {
     console.log("DB connection has been closed.");
     dbConnection = null;
   })
 }
 
 function executeSql(query, callback) {
-
+  console.log("Begin query.");
   let resultValues = [];
-
-  const request = new Request(query, function (err, rowCount) {
+  let hasError = false;
+  const request = new Request(query, (err, rowCount) => {
+    hasError = err;
     if (err) {
       console.log("Error while request was performed: ", err);
       return;
     }
     else {
-      console.log("Got ", rowCount, " row(s)");
+      console.log("Got", rowCount, "row(s)");
     }
-
     dbConnection.close();
   });
-
-  request.on('row', function (columns) {
+  request.on('requestCompleted', () => {
+    console.log('requestCompleted')
+    callback(hasError, resultValues);
+  });
+  request.on('row', (columns) => {
     // This collects all non-null rows in an array
-    columns.forEach(function (column) {
+    columns.forEach((column) => {
       if (column.value != null) {
         resultValues.push(column.value);
       }
     });
+ 
+    request.on('error', (err) => {
+      console.log("Error while executing ", query); // Might not be secure
+      hasError = true
+    });
   });
-
-  request.on('requestCompleted', function () {
-    callback(false, resultValues);
-  });
-
-  request.on('error', function (err) {
-    console.log("Error while executing ", query); // Might not be secure
-    callback(true, null);
-    throw err;
-  });
-
+  
   dbConnection.execSql(request);
+  console.log("End query.")
 }
 
 
