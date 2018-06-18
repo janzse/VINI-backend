@@ -68,7 +68,7 @@ function doesUserExist(email, callback) {
     dbConnection.query(queryString, sqlCallback)
 }
 
-function deleteUserFromDB(email, callback) {
+function blockUserInDB(email, callback) {
     const query = `
     BEGIN TRANSACTION
     IF EXISTS (SELECT * FROM bearer_tokens WITH (updlock,serializable) 
@@ -76,7 +76,7 @@ function deleteUserFromDB(email, callback) {
     BEGIN
     DELETE FROM bearer_tokens WHERE user_id LIKE (SELECT id FROM users WHERE email LIKE '${email}')
     END
-    DELETE FROM users WHERE email = '${email}'
+    UPDATE users SET blocked = 1 WHERE email = '${email}'
     COMMIT TRANSACTION
     `;
     const sqlCallback = (err, results) => {
@@ -202,7 +202,7 @@ module.exports = {
     "registerCarInDB": registerCarInDB,
     "getUserFromCredentials": getUserFromCredentials,
     "doesUserExist": doesUserExist,
-    "deleteUserFromDB": deleteUserFromDB,
+    "blockUserInDB": blockUserInDB,
     "getCarAddressFromVin": getCarAddressFromVin,
     "getUserInfoFromToken": getUserInfoFromToken,
     "checkUserAuthorization": checkUserAuthorization,
