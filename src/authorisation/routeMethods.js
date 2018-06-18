@@ -69,14 +69,14 @@ function blockUser(req, res) {
                 console.log("isUserDeleted: ", isUserDeleted);
                 if (isUserDeleted !== null) {
                     res.status(200);
-                    res.send(({"message": "Deletion was successful"}))
+                    res.send(({"message": "Block was successful"}))
                     return;
                 }
                 else {
-                    console.log("Error while deleting user: ", err);
+                    console.log("Error while block user: ", err);
                     res.status(500);
                     res.send({
-                        "message": "Failed to delete user due to a server error"
+                        "message": "Failed to block user due to a server error"
                     })
                     return;
                 }
