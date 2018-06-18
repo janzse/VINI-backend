@@ -138,34 +138,39 @@ async function getLastTransactionHash(publicKeyCar, callback) {
     let lastTransactionHash = null;
     let err = false;
     try {
-        let blockNumber = await getBlockNumber();
-        console.log("Latest block number: ", blockNumber);
+        let lastBlockNumber = await getBlockNumber();
+        console.log("Latest block number: ", lastBlockNumber);
         //let block = await getBlock(latestBlockNumber);
-        let transactionCount = await getBlockTransactionCount(blockNumber);
+        let transactionCount = await getBlockTransactionCount(lastBlockNumber);
         //console.log("First Block: ",block);
-        while (blockNumber >= 1) {
-            console.log("Blocknummer: ", blockNumber);
-            console.log("Block transaction length: ", transactionCount);
-            blockNumber = blockNumber - 1;
-            transactionCount = await getBlockTransactionCount(blockNumber);
-            if (transactionCount > 0){
-                console.log("JUHUUU Transaktionen!! ---------------------------------------")
-            }
-            /*if (block.transactions.length !== 0) {
-                block.transactions.reverse().forEach(function (transaction) {
-                    console.log("Transaction: ", transaction);
-                    if (lastTransactionHash == null && transaction.to === publicKeyCar) {
-                        lastTransactionHash = transaction.payload.pretransaction;
-                    }
-                })
-            }
-            if (blockNumber !== 1) {
-                latestBlockNumber = blockNumber - 1;
-                block = await getBlock(blockNumber);
-            }
-            else break;*/
+        let start = new Date().getTime();
+        for (let i = 1 ; i <= 100; i++){
+            let blockNumber = lastBlockNumber;
+            while (blockNumber >= 1) {
+                console.log("Blocknummer: ", blockNumber);
+                console.log("Block transaction length: ", transactionCount);
+                blockNumber = blockNumber - 1;
+                transactionCount = await getBlockTransactionCount(blockNumber);
+                if (transactionCount > 0){
+                    console.log("JUHUUU Transaktionen!! ---------------------------------------")
+                }
+                /*if (block.transactions.length !== 0) {
+                    block.transactions.reverse().forEach(function (transaction) {
+                        console.log("Transaction: ", transaction);
+                        if (lastTransactionHash == null && transaction.to === publicKeyCar) {
+                            lastTransactionHash = transaction.payload.pretransaction;
+                        }
+                    })
+                }
+                if (blockNumber !== 1) {
+                    latestBlockNumber = blockNumber - 1;
+                    block = await getBlock(blockNumber);
+                }
+                else break;*/
 
-        }
+        }}
+        let stop = new Date().getTime();
+        console("Laufzeit: ", (start - stop), " s")
     }
     catch(e){
         err = true;
