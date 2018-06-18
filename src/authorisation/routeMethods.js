@@ -1,10 +1,6 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
 
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/master
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
 function registerUser(req, res) {
@@ -183,41 +179,6 @@ let app;
 // success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
 // TODO: Fehlerfälle
 function isAuthorised(req, res, next) {
-<<<<<<< HEAD
-  const authResult = app.oauth.authorise()(req, res, next);
-    console.log('TOKEN: ' + authResult.bearerToken );
-
-  if (authResult.bearerToken != null) {
-      // Validierung der Nutzerrechte (authorisation Level)
-      let token = '3333IIII';
-      accessTokensDBHelper.getUserIDFromAccessToken(authResult.bearerToken, (userID) => {
-          console.log('userID: ' + userID);
-          if (userID === 0)
-          {
-              res.status(500);
-              res.json({
-                  "message": "No compatible UserID for this bearer token"
-              })
-          }
-          // Prüfen, ob der User deaktiviert ist
-          userDBHelper.isUserBlocked(userID, error, result => {
-              if (error)
-              {
-                  res.status(500);
-                  res.json({
-                      "message": "User is blocked"
-                  })
-              }
-              console.log('AUSGABE: ' + result);
-          })
-      })
-  }
-  else {
-    console.log("No valid accessToken found");
-    res.status(403);
-    res.redirect("/");
-  }
-=======
     const token = req.get("Authorization").slice("Bearer ".length)
 
     if (token != null) {
@@ -264,7 +225,6 @@ function errorHandling(response, status, message)
     });
 
     response.redirect(query);
->>>>>>> upstream/master
 }
 
 module.exports = {
