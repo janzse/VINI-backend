@@ -36,7 +36,7 @@ class Transaction {
     }
 
     setServiceTwo(serviceTwo) {
-        this.data.serviceOne = serviceTwo;
+        this.data.serviceTwo = serviceTwo;
     }
 
     setOilchange(oilchange){
