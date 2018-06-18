@@ -1,6 +1,5 @@
-import {getCarAddressFromVin, getUserInfoFromToken} from "../database/dbHelper";
 import Transaction from "../blockchain/transaction";
-import {sendTransaction} from "../blockchain/ethNode";
+import {sendTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
@@ -15,14 +14,14 @@ function updateMileage(req, res) {
         });
         return false;
     }
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
+    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if (carAddress === null) {
             console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -65,115 +64,128 @@ const getTimestamp = () => {
 };
 
 function getCarByVin(req, res) {
-    console.log(req.body);
-    let transactionPayload = [];
-
-    // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
-    // mit einer 0 auffüllen)
-    let payloadItem1 = {
-        timestamp: getTimestamp(),
-        mileage: 1337,
-        service1: false,
-        service2: true,
-        oilChange: false,
-        mainInspection: true,
-        nextcheck: getTimestamp(),
-        ownerCount: 4,
-        entrant: "d@d.de",
-        state: "valid",
-        transactionId: "123456"
-    };
-    let payloadItem2 = {
-        timestamp: getTimestamp(),
-        mileage: 1338,
-        service1: true,
-        service2: true,
-        oilChange: false,
-        mainInspection: true,
-        nextcheck: getTimestamp(),
-        ownerCount: 5,
-        entrant: "c@c.de",
-        state: "invalid",
-        transactionId: "123457"
-    };
-    let payloadItem3 = {
-        timestamp: getTimestamp(),
-        mileage: 1339,
-        service1: false,
-        service2: true,
-        oilChange: true,
-        mainInspection: false,
-        nextcheck: getTimestamp(),
-        ownerCount: 5,
-        entrant: "b@b.de",
-        state: "rejected",
-        transactionId: "123458"
-    };
-    let payloadItem4 = {
-        timestamp: getTimestamp(),
-        mileage: 1339,
-        service1: false,
-        service2: true,
-        oilChange: true,
-        mainInspection: false,
-        nextcheck: getTimestamp(),
-        ownerCount: 5,
-        entrant: "a@a.de",
-        state: "open",
-        transactionId: "123459"
-    };
-
-    transactionPayload.push(payloadItem1);
-    transactionPayload.push(payloadItem2);
-    transactionPayload.push(payloadItem3);
-    transactionPayload.push(payloadItem4);
-
-
-    let jsonResponse = {
-        "vin": req.query.vin,
-        transactionPayload
-    };
-
-    res.send(JSON.stringify(jsonResponse));
-
-    /*
-   if(req.query.vin == null){
-        console.log("Invalid request on getCarByVin");
-        res.status(400);
-        res.json({
-            "message": "invalid/no vin supplied."
-        });
-        return false;
-    }
-    getCarAddressFromVin(req.query.vin, (err, carAddress) => {
-        if (carAddress === null) {
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
-        }
-        let transactions = EthNode.getAllTransactions(carAddress);
+    if (req.query.vin === "dummy") {
         let transactionPayload = [];
-        transactions.array.forEach(element => {
-            let payloadItem = {
-                timestamp: element.data.timestamp,
-                mileage: element.data.mileage,
-                service1: element.data.serviceOne,
-                service2: element.data.serviceTwo,
-                oilchange: element.data.oilChange,
-                nextcheck: element.data.inspection,
-                ownerCount: element.data.preOwner,
-                entrant: element.data.entrant,
-                state: element.data.state
-            };
-            transactionPayload.push(payloadItem);
-        });
+
+        // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
+        // mit einer 0 auffüllen)
+        let payloadItem1 = {
+            timestamp: getTimestamp(),
+            mileage: 1337,
+            service1: false,
+            service2: true,
+            oilChange: false,
+            mainInspection: true,
+            nextcheck: getTimestamp(),
+            ownerCount: 4,
+            entrant: "d@d.de",
+            state: "valid",
+            transactionId: "123456"
+        };
+        let payloadItem2 = {
+            timestamp: getTimestamp(),
+            mileage: 1338,
+            service1: true,
+            service2: true,
+            oilChange: false,
+            mainInspection: true,
+            nextcheck: getTimestamp(),
+            ownerCount: 5,
+            entrant: "c@c.de",
+            state: "invalid",
+            transactionId: "123457"
+        };
+        let payloadItem3 = {
+            timestamp: getTimestamp(),
+            mileage: 1339,
+            service1: false,
+            service2: true,
+            oilChange: true,
+            mainInspection: false,
+            nextcheck: getTimestamp(),
+            ownerCount: 5,
+            entrant: "b@b.de",
+            state: "rejected",
+            transactionId: "123458"
+        };
+        let payloadItem4 = {
+            timestamp: getTimestamp(),
+            mileage: 1339,
+            service1: false,
+            service2: true,
+            oilChange: true,
+            mainInspection: false,
+            nextcheck: getTimestamp(),
+            ownerCount: 5,
+            entrant: "a@a.de",
+            state: "open",
+            transactionId: "123459"
+        };
+
+        transactionPayload.push(payloadItem1);
+        transactionPayload.push(payloadItem2);
+        transactionPayload.push(payloadItem3);
+        transactionPayload.push(payloadItem4);
+
+
         let jsonResponse = {
-            vin: req.query.vin,
+            "vin": req.query.vin,
             transactionPayload
         };
+
         res.send(JSON.stringify(jsonResponse));
-*/
+    } else {
+
+        if (req.query.vin == null) {
+            console.log("Invalid request on getCarByVin");
+            res.status(400);
+            res.json({
+                "message": "invalid/no vin supplied."
+            });
+            return false;
+        }
+        getCarAddressFromVin(req.query.vin, (err, carAddress) => {
+            if (carAddress === undefined) {
+                console.log("vin not found in DB!! aborting.");
+                res.status(400);
+                res.json({"message": "Unknown vin!"});
+                return false;
+            }
+            let transactions = getAllTransactions(carAddress).then((result) => {
+                let transactionPayload = [];
+                transactions.array.forEach(element => {
+                    let payloadItem = {
+                        timestamp: element.data.timestamp,
+                        mileage: element.data.mileage,
+                        service1: element.data.serviceOne,
+                        service2: element.data.serviceTwo,
+                        oilchange: element.data.oilChange,
+                        nextcheck: element.data.inspection,
+                        ownerCount: element.data.preOwner,
+                        entrant: element.data.entrant,
+                        state: element.data.state
+                    };
+                    transactionPayload.push(payloadItem);
+                });
+                let jsonResponse = {
+                    vin: req.query.vin,
+                    transactionPayload
+                };
+                res.send(JSON.stringify(jsonResponse));
+            }, (error) => {
+            });
+            // if (transactions === undefined) {
+            //     console.log("vin not found in Blockchain! aborting.");
+            //     res.status(400);
+            //     res.json({"message": "Unknown vin!"});
+            //     return false;
+            // }
+
+
+        });
+    }
+
+
 }
 
 function cancelTransaction(req, res) {
@@ -198,14 +210,14 @@ function shopService(req, res) {
         });
         return false;
     }
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
+    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if (carAddress === null) {
             console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -246,14 +258,14 @@ function tuevEntry(req, res) {
         return false;
     }
 
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
+    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if (carAddress === null) {
             console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -292,14 +304,24 @@ function stvaRegister(req, res) {
         return false;
     }
 
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
+    dbHelper.getCarAddressFromVin(req.body.vin, async (err, carAddress) => {
+        if (carAddress === null) {
+            console.log("carAddress not found: Creating new one");
+            // VIN not in DB yet -> Create it
+            const carAccount = createCarAccount();
+
+            const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, getTimestamp());
+
+            if (result == null) {
+                console.log("Error while registering new car");
+                res.status(500);
+                res.json({
+                    "message": "Error while registering new car"
+                });
+            }
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -325,8 +347,7 @@ function stvaRegister(req, res) {
     });
 }
 
-function getAllAnnulmentTransactions(req, res)
-{
+function getAllAnnulmentTransactions(req, res) {
     dbHelper.getAnnulmentTransactionsFromDB((error, results) => {
         if (error) {
             res.status(500);
@@ -336,16 +357,26 @@ function getAllAnnulmentTransactions(req, res)
         }
         else
         {
+            /*
             let annulmentPayload = [];
             results.forEach(element => {
                 let payloadItem = {
                     transactionHash: element[0].transactionHash[0],
-                    rejected: element[1].rejected[0]
+                    rejected: element[1].rejected[0],
+                    user_id: element[2].user_id[0]
                 };
                 annulmentPayload.push(payloadItem);
             });
             res.send(JSON.stringify({"annulments": annulmentPayload}));
             //next();
+            */
+            const annulment = {
+                transactionHash: results[0],
+                rejected: results[1],
+                user_id: results[2],
+                vin: results[3]
+            };
+            res.send(JSON.stringify({"annulment": annulment}));
         }
     });
 }

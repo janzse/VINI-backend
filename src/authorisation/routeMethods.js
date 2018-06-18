@@ -33,7 +33,7 @@ function registerUser(req, res) {
         //TODO: Alle Werte in die DB schreiben
         dbHelper.registerUserInDB(req.body.email, req.body.password, userKeys.privateKey, userKeys.publicKey,
             req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
-            req.body.blocked, (hasError, rowCount) => {
+            false, (hasError, rowCount) => {
 
                 if (!hasError) {
                     res.status(200);
@@ -270,7 +270,7 @@ function isAuthorised(req, res, next) {
         })
     }
     else {
-        errorHandling(res, 406, "No valid accessToken found")
+        errorHandling(res, 406, "Kein valides Accesstoken gefunden")
     }
 }
 

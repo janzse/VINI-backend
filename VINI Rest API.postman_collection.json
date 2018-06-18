@@ -1,13 +1,13 @@
 {
 	"info": {
-		"_postman_id": "96498247-0808-4c0b-9f73-9ed6830a1cd5",
+		"_postman_id": "4ab18a14-2bd9-48a8-bfa6-a2ecbacb0d1a",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Lokal",
-			"description": "",
+			"description": null,
 			"item": [
 				{
 					"name": "api_car",
@@ -225,7 +225,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"$timestamp\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
+							"raw": "{\n\t\"vin\": \"XD1LOL1KEKXD\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/register",
@@ -532,7 +532,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{local_url}}/ethTest/firstBlock",
 							"host": [
@@ -551,7 +554,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{local_url}}/ethTest/lastBlockNumber",
 							"host": [
@@ -575,7 +581,10 @@
 								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{local_url}}/ethTest/lastTransaction",
 							"host": [
@@ -629,7 +638,7 @@
 		},
 		{
 			"name": "Server",
-			"description": "",
+			"description": null,
 			"item": [
 				{
 					"name": "api_car",
@@ -1154,7 +1163,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{server_url}}/ethTest/lastBlock",
 							"host": [
@@ -1173,7 +1185,10 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{server_url}}/ethTest/lastBlockNumber",
 							"host": [
@@ -1197,7 +1212,10 @@
 								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{server_url}}/ethTest/lastTransaction",
 							"host": [
