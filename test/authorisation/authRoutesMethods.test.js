@@ -3,7 +3,6 @@ test('Init test case', () => {
 });
 
 test('Restricted auth request test', () => {
-    //const accessRestrictedArea = require('../../src/authorisation/restrictedAreaRoutesMethods').accessRestrictedArea(); //file throw error on load?
 
     var string_received = false;
     const res_mock = 
@@ -13,6 +12,11 @@ test('Restricted auth request test', () => {
             string_received = (e != 'undefined'); 
         }
     };
+    
+    //is there a better way?
+    const accessRestrictedArea = require('../../src/authorisation/restrictedAreaRoutesMethods').accessRestrictedArea(null,res_mock);
+    
     //accessRestrictedArea(null, res_mock);
-    //expect(string_received).toBe(true);
+    expect(string_received).toBe(true);
+    
 });
