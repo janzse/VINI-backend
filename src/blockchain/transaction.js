@@ -1,9 +1,12 @@
-class Transaction {  
+import {toHexString} from "../utils"
+
+class Transaction {
 
     constructor(from, to, timestamp) {
 
-        this.from = from; //String: sender address where the TX originated from (STVAWallet)
-        this.to = to;//String: recipient address (a carWallet)
+        this.from = toHexString(from); // String: sender address where the TX originated from (STVAWallet)
+        this.to = toHexString(to); // String: recipient address (a carWallet)
+        this.gas = 100000; // Default gas
         this.data = {
             "email": null,
             "preTransaction": null,

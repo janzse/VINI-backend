@@ -40,4 +40,5 @@ router.get('/lastTransaction', (req, res) => {ethNode.getLastTransactionHash(req
     }
 })});
 
+
 module.exports = router;

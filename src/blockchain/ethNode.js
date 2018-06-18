@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import {toHexString} from "../utils"
 
 let web3;
 let isConnected = false;
@@ -45,6 +46,29 @@ function sendTransaction(transaction, callback) {
         });
 }
 
+async function sendSignedTransaction(transaction, privateKey) {
+    return new Promise(async (resolve) => {
+        try {
+            await web3.eth.net.isListening();
+
+            transaction.data = web3.utils.toHex(JSON.stringify(transaction.data));
+
+            privateKey = toHexString(privateKey);
+            const singedTX = await web3.eth.accounts.signTransaction(transaction, privateKey);
+
+            web3.eth.sendSignedTransaction(singedTX.rawTransaction)
+                .once('transactionHash', (hash) => {
+                    console.log("Transaction successful:", hash);
+                    resolve(hash);
+                });
+        }
+        catch (err) {
+            console.log("Error while sending signedTransaction: ", err);
+            resolve(null);
+        }
+    });
+}
+
 async function getTransaction(transHash) {
     try {
         await web3.eth.net.isListening();
@@ -70,7 +94,7 @@ async function getBlockTransactionCount(blockNumber) {
         await web3.eth.net.isListening();
         return await web3.eth.getBlockTransactionCount(blockNumber);
     }
-    catch(err) {
+    catch (err) {
         console.error("Error while getting TransactionCount: \n", err);
     }
 }
@@ -144,14 +168,14 @@ async function getLastTransactionHash(publicKeyCar, callback) {
 
         let start = new Date().getTime();
         let k = 100;
-        for (let i = 1 ; i <= k; i++){
+        for (let i = 1; i <= k; i++) {
             let blockNumber = lastBlockNumber;
             while (blockNumber >= 1) {
                 let transactionCount = await getBlockTransactionCount(blockNumber);
                 console.log("Blocknummer: ", blockNumber);
                 console.log("Block transaction length: ", transactionCount);
                 blockNumber = blockNumber - 1;
-                if (transactionCount > 0){
+                if (transactionCount > 0) {
                     console.log("JUHUUU Transaktionen!! ---------------------------------------")
                 }
                 /*if (block.transactions.length !== 0) {
@@ -168,9 +192,10 @@ async function getLastTransactionHash(publicKeyCar, callback) {
                 }
                 else break;*/
 
-        }}
+            }
+        }
         let stop = new Date().getTime();
-        console.log("Laufzeit für ", (k *  lastBlockNumber), " Aufrufe: ", Math.floor((stop - start)/1000), " s")
+        console.log("Laufzeit für ", (k * lastBlockNumber), " Aufrufe: ", Math.floor((stop - start) / 1000), " s")
     }
     catch (e) {
         err = true;
@@ -186,6 +211,7 @@ function createUserAccount() {
         return;
     }
 
+    //TODO: Neue Accounts brauchen Money$$$
     const userAccount = web3.eth.accounts.create();
 
     return {
@@ -215,6 +241,7 @@ module.exports = {
     "createUserAccount": createUserAccount,
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
+    "sendSignedTransaction": sendSignedTransaction,
     "getBlockNumber": getBlockNumber,
     "getTransaction": getTransaction,
     "getBlock": getBlock,

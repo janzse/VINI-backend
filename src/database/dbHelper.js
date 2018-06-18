@@ -81,7 +81,7 @@ function deleteUserFromDB(email, callback) {
     `;
     const sqlCallback = (err, results) => {
         const isUserDeleted = results != null;
-        console.log("deleteUserFromDB - sqlCallback")
+        console.log("deleteUserFromDB - sqlCallback");
         callback(err, isUserDeleted);
     };
 
@@ -108,14 +108,14 @@ function getCarAddressFromVin(vin, callback) {
 
 function getUserInfoFromToken(token, callback) {
 
-    const queryString = `SELECT privateKey, email FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
+    const queryString = `SELECT privateKey, publicKey, email FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
 
     const sqlCallback = (err, results) => {
         if (results.length === 0) {
             console.log("Could not find user by bearerToken: ", token);
         }
         else {
-            callback(results[0], results[1]);
+            callback(results[0], results[1], results[2]);
         }
     };
 
