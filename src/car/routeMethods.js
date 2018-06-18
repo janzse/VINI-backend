@@ -346,7 +346,9 @@ function getAllAnnulmentTransactions(req, res) {
                 "message": "Failure at getting annulment transactions"
             });
         }
-        else {
+        else
+        {
+            /*
             let annulmentPayload = [];
             results.forEach(element => {
                 let payloadItem = {
@@ -358,6 +360,14 @@ function getAllAnnulmentTransactions(req, res) {
             });
             res.send(JSON.stringify({"annulments": annulmentPayload}));
             //next();
+            */
+            const annulment = {
+                transactionHash: results[0],
+                rejected: results[1],
+                user_id: results[2],
+                vin: results[3]
+            };
+            res.send(JSON.stringify({"annulment": annulment}));
         }
     });
 }
