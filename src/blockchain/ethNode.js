@@ -141,16 +141,17 @@ async function getLastTransactionHash(publicKeyCar, callback) {
         let lastBlockNumber = await getBlockNumber();
         console.log("Latest block number: ", lastBlockNumber);
         //let block = await getBlock(latestBlockNumber);
-        let transactionCount = await getBlockTransactionCount(lastBlockNumber);
+        //let transactionCount = await getBlockTransactionCount(lastBlockNumber);
         //console.log("First Block: ",block);
         let start = new Date().getTime();
-        for (let i = 1 ; i <= 100; i++){
+        let k = 100;
+        for (let i = 1 ; i <= k; i++){
             let blockNumber = lastBlockNumber;
             while (blockNumber >= 1) {
+                let transactionCount = await getBlockTransactionCount(blockNumber);
                 console.log("Blocknummer: ", blockNumber);
                 console.log("Block transaction length: ", transactionCount);
                 blockNumber = blockNumber - 1;
-                transactionCount = await getBlockTransactionCount(blockNumber);
                 if (transactionCount > 0){
                     console.log("JUHUUU Transaktionen!! ---------------------------------------")
                 }
@@ -170,7 +171,7 @@ async function getLastTransactionHash(publicKeyCar, callback) {
 
         }}
         let stop = new Date().getTime();
-        console("Laufzeit: ", (start - stop), " s")
+        console.log("Laufzeit für ", (k *  lastBlockNumber), " Aufrufe: ", Math.floor((stop - start)/1000), " s")
     }
     catch(e){
         err = true;

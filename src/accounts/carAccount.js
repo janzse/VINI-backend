@@ -6,4 +6,6 @@
 function CarAccount(privateKey, vin) {
     this.privateKey = privateKey;
     this.vin = vin;
-}
+};
+
+module.exports=CarAccount;

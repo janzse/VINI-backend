@@ -11,7 +11,7 @@ function UserAccount(privateKey, email, password, authorityLevel, forename, surn
     this.authorityLevel = authorityLevel;
     this.forename = forename;
     this.surname = surname;
-    this.companyName = companyname;
+    this.companyName = companyName;
     this.creationDate = -1;
     this.blocked = false;
 
@@ -25,5 +25,7 @@ function UserAccount(privateKey, email, password, authorityLevel, forename, surn
 
     this.validateUser = function (password) {
         return this.password === password;
-    };
-}
+    }
+};
+
+module.exports=UserAccount;
