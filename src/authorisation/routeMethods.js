@@ -1,11 +1,5 @@
-<<<<<<< HEAD:src/authorisation/authRoutesMethods.js
-import userDBHelper from "../database/userDBHelper";
-import accessTokensDBHelper from "../database/accessTokensDBHelper";
-=======
 import dbHelper from "../database/dbHelper";
 import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
-
->>>>>>> upstream/master:src/authorisation/routeMethods.js
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
