@@ -70,8 +70,8 @@ async function getBlockTransactionCount(blockNumber) {
         await web3.eth.net.isListening();
         return await web3.eth.getBlockTransactionCount(blockNumber);
     }
-    catch (err) {
-        console.error("Error while getting Block: ", "\n", err);
+    catch(err) {
+        console.error("Error while getting TransactionCount: \n", err);
     }
 }
 
@@ -114,7 +114,7 @@ async function getTransactionCountFirst1000Blocks() {
 
 async function getAllTransactions(publicKeyCar) {
     try {
-        let transactions = null;
+        let transactions = [];
         let lastTransactionHash = await getLastTransactionHash();
         while (true) {
             let currentTransaction = await getTransaction(lastTransactionHash);
@@ -136,35 +136,41 @@ async function getLastTransactionHash(publicKeyCar, callback) {
     let lastTransactionHash = null;
     let err = false;
     try {
-        let latestBlockNumber = await getBlockNumber();
-        latestBlockNumber = latestBlockNumber - 8800;
-        console.log("Latest block number: ", latestBlockNumber);
+        let lastBlockNumber = await getBlockNumber();
+        console.log("Latest block number: ", lastBlockNumber);
         //let block = await getBlock(latestBlockNumber);
-        let transactionCount = await getBlockTransactionCount(latestBlockNumber);
+        //let transactionCount = await getBlockTransactionCount(lastBlockNumber);
         //console.log("First Block: ",block);
-        await getTransactionCountFirst1000Blocks();
-        /*        let i = 1;
-                while (lastTransactionHash == null) {
-                    console.log("Schleifendurchlauf ", i);
-                    console.log("Block transaction length: ", transactionCount);
-                    latestBlockNumber = latestBlockNumber - 1;
-                    transactionCount = await getBlockTransactionCount(latestBlockNumber);
-                    i++;
-                    if (block.transactions.length !== 0) {
-                        block.transactions.reverse().forEach(function (transaction) {
-                            console.log("Transaction: ", transaction);
-                            if (lastTransactionHash == null && transaction.to === publicKeyCar) {
-                                lastTransactionHash = transaction.payload.pretransaction;
-                            }
-                        })
-                    }
-                    if (latestBlockNumber !== 1) {
-                        latestBlockNumber = latestBlockNumber - 1;
-                        block = await getBlock(latestBlockNumber);
-                    }
-                    else break;
 
-                }*/
+        let start = new Date().getTime();
+        let k = 100;
+        for (let i = 1 ; i <= k; i++){
+            let blockNumber = lastBlockNumber;
+            while (blockNumber >= 1) {
+                let transactionCount = await getBlockTransactionCount(blockNumber);
+                console.log("Blocknummer: ", blockNumber);
+                console.log("Block transaction length: ", transactionCount);
+                blockNumber = blockNumber - 1;
+                if (transactionCount > 0){
+                    console.log("JUHUUU Transaktionen!! ---------------------------------------")
+                }
+                /*if (block.transactions.length !== 0) {
+                    block.transactions.reverse().forEach(function (transaction) {
+                        console.log("Transaction: ", transaction);
+                        if (lastTransactionHash == null && transaction.to === publicKeyCar) {
+                            lastTransactionHash = transaction.payload.pretransaction;
+                        }
+                    })
+                }
+                if (blockNumber !== 1) {
+                    latestBlockNumber = blockNumber - 1;
+                    block = await getBlock(blockNumber);
+                }
+                else break;*/
+
+        }}
+        let stop = new Date().getTime();
+        console.log("Laufzeit für ", (k *  lastBlockNumber), " Aufrufe: ", Math.floor((stop - start)/1000), " s")
     }
     catch (e) {
         err = true;

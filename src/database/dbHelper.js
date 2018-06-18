@@ -144,7 +144,7 @@ function getAllUsers(callback){
         callback(err,results);
     };
 
-    dbConnection.query(queryString, sqlCallback)
+    dbConnection.query(queryString, sqlCallback,true);
 }
 function addAnnulmentTransaction(transactionHash, timestamp) {
 
@@ -161,7 +161,8 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 
 function getAnnulmentTransactionsFromDB(callback)
 {
-    const queryString = `SELECT * FROM annulment_transactions`;
+    const queryString = `SELECT at.transactionHash, at.rejected, at.user_id, kfz.vin FROM annulment_transactions as at,
+                        kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
 
     const sqlCallback = (error, results) => {
         callback(error, results)
