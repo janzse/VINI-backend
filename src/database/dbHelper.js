@@ -160,8 +160,8 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 }
 
 //TODO: Testen
-function getHeadTransactionHash(vin, callback){
-    const queryString = `SELECT headTx FROM kfz WHERE vin = '${vin}'`;
+function getHeadTransactionHash(publicKeyCar, callback){
+    const queryString = `SELECT headTx FROM kfz WHERE publicKey = '${publicKeyCar}'`;
 
     const sqlCallback = (err, result) => {
         callback(err,result);
@@ -171,9 +171,9 @@ function getHeadTransactionHash(vin, callback){
 }
 
 //TODO: Testen
-function updateHeadTransactionHash(vin, headTxHash, callback) {
+function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
 
-    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE vin = '${vin}';`;
+    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${publicKeyCar}';`;
 
     const sqlCallback = (error, result) => {
 

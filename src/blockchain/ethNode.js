@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import dbHelper from "../database/dbHelper";
 
 let web3;
 let isConnected = false;
@@ -28,6 +29,8 @@ function sendTransaction(transaction, callback) {
         return;
     }
 
+    //let lastTransacctionHash = dbHelper.getHeadTransactionHash(transaction.to);
+
     web3.eth.net.isListening()
         .then(() => {
             web3.eth.sendTransaction({
@@ -36,7 +39,7 @@ function sendTransaction(transaction, callback) {
                 "gas": 100000,
                 "data": web3.utils.toHex(JSON.stringify(transaction.data))
             }, (err, hash) => {
-                //TODO: Aktuelle Transaktion in die Datenbank schreiben
+                //dbHelper.updateHeadTransactionHash(transaction.to, hash);
                 callback(err)
             });
         })
