@@ -4,7 +4,7 @@ import ethNode from "../blockchain/ethNode";
 const router = express.Router();
 
 /* GET home page. */
-router.get('/allTransactions', (req, res) => {ethNode.getAllTransactions(req.query(err, transactions) => {
+router.get('/allTransactions', (req, res) => {ethNode.getAllTransactions(req.query.vin, (err, transactions) => {
     if (!err){
         console.log("Transactions are: ", transactions);
         res.status(200);
