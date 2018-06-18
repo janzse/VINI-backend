@@ -210,7 +210,7 @@ function isAuthorised(req, res, next) {
         })
     }
     else {
-        errorHandling(res, 406, "No valid accessToken found")
+        errorHandling(res, 406, "Kein valides Accesstoken gefunden")
     }
 }
 
