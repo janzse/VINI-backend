@@ -1,13 +1,9 @@
-class Transaction {
-
-    from; //String: sender address where the TX originated from (STVAWallet)
-    to; //String: recipient address (a carWallet)
-    data;
+class Transaction {  
 
     constructor(from, to, timestamp) {
 
-        this.from = from;
-        this.to = to;
+        this.from = from; //String: sender address where the TX originated from (STVAWallet)
+        this.to = to;//String: recipient address (a carWallet)
         this.data = {
             "email": null,
             "preTransaction": null,
@@ -36,7 +32,7 @@ class Transaction {
     }
 
     setServiceTwo(serviceTwo) {
-        this.data.serviceOne = serviceTwo;
+        this.data.serviceTwo = serviceTwo;
     }
 
     setOilchange(oilchange){
@@ -50,6 +46,6 @@ class Transaction {
     setpreOwner(preowner){
         this.data.preOwner = preowner;
     }
-}
+};
 
 module.exports = Transaction;
