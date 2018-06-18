@@ -322,14 +322,15 @@ function getAllAnnulmentTransactions(req, res)
         }
         else
         {
-            const trxBody = {
-                id: results[0],
-                transactionHash: results[1],
-                executed: results[2],
-                creationDate: results[3]
-            }
-            req.body = trxBody;
-            res.json(results);
+            let annulmentPayload = [];
+            results.forEach(element => {
+                let payloadItem = {
+                    transactionHash: element[0].transactionHash[0],
+                    rejected: element[1].rejected[0]
+                };
+                annulmentPayload.push(payloadItem);
+            });
+            res.send(JSON.stringify({"annulments": annulmentPayload}));
             //next();
         }
     });

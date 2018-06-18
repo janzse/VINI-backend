@@ -27,3 +27,4 @@ module.exports = {
   "router": router,
   "initRoutes": initRoutes
 };
+// TODO: Verifikation über AccessToken
