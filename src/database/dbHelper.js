@@ -129,7 +129,7 @@ function getAllUsers(callback){
         callback(err,results);
     };
 
-    dbConnection.query(queryString, sqlCallback)
+    dbConnection.query(queryString, sqlCallback,true);
 }
 function addAnnulmentTransaction(transactionHash, timestamp) {
 
