@@ -1,5 +1,5 @@
 import Transaction from "../blockchain/transaction";
-import {sendTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
+import {sendTransaction, sendSignedTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
@@ -21,27 +21,25 @@ function updateMileage(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), async (privateKey, userAddress, email) => {
 
-            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            const transaction = new Transaction(userAddress, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
             transaction.setEmail(email);
 
-            sendTransaction(transaction, (err) => {
-                if (err) {
-                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
-                    res.status(500);
-                    res.json({
-                        "message": "Updating mileage failed"
-                    });
-                } else {
-                    console.log("Transaction was sent: ", transaction);
-                    res.status(200);
-                    res.json({
-                        "message": "Successfully updated mileage"
-                    });
-                }
-            });
+            const transHash = await sendSignedTransaction(transaction, privateKey);
+            if (transHash == null) {
+                console.log("An error occurred while sending transaction: ", transaction, ": ", err);
+                res.status(500);
+                res.json({
+                    "message": "Updating mileage failed"
+                });
+            } else {
+                res.status(200);
+                res.json({
+                    "message": "Successfully updated mileage"
+                });
+            }
         });
     });
 }
@@ -217,9 +215,9 @@ function shopService(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (privateKey, userAddress, email) => {
 
-            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            const transaction = new Transaction(privateKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
             transaction.setServiceOne(req.body.service1);
             transaction.setServiceTwo(req.body.service1);
@@ -265,9 +263,9 @@ function tuevEntry(req, res) {
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (privateKey, userAddress, email) => {
 
-            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            const transaction = new Transaction(privateKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
             transaction.setNextCheck(req.body.nextCheck);
             transaction.setEmail(email);
@@ -321,9 +319,9 @@ function stvaRegister(req, res) {
             }
         }
 
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (privateKey, userAddress, email) => {
 
-            const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
+            const transaction = new Transaction(privateKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
             transaction.setpreOwner(req.body.ownerCount);
             transaction.setEmail(email);
@@ -355,8 +353,7 @@ function getAllAnnulmentTransactions(req, res) {
                 "message": "Failure at getting annulment transactions"
             });
         }
-        else
-        {
+        else {
             /*
             let annulmentPayload = [];
             results.forEach(element => {
