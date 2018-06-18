@@ -144,6 +144,17 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
     dbConnection.query(queryString, sqlCallback);
 }
 
+function getAnnulmentTransactionsFromDB(callback)
+{
+    const queryString = `SELECT * FROM annulment_transactions`;
+
+    const sqlCallback = (error, results) => {
+        callback(error, results)
+    };
+
+    dbConnection.query(queryString, sqlCallback);
+}
+
 module.exports = {
     "registerUserInDB": registerUserInDB,
     "getUserFromCredentials": getUserFromCredentials,
@@ -152,5 +163,6 @@ module.exports = {
     "getCarAddressFromVin": getCarAddressFromVin,
     "getUserInfoFromToken": getUserInfoFromToken,
     "checkUserAuthorization": checkUserAuthorization,
-    "getAllUsers": getAllUsers
+    "getAllUsers": getAllUsers,
+    "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB
 };
