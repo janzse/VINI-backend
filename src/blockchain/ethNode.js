@@ -72,7 +72,7 @@ async function getBlockTransactionCount(blockNumber) {
         return await web3.eth.getBlockTransactionCount(blockNumber);
     }
     catch(err) {
-        console.error("Error while getting Block: ", "\n", err);
+        console.error("Error while getting TransactionCount: ", "\n", err);
     }
 }
 
@@ -140,7 +140,6 @@ async function getLastTransactionHash(publicKeyCar, callback) {
     try {
         let blockNumber = await getBlockNumber();
         console.log("Latest block number: ", blockNumber);
-        blockNumber = blockNumber - 8800;
         //let block = await getBlock(latestBlockNumber);
         let transactionCount = await getBlockTransactionCount(blockNumber);
         //console.log("First Block: ",block);
