@@ -146,13 +146,14 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 
 function getAnnulmentTransactionsFromDB(callback)
 {
-    const queryString = `SELECT transactionHash, rejected, user_id FROM annulment_transactions`;
+    const queryString = `SELECT at.transactionHash, at.rejected, at.user_id, kfz.vin FROM annulment_transactions as at,
+                        kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
 
     const sqlCallback = (error, results) => {
         callback(error, results)
     };
 
-    dbConnection.query(queryString, sqlCallback, true);
+    dbConnection.query(queryString, sqlCallback);
 }
 
 module.exports = {
