@@ -46,8 +46,8 @@ function getUser(email, password, callback) {
 
     console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
 
-  //try and get the user using the user's credentials
-  dbHelper.getUserFromCredentials(email, password, callback)
+    //try and get the user using the user's credentials
+    return dbHelper.getUserFromCredentials(email, password, callback)
 }
 
 /**
