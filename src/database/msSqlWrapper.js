@@ -4,17 +4,18 @@ let dbConnection = null;
 
 //TODO: Datenbankverbindung offen halten, statt jedes Mal zu schließen?
 
-function query(queryString, callback) {
+function query(queryString, callback, json) {
 
   if (dbConnection == null) {
-    initConnection(queryString, callback);
+    initConnection(queryString, callback, json);
   }
-  else {
+  else if (json === undefined)
     executeSql(queryString, callback);
-  }
+  else
+    executeSqlJSON(queryString, callback);
 }
 
-function initConnection(query, callback) {
+function initConnection(query, callback, json) {
   console.log("Initializing DB connection");
 
   dbConnection = new Connection({
@@ -31,9 +32,14 @@ function initConnection(query, callback) {
     if (err) {
       console.log("Unable to connect to database!", err);
     }
-    else {
+    else if (json === undefined){
       console.log("Successfully connected to DB");
       executeSql(query, callback);
+    }
+    else
+    {
+        console.log("Successfully connected to DB");
+        executeSqlJSON(query, callback);
     }
   });
 
@@ -78,6 +84,43 @@ function executeSql(query, callback) {
   
   dbConnection.execSql(request);
   console.log("End query.")
+}
+
+function executeSqlJSON(query, callback) {
+    console.log("Begin query.");
+    let entries = [];
+    let hasError = false;
+    const request = new Request(query, (err, rowCount) => {
+        hasError = err;
+        if (err) {
+            console.log("Error while request was performed: ", err);
+            return;
+        }
+        else {
+            console.log("Got", rowCount, "row(s)");
+        }
+        dbConnection.close();
+    });
+    request.on('requestCompleted', () => {
+        console.log('requestCompleted')
+        callback(hasError, entries);
+    });
+    request.on('row', (columns) => {
+      let entry = [];
+        // This collects all non-null rows in an array
+        columns.forEach((column) => {
+          entry.push({[column.metadata.colName]: [column.value]});
+        });
+        entries.push(entry);
+
+        request.on('error', (err) => {
+            console.log("Error while executing ", query); // Might not be secure
+            hasError = true
+        });
+    });
+
+    dbConnection.execSql(request);
+    console.log("End query.")
 }
 
 

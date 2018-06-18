@@ -322,23 +322,15 @@ function getAllAnnulmentTransactions(req, res)
         }
         else
         {
-            annulments.array.forEach(results => {
+            let annulmentPayload = [];
+            results.forEach(element => {
                 let payloadItem = {
-                    id: results.payload.id,
-                    transactionHash: results.transactionHash,
-                    executed: results.payload.serviceOne,
-                    creationDate: results.payload.serviceTwo,
+                    transactionHash: element[0].transactionHash[0],
+                    rejected: element[1].rejected[0]
                 };
-                transactionPayload.push(payloadItem);
+                annulmentPayload.push(payloadItem);
             });
-            var jsonResponse = {
-                vin: req.params.vin,
-                transactionPayload
-            };
-            res.send(JSON.stringify(jsonResponse));
-
-            let obj.transactionPayload[];
-            res.send(JSON.stringify());
+            res.send(JSON.stringify({"annulments": annulmentPayload}));
             //next();
         }
     });
