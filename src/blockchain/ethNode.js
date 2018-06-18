@@ -143,8 +143,8 @@ async function getLastTransactionHash(publicKeyCar, callback) {
         //let block = await getBlock(latestBlockNumber);
         let transactionCount = await getBlockTransactionCount(blockNumber);
         //console.log("First Block: ",block);
-        while (lastTransactionHash == null) {
-            console.log("Blocknummer ", );
+        while (blockNumber >= 1) {
+            console.log("Blocknummer: ", blockNumber);
             console.log("Block transaction length: ", transactionCount);
             blockNumber = blockNumber - 1;
             transactionCount = await getBlockTransactionCount(blockNumber);
