@@ -326,7 +326,8 @@ function getAllAnnulmentTransactions(req, res)
             results.forEach(element => {
                 let payloadItem = {
                     transactionHash: element[0].transactionHash[0],
-                    rejected: element[1].rejected[0]
+                    rejected: element[1].rejected[0],
+                    user_id: element[2].user_id[0]
                 };
                 annulmentPayload.push(payloadItem);
             });

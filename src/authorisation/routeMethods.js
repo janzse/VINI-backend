@@ -33,7 +33,7 @@ function registerUser(req, res) {
         //TODO: Alle Werte in die DB schreiben
         dbHelper.registerUserInDB(req.body.email, req.body.password, userKeys.privateKey, userKeys.publicKey,
             req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
-            req.body.blocked, (hasError, rowCount) => {
+            0, (hasError, rowCount) => {
 
             if (!hasError) {
                 res.status(200);

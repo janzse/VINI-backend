@@ -146,7 +146,7 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 
 function getAnnulmentTransactionsFromDB(callback)
 {
-    const queryString = `SELECT transactionHash, rejected FROM annulment_transactions`;
+    const queryString = `SELECT transactionHash, rejected, user_id FROM annulment_transactions`;
 
     const sqlCallback = (error, results) => {
         callback(error, results)
