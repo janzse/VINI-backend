@@ -138,21 +138,21 @@ async function getLastTransactionHash(publicKeyCar, callback) {
     let lastTransactionHash = null;
     let err = false;
     try {
-        let latestBlockNumber = await getBlockNumber();
-        latestBlockNumber = latestBlockNumber - 8800;
-        console.log("Latest block number: ", latestBlockNumber);
+        let blockNumber = await getBlockNumber();
+        console.log("Latest block number: ", blockNumber);
+        blockNumber = blockNumber - 8800;
         //let block = await getBlock(latestBlockNumber);
-        let transactionCount = await getBlockTransactionCount(latestBlockNumber);
+        let transactionCount = await getBlockTransactionCount(blockNumber);
         //console.log("First Block: ",block);
-        await getTransactionCountFirst1000Blocks();
-/*        let i = 1;
         while (lastTransactionHash == null) {
-            console.log("Schleifendurchlauf ", i);
+            console.log("Blocknummer ", );
             console.log("Block transaction length: ", transactionCount);
-            latestBlockNumber = latestBlockNumber - 1;
-            transactionCount = await getBlockTransactionCount(latestBlockNumber);
-            i++;
-            if (block.transactions.length !== 0) {
+            blockNumber = blockNumber - 1;
+            transactionCount = await getBlockTransactionCount(blockNumber);
+            if (transactionCount > 0){
+                console.log("JUHUUU Transaktionen!! ---------------------------------------")
+            }
+            /*if (block.transactions.length !== 0) {
                 block.transactions.reverse().forEach(function (transaction) {
                     console.log("Transaction: ", transaction);
                     if (lastTransactionHash == null && transaction.to === publicKeyCar) {
@@ -160,13 +160,13 @@ async function getLastTransactionHash(publicKeyCar, callback) {
                     }
                 })
             }
-            if (latestBlockNumber !== 1) {
-                latestBlockNumber = latestBlockNumber - 1;
-                block = await getBlock(latestBlockNumber);
+            if (blockNumber !== 1) {
+                latestBlockNumber = blockNumber - 1;
+                block = await getBlock(blockNumber);
             }
-            else break;
+            else break;*/
 
-        }*/
+        }
     }
     catch(e){
         err = true;
