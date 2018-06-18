@@ -137,28 +137,42 @@ function getCarByVin(req, res) {
     res.send(JSON.stringify(jsonResponse));
 
     /*
-    import EthNode from "../../../blockchain/ethNode";
-    var transactions = EthNode.getCarTransactions(req.params.vin);
-    var transactionPayload = [];
-    transactions.array.forEach(element => {
-        var payloadItem = {
-            timestamp: element.timestamp,
-            mileage: element.payload.mileage,
-            service1: element.payload.serviceOne,
-            service2: element.payload.serviceTwo,
-            oilchange: element.payload.oilChange,
-            nextcheck: element.payload.inspection,
-            ownerCount: element.payload.preowner,
-            entrant: element.payload.entrant,
-            state: element.payload.state
+   if(req.query.vin == null){
+        console.log("Invalid request on getCarByVin");
+        res.status(400);
+        res.json({
+            "message": "invalid/no vin supplied."
+        });
+        return false;
+    }
+    getCarAddressFromVin(req.query.vin, (err, carAddress) => {
+        if (carAddress === null) {
+            console.log("vin not found! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return false;
+        }
+        let transactions = EthNode.getAllTransactions(carAddress);
+        let transactionPayload = [];
+        transactions.array.forEach(element => {
+            let payloadItem = {
+                timestamp: element.data.timestamp,
+                mileage: element.data.mileage,
+                service1: element.data.serviceOne,
+                service2: element.data.serviceTwo,
+                oilchange: element.data.oilChange,
+                nextcheck: element.data.inspection,
+                ownerCount: element.data.preOwner,
+                entrant: element.data.entrant,
+                state: element.data.state
+            };
+            transactionPayload.push(payloadItem);
+        });
+        let jsonResponse = {
+            vin: req.query.vin,
+            transactionPayload
         };
-        transactionPayload.push(payloadItem);
-    });
-    var jsonResponse = {
-        vin: req.params.vin,
-        transactionPayload
-    };
-    res.send(JSON.stringify(jsonResponse));
+        res.send(JSON.stringify(jsonResponse));
 */
 }
 

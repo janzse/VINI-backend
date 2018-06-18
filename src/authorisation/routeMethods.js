@@ -35,19 +35,19 @@ function registerUser(req, res) {
             req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
             0, (hasError, rowCount) => {
 
-            if (!hasError) {
-                res.status(200);
-                res.json({
-                    "message": "Registration was successful"
-                })
-            }
-            else {
-                res.status(500);
-                res.json({
-                    "message": "Failed to register user due to a server error"
-                })
-            }
-        });
+                if (!hasError) {
+                    res.status(200);
+                    res.json({
+                        "message": "Registration was successful"
+                    })
+                }
+                else {
+                    res.status(500);
+                    res.json({
+                        "message": "Failed to register user due to a server error"
+                    })
+                }
+            });
         console.log("test3");
     })
 }
@@ -93,24 +93,84 @@ function deleteUser(req, res) {
 }
 
 
-//DUMMY FUNCTION!!!!
+
 //VINI.de/api/users
 function getUsers(req, res) {
 
     //CHECK DB-Connection: if available - return select all result; if not return dummy values
-    /*
-    dbHelper.getAllUsers((err, results) => {
-            if(result.length > 0){
 
-                //TODO convert results to appropriate JSON
-                res.send(results);
-                return true;
+    dbHelper.getAllUsers((err, results) => {
+            if (results.length > 0) {
+
+                let userPayload = [];
+                results.forEach(element => {
+                    let payloadItem = {
+                        date: element[8].creationDate[0],
+                        forename: element[5].forename[0],
+                        surname: element[6].surname[0],
+                        authorityLevel: element[4].authorityLevel[0],
+                        email: element[1].email[0],
+                        company: element[7].companyName[0]
+                    };
+                    userPayload.push(payloadItem);
+                });
+                res.status(200);
+                res.send(JSON.stringify({"users": userPayload}));
+
+
+            } else { //send dummy
+                let transactionPayload = [];
+
+
+                const payloadItem1 = {
+                    date: "11.06.2008",
+                    forename: "Ernst",
+                    surname: "Mustermann",
+                    authorityLevel: "TUEV",
+                    action: "dummy",
+                    email: "queryMail",
+                    company: "TUEV"
+                };
+                const payloadItem2 = {
+                    date: "11.06.2018",
+                    forename: "Brigitte",
+                    surname: "Mustermann",
+                    authorityLevel: "ZWS",
+                    action: "dummy",
+                    email: "queryMail",
+                    company: "KFZ Bongard"
+                };
+                const payloadItem3 = {
+                    date: "11.06.2018",
+                    forename: "Johnathan",
+                    surname: "Mustermann",
+                    authorityLevel: "STVA",
+                    action: "dummy",
+                    email: "queryMail",
+                    company: "Amt X"
+                };
+                const payloadItem4 = {
+                    date: "12.06.2018",
+                    forename: "Gabi",
+                    surname: "Mustermann",
+                    authorityLevel: "ASTVA",
+                    action: "dummy",
+                    email: "queryMail",
+                    company: "Amt Y"
+                };
+
+                transactionPayload.push(payloadItem1);
+                transactionPayload.push(payloadItem2);
+                transactionPayload.push(payloadItem3);
+                transactionPayload.push(payloadItem4);
+                const msg = JSON.stringify({transactionPayload});
+                res.send(msg);
             }
         }
     );
-*/
-    //DUMMY
 
+    //DUMMY
+    /*
     let transactionPayload = [];
 
 
@@ -156,7 +216,7 @@ function getUsers(req, res) {
     transactionPayload.push(payloadItem3);
     transactionPayload.push(payloadItem4);
     const msg = JSON.stringify({transactionPayload});
-    res.send(msg);
+    res.send(msg);*/
 }
 
 
@@ -214,14 +274,13 @@ function isAuthorised(req, res, next) {
     }
 }
 
-function errorHandling(response, status, message)
-{
+function errorHandling(response, status, message) {
     const url = require('url');
     const query = url.format({
         pathname: '/error',
         query: {
-        "status": status,
-        "message": message
+            "status": status,
+            "message": message
         }
     });
 
