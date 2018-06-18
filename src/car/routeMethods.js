@@ -1,6 +1,5 @@
-import {getCarAddressFromVin, getUserInfoFromToken} from "../database/dbHelper";
 import Transaction from "../blockchain/transaction";
-import {sendTransaction} from "../blockchain/ethNode";
+import {sendTransaction, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
@@ -15,14 +14,14 @@ function updateMileage(req, res) {
         });
         return false;
     }
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
+    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if (carAddress === null) {
             console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -184,14 +183,14 @@ function shopService(req, res) {
         });
         return false;
     }
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
+    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if (carAddress === null) {
             console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -232,14 +231,14 @@ function tuevEntry(req, res) {
         return false;
     }
 
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
+    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
+        if (carAddress === null) {
             console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Unknown vin!"});
             return false;
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -278,14 +277,24 @@ function stvaRegister(req, res) {
         return false;
     }
 
-    getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if(carAddress === null){
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
+    dbHelper.getCarAddressFromVin(req.body.vin, async (err, carAddress) => {
+        if (carAddress === null) {
+            console.log("carAddress not found: Creating new one");
+            // VIN not in DB yet -> Create it
+            const carAccount = createCarAccount();
+
+            const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, getTimestamp());
+
+            if (result == null) {
+                console.log("Error while registering new car");
+                res.status(500);
+                res.json({
+                    "message": "Error while registering new car"
+                });
+            }
         }
-        getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
+
+        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (userKey, email) => {
 
             const transaction = new Transaction(userKey, carAddress, req.body.timestamp);
             transaction.setMileage(req.body.mileage);
@@ -311,8 +320,7 @@ function stvaRegister(req, res) {
     });
 }
 
-function getAllAnnulmentTransactions(req, res)
-{
+function getAllAnnulmentTransactions(req, res) {
     dbHelper.getAnnulmentTransactionsFromDB((error, results) => {
         if (error) {
             res.status(500);
@@ -320,8 +328,7 @@ function getAllAnnulmentTransactions(req, res)
                 "message": "Failure at getting annulment transactions"
             });
         }
-        else
-        {
+        else {
             const trxBody = {
                 id: results[0],
                 transactionHash: results[1],
