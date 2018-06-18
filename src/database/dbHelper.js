@@ -68,7 +68,7 @@ function doesUserExist(email, callback) {
     dbConnection.query(queryString, sqlCallback)
 }
 
-function deleteUserFromDB(email, callback) {
+function blockUserInDB(email, callback) {
     const query = `
     BEGIN TRANSACTION
     IF EXISTS (SELECT * FROM bearer_tokens WITH (updlock,serializable) 
@@ -76,7 +76,7 @@ function deleteUserFromDB(email, callback) {
     BEGIN
     DELETE FROM bearer_tokens WHERE user_id LIKE (SELECT id FROM users WHERE email LIKE '${email}')
     END
-    DELETE FROM users WHERE email = '${email}'
+    UPDATE users SET blocked = 1 WHERE email = '${email}'
     COMMIT TRANSACTION
     `;
     const sqlCallback = (err, results) => {
@@ -146,6 +146,7 @@ function getAllUsers(callback){
 
     dbConnection.query(queryString, sqlCallback,true);
 }
+
 function addAnnulmentTransaction(transactionHash, timestamp) {
 
     const queryString = `INSERT INTO annulment_transactions (transactionHash, creationDate, executed) VALUES ('${transactionHash}', '${timestamp}', 'false');`;
@@ -154,6 +155,31 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 
         const isUserRegistered = (result) !== null ? result.length > 0 : null;
         callback(error, isAnnulementRequested);
+    };
+
+    dbConnection.query(queryString, sqlCallback);
+}
+
+//TODO: Testen
+function getHeadTransactionHash(publicKeyCar, callback){
+    const queryString = `SELECT headTx FROM kfz WHERE publicKey = '${publicKeyCar}'`;
+
+    const sqlCallback = (err, result) => {
+        callback(err,result);
+    };
+
+    dbConnection.query(queryString, sqlCallback,true);
+}
+
+//TODO: Testen
+function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
+
+    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${publicKeyCar}';`;
+
+    const sqlCallback = (error, result) => {
+
+        const isHeadTxUpdated = (result) !== null ? result.length > 0 : null;
+        callback(error, isHeadTxUpdated);
     };
 
     dbConnection.query(queryString, sqlCallback);
@@ -176,10 +202,12 @@ module.exports = {
     "registerCarInDB": registerCarInDB,
     "getUserFromCredentials": getUserFromCredentials,
     "doesUserExist": doesUserExist,
-    "deleteUserFromDB": deleteUserFromDB,
+    "blockUserInDB": blockUserInDB,
     "getCarAddressFromVin": getCarAddressFromVin,
     "getUserInfoFromToken": getUserInfoFromToken,
     "checkUserAuthorization": checkUserAuthorization,
     "getAllUsers": getAllUsers,
-    "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB
+    "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB,
+    "getHeadTransactionHash": getHeadTransactionHash,
+    "updateHeadTransactionHash": updateHeadTransactionHash
 };

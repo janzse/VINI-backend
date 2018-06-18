@@ -52,7 +52,7 @@ function registerUser(req, res) {
     })
 }
 
-function deleteUser(req, res) {
+function blockUser(req, res) {
 
     if (req.body.email == null || req.get("Authorization") == null) {
         console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
@@ -65,18 +65,18 @@ function deleteUser(req, res) {
 
     dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
         if (doesUserExist !== null) {
-            dbHelper.deleteUserFromDB(req.body.email, (err, isUserDeleted) => {
+            dbHelper.blockUserInDB(req.body.email, (err, isUserDeleted) => {
                 console.log("isUserDeleted: ", isUserDeleted);
                 if (isUserDeleted !== null) {
                     res.status(200);
-                    res.send(({"message": "Deletion was successful"}))
+                    res.send(({"message": "Block was successful"}))
                     return;
                 }
                 else {
-                    console.log("Error while deleting user: ", err);
+                    console.log("Error while block user: ", err);
                     res.status(500);
                     res.send({
-                        "message": "Failed to delete user due to a server error"
+                        "message": "Failed to block user due to a server error"
                     })
                     return;
                 }
@@ -294,7 +294,7 @@ module.exports = {
     "registerUser": registerUser,
     "login": login,
     "isAuthorised": isAuthorised,
-    "deleteUser": deleteUser,
+    "blockUser": blockUser,
     "getUsers": getUsers,
     "errorHandling": errorHandling
 };

@@ -1,9 +1,10 @@
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('3333IIII', 3, '2018-06-11 19:52:48.120');
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('54b293622e2ebd912ba5462afeaa3414e398070e', 13, '2018-06-11 19:52:48.120');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('1009f3f597abd0dc889a920bf43877f06cf24d23', 11, '2018-06-16 17:44:57.347');
 INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('5c290618704a9541919bd8230561cb1535dcfdb1', 5, '2018-06-11 19:52:48.120');
 INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('5e7443ab43e7db38508dfba70eae4a51eb5d13e3', 16, '2018-06-11 19:52:48.120');
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('89f7b52f91db5c76e7d8459378297a58f8d20548', 17, '2018-06-11 19:52:48.120');
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('a243d6541f91ec53d5d49eeb752059b45a9e6b1e', 43, '2018-06-11 19:52:48.120');
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('b2be56773435ef6c44d798f289869e2892565ee5', 1, '2032-06-11 19:52:48.120');
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('d9a840b1338883cf3745fb462fb32f97c72bcc7f', 45, '2018-06-11 19:52:48.120');
-INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('fc8350177096883099b652480299135248d356af', 11, '2018-06-11 19:52:48.120');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('69265a6984d4f0cdc48b4093b18558b65f323328', 13, '2018-06-16 16:52:21.127');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('8a366ebfe682fa6e6e74c203dfc05a0dd37e925a', 1, '2018-06-18 14:15:28.640');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('a5297f5db808dc2ea0265bbd185e895115373dfa', 8, '2018-06-18 10:08:20.780');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('a74b0debd96954f807451074ac3eefe7918f1b7b', 3, '2018-06-11 19:52:48.120');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('b219ba87915fb36e13a9a75955108b15f9770b70', 6, '2018-06-18 12:21:17.710');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('b243d6541f91ec53d5d49eeb752059b45a9e6b1e', 124, '2018-12-12 12:00:00.000');
+INSERT INTO [vini-database].dbo.bearer_tokens (token, user_id, expiration) VALUES ('c66c49a3c990ddb3d95eb18986ee5e9980c005c1', 9, '2018-06-18 18:27:28.013');

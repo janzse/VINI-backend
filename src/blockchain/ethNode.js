@@ -29,6 +29,8 @@ function sendTransaction(transaction, callback) {
         return;
     }
 
+    //let lastTransacctionHash = dbHelper.getHeadTransactionHash(transaction.to);
+
     web3.eth.net.isListening()
         .then(() => {
             web3.eth.sendTransaction({
@@ -37,7 +39,7 @@ function sendTransaction(transaction, callback) {
                 "gas": 100000,
                 "data": web3.utils.toHex(JSON.stringify(transaction.data))
             }, (err, hash) => {
-                //TODO: Aktuelle Transaktion in die Datenbank schreiben
+                //dbHelper.updateHeadTransactionHash(transaction.to, hash);
                 callback(err)
             });
         })
@@ -79,129 +81,22 @@ async function getTransaction(transHash) {
     }
 }
 
-async function getBlock(blockIdentifier) {
+//TODO: Testing on real blockchain transactions
+async function getAllTransactions(headTxHash) {
+    let transactions = [];
+    let currentHash = headTxHash;
     try {
-        await web3.eth.net.isListening();
-        return await web3.eth.getBlock(blockIdentifier);
-    }
-    catch (err) {
-        console.error("Error while getting Block: ", "\n", err);
-    }
-}
-
-async function getBlockTransactionCount(blockNumber) {
-    try {
-        await web3.eth.net.isListening();
-        return await web3.eth.getBlockTransactionCount(blockNumber);
-    }
-    catch (err) {
-        console.error("Error while getting TransactionCount: \n", err);
-    }
-}
-
-async function getBlockNumber() {
-    try {
-        await web3.eth.net.isListening();
-        return await web3.eth.getBlockNumber();
-    }
-    catch (err) {
-        console.error("Error while getting Blocknumber: ", "\n", err);
-    }
-}
-
-async function getTransactionCountFirst1000Blocks() {
-    let response = [];
-    console.log("Response empty: ", response.length);
-    let callback = function (err, res) {
-        if (!err) {
-            console.log("Callback response: ", res);
-            response.push(res);
-        }
-        else {
-            console.log("Error ins batch processing callback.")
-        }
-    };
-    try {
-        await web3.eth.net.isListening();
-        let currentBlockNumber = await web3.eth.getBlockNumber();
-        let batchRequest = new web3.eth.BatchRequest();
-        for (let i = currentBlockNumber; i >= currentBlockNumber - 1000; i--) {
-            batchRequest.add(web3.eth.getBlockTransactionCount.request(i, callback));
-        }
-        batchRequest.execute();
-        console.log("Response: ", response);
-    }
-    catch (err) {
-        console.error("Error while getting Transactions for first 1000 Blocks: ", "\n", err);
-    }
-}
-
-async function getAllTransactions(publicKeyCar) {
-    try {
-        let transactions = [];
-        let lastTransactionHash = await getLastTransactionHash();
-        while (true) {
-            let currentTransaction = await getTransaction(lastTransactionHash);
+        let currentTransaction = await getTransaction(lastTransactionHash);
+        while (currentTransaction.payload.pretransaction !== null) {
+            currentHash = currentTransaction.payload.pretransaction;
+            currentTransaction = await getTransaction(currentHash);
             transactions.add = currentTransaction;
-            if (currentTransaction.payload.pretransaction != null) {
-                lastTransactionHash = currentTransaction.payload.pretransaction;
-            }
-            else {
-                return transactions;
-            }
         }
     }
     catch (err) {
         console.log("Error while getting transactions", err);
     }
-}
-
-async function getLastTransactionHash(publicKeyCar, callback) {
-    let lastTransactionHash = null;
-    let err = false;
-    try {
-        let lastBlockNumber = await getBlockNumber();
-        console.log("Latest block number: ", lastBlockNumber);
-        //let block = await getBlock(latestBlockNumber);
-        //let transactionCount = await getBlockTransactionCount(lastBlockNumber);
-        //console.log("First Block: ",block);
-
-        let start = new Date().getTime();
-        let k = 100;
-        for (let i = 1; i <= k; i++) {
-            let blockNumber = lastBlockNumber;
-            while (blockNumber >= 1) {
-                let transactionCount = await getBlockTransactionCount(blockNumber);
-                console.log("Blocknummer: ", blockNumber);
-                console.log("Block transaction length: ", transactionCount);
-                blockNumber = blockNumber - 1;
-                if (transactionCount > 0) {
-                    console.log("JUHUUU Transaktionen!! ---------------------------------------")
-                }
-                /*if (block.transactions.length !== 0) {
-                    block.transactions.reverse().forEach(function (transaction) {
-                        console.log("Transaction: ", transaction);
-                        if (lastTransactionHash == null && transaction.to === publicKeyCar) {
-                            lastTransactionHash = transaction.payload.pretransaction;
-                        }
-                    })
-                }
-                if (blockNumber !== 1) {
-                    latestBlockNumber = blockNumber - 1;
-                    block = await getBlock(blockNumber);
-                }
-                else break;*/
-
-            }
-        }
-        let stop = new Date().getTime();
-        console.log("Laufzeit für ", (k * lastBlockNumber), " Aufrufe: ", Math.floor((stop - start) / 1000), " s")
-    }
-    catch (e) {
-        err = true;
-        console.log("Error while getting last transaction hash", e);
-    }
-    return callback(err, lastTransactionHash);
+    return transactions;
 }
 
 function createUserAccount() {
@@ -241,10 +136,5 @@ module.exports = {
     "createUserAccount": createUserAccount,
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
-    "sendSignedTransaction": sendSignedTransaction,
-    "getBlockNumber": getBlockNumber,
-    "getTransaction": getTransaction,
-    "getBlock": getBlock,
-    "getAllTransactions": getAllTransactions,
-    "getLastTransactionHash": getLastTransactionHash
+    "getAllTransactions": getAllTransactions
 };
