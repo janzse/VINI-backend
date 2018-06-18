@@ -16,19 +16,19 @@ Stand 11.06.2018
 
 ## /api/car/mileage
 
-- [POST] Schreibt Transaktion in die BlockChain.
+- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
 
 ## /api/car/register
 
-- [POST] Schreibt Transaktion in die BlockChain.
+- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
 
 ## /api/car/service
 
-- [POST] Schreibt Transaktion in die BlockChain.
+- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
 
 ## /api/car/tuev
 
-- [POST] Schreibt Transaktion in die BlockChain.
+- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
 
 ## /api/login
 
@@ -41,7 +41,7 @@ Stand 11.06.2018
 
 ## /api/users/login
 
-- [POST] Gibt Testnachricht zurück.
+- [POST] Funktioniert.
 
 ## /api/users/register
 
