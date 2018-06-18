@@ -81,7 +81,6 @@ function blockUserInDB(email, callback) {
     `;
     const sqlCallback = (err, results) => {
         const isUserDeleted = results != null;
-        console.log("deleteUserFromDB - sqlCallback")
         callback(err, isUserDeleted);
     };
 
