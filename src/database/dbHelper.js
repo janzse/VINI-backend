@@ -41,8 +41,6 @@ function getUserFromCredentials(email, password, callback) {
             return;
         }
 
-        //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf
-        // benötigt wird
         let usersResult = {
             "id": result[0],
             "email": result[1],

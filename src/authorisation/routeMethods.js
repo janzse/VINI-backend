@@ -30,7 +30,6 @@ function registerUser(req, res) {
         console.log("test");
         const userKeys = createUserAccount();
         console.log("test2");
-        //TODO: Alle Werte in die DB schreiben
         dbHelper.registerUserInDB(req.body.email, req.body.password, userKeys.privateKey, userKeys.publicKey,
             req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
             false, (hasError, rowCount) => {
