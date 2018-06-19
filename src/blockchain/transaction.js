@@ -2,7 +2,7 @@ import {toHexString} from "../utils"
 
 class Transaction {
 
-    constructor(from, to, email, vin, timestamp) {
+    constructor(from, email, vin, to, timestamp) {
 
         this.from = toHexString(from); // String: sender address where the TX originated from (STVAWallet)
         this.to = toHexString(to); // String: recipient address (a carWallet)
@@ -17,7 +17,7 @@ class Transaction {
             "serviceOne": null,
             "serviceTwo": null,
             "oilChange": null,
-            "inspection": null,
+            "mainInspection": null,
             "annulmentTarget": null,
             "nextCheck": null
         };
@@ -43,12 +43,12 @@ class Transaction {
         this.data.serviceTwo = serviceTwo;
     }
 
-    setOilchange(oilchange){
-        this.data.oilChange = oilchange;
+    setOilChange(oilChange){
+        this.data.oilChange = oilChange;
     }
 
-    setInspection(inspection){
-        this.data.inspection = inspection;
+    setMainInspection(mainInspection){
+        this.data.mainInspection = mainInspection;
     }
 
     annulmentTarget(annulmentTarget){
@@ -59,5 +59,6 @@ class Transaction {
         this.data.nextCheck = nextCheck;
     }
 }
+
 
 module.exports = Transaction;

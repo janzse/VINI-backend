@@ -1,5 +1,5 @@
 import Transaction from "../blockchain/transaction";
-import {sendTransaction, sendSignedTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
+import {sendTransaction, sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 import {getTimestamp} from "../utils";
 
@@ -80,7 +80,7 @@ async function getCarByVin(req, res) {
             service2: true,
             oilChange: false,
             mainInspection: true,
-            nextcheck: getTimestamp(),
+            nextCheck: getTimestamp(),
             ownerCount: 4,
             entrant: "d@d.de",
             state: "valid",
@@ -93,7 +93,7 @@ async function getCarByVin(req, res) {
             service2: true,
             oilChange: false,
             mainInspection: true,
-            nextcheck: getTimestamp(),
+            nextCheck: getTimestamp(),
             ownerCount: 5,
             entrant: "c@c.de",
             state: "invalid",
@@ -106,7 +106,7 @@ async function getCarByVin(req, res) {
             service2: true,
             oilChange: true,
             mainInspection: false,
-            nextcheck: getTimestamp(),
+            nextCheck: getTimestamp(),
             ownerCount: 5,
             entrant: "b@b.de",
             state: "rejected",
@@ -119,7 +119,7 @@ async function getCarByVin(req, res) {
             service2: true,
             oilChange: true,
             mainInspection: false,
-            nextcheck: getTimestamp(),
+            nextCheck: getTimestamp(),
             ownerCount: 5,
             entrant: "a@a.de",
             state: "open",
@@ -170,8 +170,9 @@ async function getCarByVin(req, res) {
                 mileage: element.data.mileage,
                 service1: element.data.serviceOne,
                 service2: element.data.serviceTwo,
-                oilchange: element.data.oilChange,
-                nextcheck: element.data.inspection,
+                oilChange: element.data.oilChange,
+                mainInspection: element.data.mainInspection,
+                nextCheck: element.data.nextCheck,
                 ownerCount: element.data.preOwner,
                 entrant: element.data.entrant,
                 state: element.data.state
@@ -233,7 +234,7 @@ async function shopService(req, res) {
     transaction.setMileage(req.body.mileage);
     transaction.setServiceOne(req.body.service1);
     transaction.setServiceTwo(req.body.service1);
-    transaction.setOilchange(req.body.oilChange);
+    transaction.setOilChange(req.body.oilChange);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
 
@@ -424,7 +425,7 @@ async function getAllAnnulmentTransactions(req, res) {
         */
         const annulment = {
             transactionHash: results[0],
-            rejected: results[1],
+            pending: results[1],
             user_id: results[2],
             vin: results[3]
         };
@@ -432,6 +433,59 @@ async function getAllAnnulmentTransactions(req, res) {
             "annulment": annulment
         });
     }
+}
+
+async function insertAnnulmentTransaction(req, res){
+
+    const hash = req.body.transactionHash;
+    const userId =  req.body.userId;
+
+    if(hash == null || hash.length < 64 || req.body.userId == null){
+        console.log("Invalid request for annulment. To create an annulment transaction a transactionHash and a userId is required.");
+        res.status(400);
+        res.json({
+            "message": "Invalid request for annulment. To create an annulment transaction a transactionHash and a userId is required."
+        });
+        return;
+    }
+
+    const annulment = await dbHelper.getAnnulment(hash, userId);
+
+    if(annulment.length > 0){
+        console.log("Annulment transaction already exists.");
+        res.status(409);
+        res.json({
+           "message": "Annulment transaction already exists."
+        });
+        return;
+    }
+
+    const transaction = await getTransaction(hash);
+
+    if(transaction == null){
+        console.log("No transaction found with hash:", hash);
+        res.status(400);
+        res.json({
+            "message": "No transaction found with hash: " + hash
+        });
+        return;
+    }
+
+    const insertResult = await dbHelper.insertAnnulment(hash, userId);
+
+    if(insertResult == null){
+        console.log("Could not insert annulment transaction in DB");
+        res.status(500);
+        res.json({
+            "message": "Could not insert annulment transaction in DB"
+        });
+        return;
+    }
+
+    res.status(200);
+    res.json({
+       "message": "Successfully inserted annulment transaction"
+    });
 }
 
 
@@ -443,5 +497,6 @@ module.exports = {
     "tuevEntry": tuevEntry,
     "stvaRegister": stvaRegister,
     "getCarByVin": getCarByVin,
-    "getAllAnnulmentTransactions": getAllAnnulmentTransactions
+    "getAllAnnulmentTransactions": getAllAnnulmentTransactions,
+    "insertAnnulmentTransaction": insertAnnulmentTransaction
 };

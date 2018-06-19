@@ -1,10 +1,14 @@
 # RestAPI Routen
 
-Stand 11.06.2018
+Stand 19.06.2018
 
 ## /api/car
 
 - [GET] Gibt Test-Nachricht mit der übergebenen vin zurück.
+
+## /api/car/annulment
+
+- [POST] Erstellt eine neue Annulment Transaktion zu einem übergebenen transactionsHash + userId
 
 ## /api/car/applyCancelTransactions
 
