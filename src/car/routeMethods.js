@@ -68,7 +68,7 @@ async function updateMileage(req, res) {
 
 async function getCarByVin(req, res) {
     // TODO delete me (when this is working)
-    if (req.query.vin === "dummy" || "W0L000051T2123456") {
+    if (req.query.vin === "dummy" || req.query.vin === "W0L000051T2123456") {
 
         let transactionPayload = [];
 
