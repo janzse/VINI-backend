@@ -120,8 +120,7 @@ async function getUsers(req, res) {
             surname: "Mustermann",
             authorityLevel: "TUEV",
             email: "queryMail",
-            company: "TUEV",
-            blocked: false
+            company: "TUEV"
         };
         const payloadItem2 = {
             date: "11.06.2018",
@@ -129,8 +128,7 @@ async function getUsers(req, res) {
             surname: "Mustermann",
             authorityLevel: "ZWS",
             email: "queryMail",
-            company: "KFZ Bongard",
-            blocked: true
+            company: "KFZ Bongard"
         };
         const payloadItem3 = {
             date: "11.06.2018",
@@ -138,8 +136,7 @@ async function getUsers(req, res) {
             surname: "Mustermann",
             authorityLevel: "STVA",
             email: "queryMail",
-            company: "Amt X",
-            blocked: false
+            company: "Amt X"
         };
         const payloadItem4 = {
             date: "12.06.2018",
@@ -147,8 +144,7 @@ async function getUsers(req, res) {
             surname: "Mustermann",
             authorityLevel: "ASTVA",
             email: "queryMail",
-            company: "Amt Y",
-            blocked: true
+            company: "Amt Y"
         };
 
         transactionPayload.push(payloadItem1);
