@@ -201,7 +201,7 @@ async function isAuthorised(req, res, next) {
     else {
         req.body.blocked = authResult[0];
         req.body.authorityLevel = authResult[2];
-        console.log("Check user authorization result: ", userBody);
+        console.log("Check user authorization result: ", req.body.blocked, req.body.authorityLevel);
         next();
     }
 }
