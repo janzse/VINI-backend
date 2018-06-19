@@ -1,9 +1,6 @@
-test('Init test case', () => {
-    expect(1).toBe(1);
-});
 test('Transaction instanciate', () => {
-    const Transaction=require("../../src/blockchain/transaction");
+    var Transaction=require("../../src/blockchain/transaction");
 
-    let t=new Transaction();
+    let t=new Transaction("sender","receiver","1970-01-01");
     expect(t).toBeInstanceOf(Transaction)
 });
