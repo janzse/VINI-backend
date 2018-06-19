@@ -357,6 +357,15 @@ async function stvaRegister(req, res) {
             });
             return;
         }
+    } else { //car already exists, abort!
+        console.log("Error while registering new car: car already exists!");
+        res.status(400);
+        res.json({
+            "message": "Error while registering new car: car already exists!"
+        });
+        return;
+
+
     }
 
     const token = req.get("Authorization").slice("Bearer ".length);
