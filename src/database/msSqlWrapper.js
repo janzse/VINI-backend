@@ -79,7 +79,7 @@ function executeSql(query) {
             // This collects all non-null rows in an array
             columns.forEach((column) => {
                 if (column.value != null) {
-                    if (column.metadata.colName == "transactionHash")
+                    if (column.metadata.colName === "transactionHash")
                         resultValues.push("0x"+column.value);
                     else
                         resultValues.push(column.value);
