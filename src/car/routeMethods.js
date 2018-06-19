@@ -35,9 +35,8 @@ async function updateMileage(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
-    transaction.setEmail(userInfo.email);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
 
@@ -230,12 +229,11 @@ async function shopService(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setServiceOne(req.body.service1);
     transaction.setServiceTwo(req.body.service1);
     transaction.setOilchange(req.body.oilChange);
-    transaction.setEmail(userInfo.email);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
 
@@ -294,10 +292,9 @@ async function tuevEntry(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setNextCheck(req.body.nextCheck);
-    transaction.setEmail(userInfo.email);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
 
@@ -371,10 +368,9 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setPreOwner(req.body.ownerCount);
-    transaction.setEmail(userInfo.email);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
 
