@@ -192,6 +192,9 @@ async function isAuthorised(req, res, next) {
     if (authResult == null || authResult.length === 0) {
         errorHandling(res, 403, "No result from user authorization");
     }
+    else if ((Date.parse(authResult[3]) - Date.now()) < 0){
+        errorHandling(res, 401, "Bearer token expired");
+    }
     else if (authResult[0] === true) {
         errorHandling(res, 401, "User is blocked");
     }
