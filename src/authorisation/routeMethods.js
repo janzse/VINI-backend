@@ -81,7 +81,7 @@ async function blockUser(req, res) {
     if (req.body.authorityLevel !== 4){
         res.status(401);
         res.json({
-            "message": "User is not authorized to register new user"
+            "message": "User is not authorized to block user"
         });
 
         return;
@@ -120,7 +120,7 @@ async function getUsers(req, res) {
     if (req.body.authorityLevel !== 4){
         res.status(401);
         res.json({
-            "message": "User is not authorized to register new user"
+            "message": "User is not authorized to retrieve user data"
         });
 
         return;
