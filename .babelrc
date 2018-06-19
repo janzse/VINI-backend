@@ -1,0 +1,21 @@
+{
+  "presets": [
+    [
+      "env", {
+        "es2017": {
+          "modules": true
+        }
+      }
+    ],
+  ],
+  "plugins": [
+	"syntax-dynamic-import",
+    "transform-runtime",
+    "lodash"
+  ],
+  "env": {
+    "test": {
+      "plugins": ["dynamic-import-node"]
+    }
+  },
+}
