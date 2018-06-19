@@ -111,50 +111,8 @@ async function getUsers(req, res) {
         });
     }
     else {
-        //send dummy
-        let transactionPayload = [];
-
-        const payloadItem1 = {
-            date: "11.06.2008",
-            forename: "Ernst",
-            surname: "Mustermann",
-            authorityLevel: "TUEV",
-            email: "queryMail",
-            company: "TUEV"
-        };
-        const payloadItem2 = {
-            date: "11.06.2018",
-            forename: "Brigitte",
-            surname: "Mustermann",
-            authorityLevel: "ZWS",
-            email: "queryMail",
-            company: "KFZ Bongard"
-        };
-        const payloadItem3 = {
-            date: "11.06.2018",
-            forename: "Johnathan",
-            surname: "Mustermann",
-            authorityLevel: "STVA",
-            email: "queryMail",
-            company: "Amt X"
-        };
-        const payloadItem4 = {
-            date: "12.06.2018",
-            forename: "Gabi",
-            surname: "Mustermann",
-            authorityLevel: "ASTVA",
-            email: "queryMail",
-            company: "Amt Y"
-        };
-
-        transactionPayload.push(payloadItem1);
-        transactionPayload.push(payloadItem2);
-        transactionPayload.push(payloadItem3);
-        transactionPayload.push(payloadItem4);
-
-        res.json({
-            transactionPayload
-        });
+        res.status(500);
+        res.json({"message": "Datenbankverbindung fehlgeschlagen."});
     }
 }
 
