@@ -30,7 +30,7 @@ async function registerUser(req, res) {
     if (doesUserExist) {
         res.status(400);
         res.json({
-            "message": "User with email <" + req.body.email + "> already exists"
+            "message": "Es existiert bereits ein Benutzer mit der E-Mail-Adresse."
         });
 
         return;
@@ -54,13 +54,13 @@ async function registerUser(req, res) {
     if (registerResult == null) {
         res.status(500);
         res.json({
-            "message": "Failed to register user due to a server error"
+            "message": "Fehler bei der Registrierung."
         });
     }
     else {
         res.status(200);
         res.json({
-            "message": "Registration was successful"
+            "message": "Der Benutzer wurde erfolgreich erstellt."
         });
     }
 }
@@ -92,7 +92,7 @@ async function blockUser(req, res) {
     if (!doesUserExists) {
         res.status(400);
         res.send({
-            "message": "User with email " + email + " does not exist"
+            "message": "Der Benutzer wurde nicht gefunden."
         });
 
         return;
@@ -103,13 +103,13 @@ async function blockUser(req, res) {
     if (blockResult != null && blockResult.length === 0) {
         res.status(200);
         res.json({
-            "message": "Block was successful"
+            "message": "Der Benutzer wurde erfolgreich entfernt."
         });
     }
     else {
         res.status(500);
         res.json({
-            "message": "Failed to block user due to a server error"
+            "message": "Der Benutzer konnte aufgrund eines Serverfehlers nicht gelöscht werden."
         });
     }
 }
@@ -128,54 +128,8 @@ async function getUsers(req, res) {
         });
     }
     else {
-        //send dummy
-        let transactionPayload = [];
-
-        const payloadItem1 = {
-            date: "11.06.2008",
-            forename: "Ernst",
-            surname: "Mustermann",
-            authorityLevel: "TUEV",
-            action: "dummy",
-            email: "queryMail",
-            company: "TUEV"
-        };
-        const payloadItem2 = {
-            date: "11.06.2018",
-            forename: "Brigitte",
-            surname: "Mustermann",
-            authorityLevel: "ZWS",
-            action: "dummy",
-            email: "queryMail",
-            company: "KFZ Bongard"
-        };
-        const payloadItem3 = {
-            date: "11.06.2018",
-            forename: "Johnathan",
-            surname: "Mustermann",
-            authorityLevel: "STVA",
-            action: "dummy",
-            email: "queryMail",
-            company: "Amt X"
-        };
-        const payloadItem4 = {
-            date: "12.06.2018",
-            forename: "Gabi",
-            surname: "Mustermann",
-            authorityLevel: "ASTVA",
-            action: "dummy",
-            email: "queryMail",
-            company: "Amt Y"
-        };
-
-        transactionPayload.push(payloadItem1);
-        transactionPayload.push(payloadItem2);
-        transactionPayload.push(payloadItem3);
-        transactionPayload.push(payloadItem4);
-
-        res.json({
-            transactionPayload
-        });
+        res.status(500);
+        res.json({"message": "Datenbankverbindung fehlgeschlagen."});
     }
 }
 
