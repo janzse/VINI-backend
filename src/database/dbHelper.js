@@ -158,17 +158,11 @@ function getHeadTransactionHash(publicKeyCar, callback) {
 
 //TODO: Testen
 //TODO: Auf async/await ändern, sofern verwendet
-function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
+async function updateHeadTransactionHash(publicKeyCar, headTxHash) {
 
     const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${toBasicString(publicKeyCar)}';`;
 
-    const sqlCallback = (error, result) => {
-
-        const isHeadTxUpdated = (result) !== null ? result.length > 0 : null;
-        callback(error, isHeadTxUpdated);
-    };
-
-    dbConnection.query(queryString, sqlCallback);
+    return await dbConnection.query(queryString);
 }
 
 async function getAnnulmentTransactionsFromDB() {
