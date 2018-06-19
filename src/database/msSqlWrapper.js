@@ -4,84 +4,93 @@ let dbConnection = null;
 
 //TODO: Datenbankverbindung offen halten, statt jedes Mal zu schließen?
 
-function query(queryString, callback, json) {
+async function query(queryString) {
 
     if (dbConnection == null) {
-        initConnection(queryString, callback);
+        const conSuccess = await initConnection();
+
+        if (!conSuccess) {
+            return null;
+        }
     }
-    else {
-        executeSql(queryString, callback);
-    }
+    return await executeSql(queryString);
 }
 
-function initConnection(query, callback) {
-    console.log("Initializing DB connection");
+function initConnection() {
+    // Use of explicit promise, because of the event listeners
+    return new Promise((resolve) => {
+        console.log("Initializing DB connection");
 
-    dbConnection = new Connection({
-        userName: 'vini@vini.database.windows.net',
-        password: 't51sy9RbdohKsa',
-        server: 'vini.database.windows.net',
-        options: {
-            encrypt: true,
-            database: 'vini-database'
-        }
-    });
-
-    dbConnection.on('connect', (err) => {
-        if (err) {
-            console.log("Unable to connect to database!", err);
-        }
-        else {
-            console.log("Successfully connected to DB");
-            executeSql(query, callback);
-        }
-    });
-
-    dbConnection.on('end', () => {
-        console.log("DB connection has been closed.");
-        dbConnection = null;
-    })
-}
-
-function executeSql(query, callback) {
-    console.log("Begin query.");
-    let resultValues = [];
-    let hasError = false;
-
-    const request = new Request(query, (err, rowCount) => {
-        hasError = err;
-        if (err) {
-            console.log("Error while request was performed: ", err);
-            return;
-        }
-        else {
-            console.log("Got", rowCount, "row(s)");
-        }
-        dbConnection.close();
-    });
-
-    request.on('requestCompleted', () => {
-        callback(hasError, resultValues);
-    });
-
-    request.on('row', (columns) => {
-        // This collects all non-null rows in an array
-        columns.forEach((column) => {
-            if (column.value != null) {
-                resultValues.push(column.value);
+        dbConnection = new Connection({
+            userName: 'vini@vini.database.windows.net',
+            password: 't51sy9RbdohKsa',
+            server: 'vini.database.windows.net',
+            options: {
+                encrypt: true,
+                database: 'vini-database'
             }
         });
-    });
 
-    request.on('error', (err) => {
-        console.log("Error while executing ", query); // Might not be secure
-        hasError = true
-    });
+        dbConnection.on('connect', (err) => {
+            if (err) {
+                console.log("Unable to connect to database!", err);
+                resolve(null);
+            }
+            else {
+                console.log("Successfully connected to DB");
+                resolve(true);
+            }
+        });
 
-    dbConnection.execSql(request);
-    console.log("End of query.")
+        dbConnection.on('end', () => {
+            console.log("DB connection has been closed.");
+            dbConnection = null;
+        });
+    });
 }
 
+function executeSql(query) {
+    // Use of explicit promise, because of the event listeners
+    return new Promise((resolve) => {
+
+        console.log("Begin query.");
+        let resultValues = [];
+
+        const request = new Request(query, (err, rowCount) => {
+            if (err) {
+                console.log("Error while request was performed: ", err);
+                return;
+            }
+            else {
+                console.log("Got", rowCount, "row(s)");
+            }
+            dbConnection.close();
+        });
+
+        request.on('requestCompleted', () => {
+            resolve(resultValues);
+        });
+
+        request.on('row', (columns) => {
+            // This collects all non-null rows in an array
+            columns.forEach((column) => {
+                if (column.value != null) {
+                    resultValues.push(column.value);
+                }
+            });
+        });
+
+        request.on('error', (err) => {
+            console.log("Error while executing ", query, ":\n", err); // Might not be secure
+            resolve(null);
+        });
+
+        dbConnection.execSql(request);
+        console.log("End of query.")
+    });
+}
+
+//TODO: Auf async/await ändern, sofern verwendet
 function executeSqlJSON(query, callback) {
     console.log("Begin query.");
     let entries = [];
@@ -98,14 +107,14 @@ function executeSqlJSON(query, callback) {
         dbConnection.close();
     });
     request.on('requestCompleted', () => {
-        console.log('requestCompleted')
+        console.log('requestCompleted');
         callback(hasError, entries);
     });
     request.on('row', (columns) => {
-      let entry = [];
+        let entry = [];
         // This collects all non-null rows in an array
         columns.forEach((column) => {
-          entry.push({[column.metadata.colName]: [column.value]});
+            entry.push({[column.metadata.colName]: [column.value]});
         });
         entries.push(entry);
 

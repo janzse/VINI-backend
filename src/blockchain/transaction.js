@@ -26,6 +26,14 @@ class Transaction {
         this.data.email = email;
     }
 
+    setPreTransaction(hash){
+        this.data.preTransaction = hash;
+    }
+
+    setPreOwner(preOwner){
+        this.data.preOwner = preOwner;
+    }
+
     setMileage(mileage) {
         this.data.mileage = mileage;
     }
@@ -42,13 +50,17 @@ class Transaction {
         this.data.oilChange = oilchange;
     }
 
+    setInspection(inspection){
+        this.data.inspection = inspection;
+    }
+
+    setAnnulment(annulment){
+        this.data.annulment = annulment;
+    }
+
     setNextCheck(nextcheck){
         this.data.nextcheck = nextcheck;
     }
-
-    setpreOwner(preowner){
-        this.data.preOwner = preowner;
-    }
-};
+}
 
 module.exports = Transaction;
