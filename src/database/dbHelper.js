@@ -1,74 +1,56 @@
 import dbConnection from "./msSqlWrapper";
 
-function registerUserInDB(email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked, callback) {
+async function registerUserInDB(email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked) {
 
     const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
   creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
-    const sqlCallback = (err, result) => {
-
-        const isUserRegistered = (result) !== null ? result.length > 0 : null;
-        callback(err, isUserRegistered);
-    };
-
-    dbConnection.query(queryString, sqlCallback);
+    return await dbConnection.query(queryString);
 }
 
-function registerCarInDB(vin, privateKey, publicKey, creationDate) {
+async function registerCarInDB(vin, privateKey, publicKey, creationDate) {
 
-    return new Promise((resolve) => {
+    const queryString = `INSERT INTO kfz (vin, privateKey, publicKey, creationDate) VALUES ('${vin}', '${privateKey}', '${publicKey}', '${creationDate}')`;
 
-        const queryString = `INSERT INTO kfz (vin, privateKey, publicKey, creationDate) VALUES ('${vin}', '${privateKey}', '${publicKey}', '${creationDate}')`;
-
-        const sqlCallback = (err, result) => {
-            console.log("FINISHED QUERY: ", err, "res ", result);
-            resolve(err === true ? null : result);
-        };
-
-        dbConnection.query(queryString, sqlCallback);
-    });
+    return await dbConnection.query(queryString);
 }
 
-function getUserFromCredentials(email, password, callback) {
+async function updateCarHeadTx(publicKey, hash) {
+
+    const queryString = `UPDATE kfz SET headTx = '${hash}' WHERE publicKey = '${publicKey}'`;
+
+    return await dbConnection.query(queryString);
+}
+
+async function getUserFromCredentials(email, password) {
 
     const queryString = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}';`;
 
-    dbConnection.query(queryString, (err, result) => {
+    const result = await dbConnection.query(queryString);
 
-        if (result == null || result.length === 0) {
-            console.log("Invalid credentials");
-            callback(true, null); //FIXME stürzt ab POST /api/users/login 500 279.160 ms - 2531 OAuth2Error: false
-            return;
-        }
+    if (result == null || result.length === 0) {
+        console.log("Invalid credentials");
+        return null;
+    }
 
-        //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf
-        // benötigt wird
-        let usersResult = {
-            "id": result[0],
-            "email": result[1],
-            "password": result[2]
-        };
-
-        callback(false, usersResult);
-    });
+    //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf
+    return {
+        "id": result[0],
+        "email": result[1],
+        "password": result[2]
+    };
 }
 
-function doesUserExist(email, callback) {
+async function doesUserExist(email) {
 
     const queryString = `SELECT * FROM users WHERE email = '${email}'`;
 
-    // holds the results  from the query
-    const sqlCallback = (err, results) => {
+    const results = await dbConnection.query(queryString);
 
-        const doesUserExist = results !== null && results.length > 0 ? true : null;
-
-        callback(doesUserExist);
-    };
-
-    dbConnection.query(queryString, sqlCallback)
+    return results.length !== 0;
 }
 
-function blockUserInDB(email, callback) {
+async function blockUserInDB(email) {
     const query = `
     BEGIN TRANSACTION
     IF EXISTS (SELECT * FROM bearer_tokens WITH (updlock,serializable) 
@@ -79,74 +61,75 @@ function blockUserInDB(email, callback) {
     UPDATE users SET blocked = 1 WHERE email = '${email}'
     COMMIT TRANSACTION
     `;
-    const sqlCallback = (err, results) => {
-        const isUserDeleted = results != null;
-        console.log("deleteUserFromDB - sqlCallback");
-        callback(err, isUserDeleted);
-    };
 
-    dbConnection.query(query, sqlCallback);
+    return await dbConnection.query(query);
 }
 
-function getCarAddressFromVin(vin, callback) {
+async function getCarAddressFromVin(vin) {
 
     const queryString = `SELECT publicKey FROM kfz WHERE vin = '${vin}'`;
 
-    const sqlCallback = (err, results) => {
+    const result = await dbConnection.query(queryString);
 
-        if (results === null || results.length === 0) {
-            console.log("Could not find vin: ", vin);
-            callback(err, null);
-        }
-        else {
-            callback(err, results[0]);
-        }
-    };
+    if (result != null && result.length > 0) {
+        return result[0];
+    }
 
-    dbConnection.query(queryString, sqlCallback);
+    return null;
 }
 
-function getUserInfoFromToken(token, callback) {
-
+async function getUserInfoFromToken(token) {
     const queryString = `SELECT privateKey, publicKey, email FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
 
-    const sqlCallback = (err, results) => {
-        if (results.length === 0) {
-            console.log("Could not find user by bearerToken: ", token);
-        }
-        else {
-            callback(results[0], results[1], results[2]);
-        }
-    };
+    const result = await dbConnection.query(queryString);
 
-    dbConnection.query(queryString, sqlCallback);
+    if (result == null || result.length === 0) {
+        return null;
+    }
+
+    return {
+        "privateKey": result[0],
+        "address": result[1],
+        "email": result[2]
+    }
 }
 
-function checkUserAuthorization(token, callback) {
+async function checkUserAuthorization(token) {
     const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.token = '${token}'`;
 
-    const sqlCallback = (err, result) => {
-        if (result == null || result.length === 0) {
-            console.log("Could not find user by bearerToken: ", token);
-            callback(err, result);
-        }
-        else {
-            callback(err, result);
-        }
-    };
-    dbConnection.query(queryString, sqlCallback);
+    return await dbConnection.query(queryString);
 }
 
-function getAllUsers(callback){
+async function getAllUsers() {
     const queryString = 'SELECT * FROM users';
 
-    const sqlCallback = (err, results) => {
-        callback(err,results);
-    };
+    const results = await dbConnection.query(queryString);
 
-    dbConnection.query(queryString, sqlCallback,true);
+    if (results == null) {
+        return null;
+    }
+
+    // Cut array into right size
+    let users = [];
+
+    for (let i = 0; i < results.length; i += 11) {
+        users.push(results.slice(i, i + 11));
+    }
+
+    return users.map(element => {
+
+        return {
+            date: element[8],
+            forename: element[5],
+            surname: element[6],
+            authorityLevel: element[4],
+            email: element[1],
+            company: element[7]
+        };
+    });
 }
 
+//TODO: Auf async/await ändern, sofern verwendet
 function addAnnulmentTransaction(transactionHash, timestamp) {
 
     const queryString = `INSERT INTO annulment_transactions (transactionHash, creationDate, executed) VALUES ('${transactionHash}', '${timestamp}', 'false');`;
@@ -161,17 +144,19 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
 }
 
 //TODO: Testen
-function getHeadTransactionHash(publicKeyCar, callback){
+//TODO: Auf async/await ändern, sofern verwendet
+function getHeadTransactionHash(publicKeyCar, callback) {
     const queryString = `SELECT headTx FROM kfz WHERE publicKey = '${publicKeyCar}'`;
 
     const sqlCallback = (err, result) => {
-        callback(err,result);
+        callback(err, result);
     };
 
-    dbConnection.query(queryString, sqlCallback,true);
+    dbConnection.query(queryString, sqlCallback, true);
 }
 
 //TODO: Testen
+//TODO: Auf async/await ändern, sofern verwendet
 function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
 
     const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${publicKeyCar}';`;
@@ -185,21 +170,17 @@ function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
     dbConnection.query(queryString, sqlCallback);
 }
 
-function getAnnulmentTransactionsFromDB(callback)
-{
+async function getAnnulmentTransactionsFromDB() {
     const queryString = `SELECT at.transactionHash, at.creationDate kfz.vin FROM annulment_transactions as at,
                         kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
 
-    const sqlCallback = (error, results) => {
-        callback(error, results)
-    };
-
-    dbConnection.query(queryString, sqlCallback, true);
+    return await dbConnection.query(queryString);
 }
 
 module.exports = {
     "registerUserInDB": registerUserInDB,
     "registerCarInDB": registerCarInDB,
+    "updateCarHeadTx": updateCarHeadTx,
     "getUserFromCredentials": getUserFromCredentials,
     "doesUserExist": doesUserExist,
     "blockUserInDB": blockUserInDB,

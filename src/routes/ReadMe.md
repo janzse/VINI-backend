@@ -39,9 +39,13 @@ Stand 11.06.2018
 - [DEL] VERALTET De siehe /api/users/register
 - [POST] VERALTET De siehe /api/users/register
 
-## /api/users/login
+## /api/users/token
 
 - [POST] Funktioniert.
+
+## /api/users/login
+
+- [GET] Funktioniert.
 
 ## /api/users/register
 

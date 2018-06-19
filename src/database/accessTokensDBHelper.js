@@ -1,6 +1,6 @@
 import dbConnection from "./msSqlWrapper";
 
-function saveAccessToken(token, userID, expiration, callback) {
+async function saveAccessToken(token, userID, expiration) {
 
     // ON DUPLICATE gibt es in MSSQL nicht, wird durch eine Query ersetzt
     //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
@@ -17,26 +17,28 @@ function saveAccessToken(token, userID, expiration, callback) {
     insert into bearer_tokens (token, user_id, expiration) values ('${token}', ${userID}, '${expiration.toISOString()}');
     end
     commit tran`;
-    console.log(insertTokenQuery);
-    dbConnection.query(insertTokenQuery, callback);
+
+    return await dbConnection.query(insertTokenQuery);
 }
 
-function deleteAccessToken(userID, callback)
+async function deleteAccessToken(userID)
 {
     const insertTokenQuery = `DELETE FROM bearer_token WHERE user_id = '${userID}'`;
-    dbConnection.query(insertTokenQuery, callback);
+
+    await dbConnection.query(insertTokenQuery);
 }
 
-function getUserIDFromAccessToken(token, callback) {
+async function getUserIDFromAccessToken(token) {
 
     const getUserIDQuery = `SELECT user_id FROM bearer_tokens WHERE token = '${token}';`;
 
-    dbConnection.query(getUserIDQuery, (err, resultValues) => {
+    const result = await dbConnection.query(getUserIDQuery);
 
-        const userID = resultValues != null && resultValues.length === 1 ? resultValues[0] : null;
+    if(result == null || result.length === 0){
+        return null;
+    }
 
-        callback(userID);
-    });
+    return result[0];
 }
 
 
