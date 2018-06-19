@@ -119,7 +119,6 @@ async function getUsers(req, res) {
             forename: "Ernst",
             surname: "Mustermann",
             authorityLevel: "TUEV",
-            action: "dummy",
             email: "queryMail",
             company: "TUEV"
         };
@@ -128,7 +127,6 @@ async function getUsers(req, res) {
             forename: "Brigitte",
             surname: "Mustermann",
             authorityLevel: "ZWS",
-            action: "dummy",
             email: "queryMail",
             company: "KFZ Bongard"
         };
@@ -137,7 +135,6 @@ async function getUsers(req, res) {
             forename: "Johnathan",
             surname: "Mustermann",
             authorityLevel: "STVA",
-            action: "dummy",
             email: "queryMail",
             company: "Amt X"
         };
@@ -146,7 +143,6 @@ async function getUsers(req, res) {
             forename: "Gabi",
             surname: "Mustermann",
             authorityLevel: "ASTVA",
-            action: "dummy",
             email: "queryMail",
             company: "Amt Y"
         };

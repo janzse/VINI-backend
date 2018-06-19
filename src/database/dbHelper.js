@@ -101,7 +101,7 @@ async function checkUserAuthorization(token) {
 }
 
 async function getAllUsers() {
-    const queryString = 'SELECT * FROM users';
+    const queryString = 'SELECT * FROM users WHERE users.blocked = \'false\'';
 
     const results = await dbConnection.query(queryString);
 
@@ -125,6 +125,7 @@ async function getAllUsers() {
             authorityLevel: element[4],
             email: element[1],
             company: element[7]
+
         };
     });
 }
