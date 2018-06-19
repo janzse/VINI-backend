@@ -62,6 +62,7 @@ const getTimestamp = () => {
 };
 
 function getCarByVin(req, res) {
+    // TODO delete me (when this is working)
     if (req.query.vin === "dummy" || "W0L000051T2123456") {
         let transactionPayload = [];
 
