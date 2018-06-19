@@ -13,7 +13,10 @@ async function query(queryString) {
             return null;
         }
     }
-    return await executeSql(queryString);
+    //if (jsonArray === undefined)
+        return await executeSql(queryString);
+    //else
+    //    return await executeSqlJSON(queryString);
 }
 
 function initConnection() {
@@ -76,7 +79,10 @@ function executeSql(query) {
             // This collects all non-null rows in an array
             columns.forEach((column) => {
                 if (column.value != null) {
-                    resultValues.push(column.value);
+                    if (column.metadata.colName == "transactionHash")
+                        resultValues.push("0x"+column.value);
+                    else
+                        resultValues.push(column.value);
                 }
             });
         });
@@ -92,43 +98,47 @@ function executeSql(query) {
 }
 
 //TODO: Auf async/await ändern, sofern verwendet
-function executeSqlJSON(query, callback) {
-    console.log("Begin query.");
+function executeSqlJSON(query) {
     let entries = [];
-    let hasError = false;
-    const request = new Request(query, (err, rowCount) => {
-        hasError = err;
-        if (err) {
-            console.log("Error while request was performed: ", err);
-            return;
-        }
-        else {
-            console.log("Got", rowCount, "row(s)");
-        }
-        dbConnection.close();
-    });
-    request.on('requestCompleted', () => {
-        console.log('requestCompleted');
-        callback(hasError, entries);
-    });
-    request.on('row', (columns) => {
-        let entry = [];
-        // This collects all non-null rows in an array
-        columns.forEach((column) => {
-            entry.push({[column.metadata.colName]: [column.value]});
+    // Use of explicit promise, because of the event listeners
+    return new Promise((resolve) => {
+
+        console.log("Begin query.");
+        let resultValues = [];
+
+        const request = new Request(query, (err, rowCount) => {
+            if (err) {
+                console.log("Error while request was performed: ", err);
+                return;
+            }
+            else {
+                console.log("Got", rowCount, "row(s)");
+            }
+            dbConnection.close();
         });
-        entries.push(entry);
+
+        request.on('requestCompleted', () => {
+            resolve(resultValues);
+        });
+
+        request.on('row', (columns) => {
+            let entry = [];
+            // This collects all non-null rows in an array
+            columns.forEach((column) => {
+                entry.push({[column.metadata.colName]: [column.value]});
+            });
+             entries.push(entry);
+        });
 
         request.on('error', (err) => {
-            console.log("Error while executing ", query); // Might not be secure
-            hasError = true
+            console.log("Error while executing ", query, ":\n", err); // Might not be secure
+            resolve(null);
         });
+
+        dbConnection.execSql(request);
+        console.log("End of query.")
     });
-
-    dbConnection.execSql(request);
-    console.log("End query.")
 }
-
 
 module.exports = {
     "query": query

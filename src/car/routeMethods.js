@@ -475,19 +475,33 @@ async function getAllAnnulmentTransactions(req, res) {
         });
     }
     else {
-        /*
         let annulmentPayload = [];
+
+        let web3utils = require('web3-utils');
+        let trx = await getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
+        let trxInput = web3utils.toAscii(trx.input).replace(/"/g, "'");
+
         results.forEach(element => {
-            let payloadItem = {
-                transactionHash: element[0].transactionHash[0],
+            annulmentPayload.push(element);
+            });
+        annulmentPayload.push(trxInput);
+        //res.send({"annulments": annulmentPayload});
+        //res.send(JSON.stringify({"annulments": annulmentPayload}));
+
+        /*
+         let annulmentPayload = [];
+         results.forEach(element => {
+             let payloadItem = {
+               transactionHash: element[0].transactionHash[0],
                 rejected: element[1].rejected[0],
                 user_id: element[2].user_id[0]
-            };
-            annulmentPayload.push(payloadItem);
+             };
+              annulmentPayload.push(payloadItem);
         });
         res.send(JSON.stringify({"annulments": annulmentPayload}));
         //next();
         */
+
         const annulment = {
             transactionHash: results[0],
             pending: results[1],
