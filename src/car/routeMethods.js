@@ -45,7 +45,21 @@ async function updateMileage(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
+    let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
+
+    if(preTransaction == null){
+        console.log("Error while getting preTransaction from DB");
+        res.status(500);
+        res.json({
+            "message": "Error while getting preTransaction from DB"
+        });
+        return;
+    }
+    if(preTransaction.length === 0){
+        preTransaction = null;
+    }
+
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
@@ -249,7 +263,21 @@ async function shopService(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
+    let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
+
+    if(preTransaction == null){
+        console.log("Error while getting preTransaction from DB");
+        res.status(500);
+        res.json({
+            "message": "Error while getting preTransaction from DB"
+        });
+        return;
+    }
+    if(preTransaction.length === 0){
+        preTransaction = null;
+    }
+
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setServiceOne(req.body.service1);
     transaction.setServiceTwo(req.body.service1);
@@ -321,7 +349,21 @@ async function tuevEntry(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
+    let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
+
+    if(preTransaction == null){
+        console.log("Error while getting preTransaction from DB");
+        res.status(500);
+        res.json({
+            "message": "Error while getting preTransaction from DB"
+        });
+        return;
+    }
+    if(preTransaction.length === 0){
+        preTransaction = null;
+    }
+
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setNextCheck(req.body.nextCheck);
 
@@ -414,7 +456,21 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, carAddress, req.body.timestamp);
+    let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
+
+    if(preTransaction == null){
+        console.log("Error while getting preTransaction from DB");
+        res.status(500);
+        res.json({
+            "message": "Error while getting preTransaction from DB"
+        });
+        return;
+    }
+    if(preTransaction.length === 0){
+        preTransaction = null;
+    }
+
+    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setPreOwner(req.body.ownerCount);
 
