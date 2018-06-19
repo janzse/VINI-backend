@@ -1,5 +1,4 @@
 import express from "express";
-import restrictedAreaRoutesMethods from "../authorisation/restrictedAreaRoutesMethods";
 
 const router = express.Router();
 
@@ -7,9 +6,6 @@ const router = express.Router();
 router.get('/', (req, res, next) => {
   res.send('My fancy page')
 });
-
-/* POST to validate accessToken */
-router.post("/enter", restrictedAreaRoutesMethods.accessRestrictedArea);
 
 router.get('/error', (req, res, next) => {
   if (req.url !== null) {

@@ -13,14 +13,20 @@ const router = express.Router();
 /* GET car by VIN. */
 router.get('/', routeMethods.getCarByVin);
 
-/* GET annulment trxs. */
-router.get('/annulment', authRoutesMethods.isAuthorised, routeMethods.getAllAnnulmentTransactions);
+/* GET apply cancel transaction. */
+//router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getApplyCancelTransaction);
 
 /* POST apply cancel transaction. */
-router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.applyCancelTransaction);
+//router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.postAapplyCancelTransaction);
+
+/* DEL apply cancel transaction. */
+//router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.delApplyCancelTransaction);
+
+/* GET cancel transaction. */
+//router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getCancelTransaction);
 
 /* POST cancel transaction. */
-router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.cancelTransaction);
+//router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.postCancelTransaction);
 
 /* POST updateMileage. */
 router.post('/mileage', authRoutesMethods.isAuthorised, routeMethods.updateMileage);
