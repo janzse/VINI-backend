@@ -1,5 +1,5 @@
 import dbHelper from "../database/dbHelper";
-import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
+import { createUserAccount } from "../blockchain/ethNode";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -12,7 +12,7 @@ async function registerUser(req, res) {
         res.status(400);
         res.json({
             "message": "Request has to include: email, password, authorityLevel, forename," +
-            "surname, companyName & creationDate in the body and bearer_token in the header"
+                "surname, companyName & creationDate in the body and bearer_token in the header"
         });
         return;
     }
@@ -96,7 +96,6 @@ async function blockUser(req, res) {
         });
     }
 }
-
 
 //VINI.de/api/users
 async function getUsers(req, res) {
@@ -221,6 +220,7 @@ function errorHandling(response, status, message) {
 
     response.redirect(query);
 }
+
 
 module.exports = {
     "registerUser": registerUser,

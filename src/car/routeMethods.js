@@ -67,7 +67,9 @@ async function updateMileage(req, res) {
 }
 
 async function getCarByVin(req, res) {
-    if (req.query.vin === "dummy") {
+    // TODO delete me (when this is working)
+    if (req.query.vin === "dummy" || "W0L000051T2123456") {
+
         let transactionPayload = [];
 
         // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
@@ -144,6 +146,7 @@ async function getCarByVin(req, res) {
             });
             return false;
         }
+
         const carAddress = await dbHelper.getCarAddressFromVin(req.query.vin);
 
         if (carAddress == null) {

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4ab18a14-2bd9-48a8-bfa6-a2ecbacb0d1a",
+		"_postman_id": "1951b9db-adfa-4f46-a19a-0e6816007eb2",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -225,7 +225,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"XD1LOL1KEKXD\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"ownerCount\" : 4\n}"
+							"raw": "{\n\t\"vin\": \"WD3LMN1J4664M7766\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 5000,\n\t\"ownerCount\" : 2\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/register",
@@ -276,7 +276,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
+							"raw": "{\n\t\"vin\": \"XD1LOL1KEKXD\",\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/service",
@@ -327,7 +327,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+							"raw": "{\n\t\"vin\": \"XD1LOL1KEKXD\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/tuev",
@@ -369,7 +369,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -378,7 +378,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+							"raw": "{\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/login",
@@ -416,7 +416,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\" : \"Franz\"\n}"
+							"raw": "{\n  \"email\" : \"alibaba\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -434,6 +434,19 @@
 				},
 				{
 					"name": "api_users_register_post",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5057c750-3591-4392-96ec-3f240d120787",
+								"type": "text/javascript",
+								"exec": [
+									"var moment = require('moment');",
+									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -454,7 +467,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\" : \"Franz\",\n\t\"password\" : \"secret\",\n\t\"confirm\" : \"secret\"\n}"
+							"raw": "{\n\t\"email\" : \"async@test.de\",\n\t\"password\" : \"geheim\",\n\t\"authorityLevel\": 1,\n\t\"forename\": \"Async\",\n\t\"surname\": \"Await\",\n\t\"companyName\": \"CleanCode.com\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -623,12 +636,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{local_url}}/restricted",
+							"raw": "{{local_url}}/restricted/enter",
 							"host": [
 								"{{local_url}}"
 							],
 							"path": [
-								"restricted"
+								"restricted",
+								"enter"
 							]
 						}
 					},
@@ -1292,21 +1306,21 @@
 	],
 	"variable": [
 		{
-			"id": "8f7f78d1-4f38-4d33-a8bb-afba59bd2fcc",
+			"id": "f73f94d9-1868-44fb-801f-19acabc31ecc",
 			"key": "bearer_token",
-			"value": "fc8350177096883099b652480299135248d356afserver",
+			"value": "666443ab43e7db38508dfba70eae4a51eb5d13e3",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "c34144ca-d557-4a8f-a0da-1542be748c3f",
+			"id": "ff9de1c4-e462-4bec-8d37-cec61709c545",
 			"key": "server_url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "0fd1cb6c-a523-4e12-8cdd-f52939658d6f",
+			"id": "f5708555-52ee-4e66-8227-3ed4b21ec053",
 			"key": "local_url",
 			"value": "http://localhost:4711",
 			"type": "string",
