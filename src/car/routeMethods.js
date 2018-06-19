@@ -19,7 +19,7 @@ async function updateMileage(req, res) {
     if (carAddress === null) {
         console.log("vin not found! aborting.");
         res.status(400);
-        res.json({"message": "Unknown vin!"});
+        res.json({"message": "Fahrzeug nicht gefunden!"});
         return;
     }
 
@@ -44,7 +44,7 @@ async function updateMileage(req, res) {
         console.log("An error occurred while sending transaction: ", transaction);
         res.status(500);
         res.json({
-            "message": "Updating mileage failed"
+            "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
     } else {
 
@@ -60,14 +60,14 @@ async function updateMileage(req, res) {
 
         res.status(200);
         res.json({
-            "message": "Successfully updated mileage"
+            "message": "Transaktion erfolgreich durchgeführt"
         });
     }
 }
 
 async function getCarByVin(req, res) {
     // TODO delete me (when this is working)
-    if (req.query.vin === "dummy" || "W0L000051T2123456") {
+    if (req.query.vin === "dummy" || req.query.vin === "W0L000051T2123456") {
 
         let transactionPayload = [];
 
@@ -151,7 +151,7 @@ async function getCarByVin(req, res) {
         if (carAddress == null) {
             console.log("vin not found in DB!! aborting.");
             res.status(400);
-            res.json({"message": "Unknown vin!"});
+            res.json({"message": "Fahrzeug nicht gefunden!"});
             return;
         }
 
@@ -160,7 +160,7 @@ async function getCarByVin(req, res) {
         if (transactions == null) {
             console.log("Could not find vin in blockchain");
             res.status(400);
-            res.json({"message": "Unknown vin!"});
+            res.json({"message": "Fahrzeug nicht gefunden!"});
             return;
         }
 
@@ -214,7 +214,7 @@ async function shopService(req, res) {
     if (carAddress === null) {
         console.log("vin not found! aborting.");
         res.status(400);
-        res.json({"message": "Unknown vin!"});
+        res.json({"message": "Fahrzeug nicht gefunden!"});
         return;
     }
 
@@ -252,12 +252,12 @@ async function shopService(req, res) {
             console.log("An error occurred while updating headTx in DB");
             res.status(500);
             res.json({
-                "message": "An error occurred while updating headTx in DB"
+                "message": "Die Transaktion konnte nicht durchgeführt werden!"
             });
         }
         res.status(200);
         res.json({
-            "message": "Successfully entered shop-service"
+            "message": "Transaktion erfolgreich durchgeführt!"
         });
     }
 }
@@ -277,7 +277,7 @@ async function tuevEntry(req, res) {
     if (carAddress === null) {
         console.log("vin not found! aborting.");
         res.status(400);
-        res.json({"message": "Unknown vin!"});
+        res.json({"message": "Fahrzeug wurde nicht gefunden!"});
         return;
     }
 
@@ -303,7 +303,7 @@ async function tuevEntry(req, res) {
         console.log("An error occurred while sending transaction: ", transaction);
         res.status(500);
         res.json({
-            "message": "Entering tuev-report failed"
+            "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
     } else {
 
@@ -313,13 +313,13 @@ async function tuevEntry(req, res) {
             console.log("An error occurred while updating headTx in DB");
             res.status(500);
             res.json({
-                "message": "An error occurred while updating headTx in DB"
+                "message": "Die Transaktion konnte nicht durchgeführt werden!"
             });
         }
 
         res.status(200);
         res.json({
-            "message": "Successfully entered tuev-report"
+            "message": "Transaktion erfolgreich durchgeführt"
         });
     }
 }
@@ -351,10 +351,19 @@ async function stvaRegister(req, res) {
             console.log("Error while registering new car");
             res.status(500);
             res.json({
-                "message": "Error while registering new car"
+                "message": "Die Transaktion konnte nicht durchgeführt werden!"
             });
             return;
         }
+    } else { //car already exists, abort!
+        console.log("Error while registering new car: car already exists!");
+        res.status(400);
+        res.json({
+            "message": "Error while registering new car: car already exists!"
+        });
+        return;
+
+
     }
 
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -379,7 +388,7 @@ async function stvaRegister(req, res) {
         console.log("An error occurred while sending transaction: ", transaction);
         res.status(500);
         res.json({
-            "message": "Entering stva-register failed"
+            "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
     } else {
 
@@ -389,13 +398,13 @@ async function stvaRegister(req, res) {
             console.log("An error occurred while updating headTx in DB");
             res.status(500);
             res.json({
-                "message": "An error occurred while updating headTx in DB"
+                "message": "Die Transaktion konnte nicht durchgeführt werden!"
             });
         }
 
         res.status(200);
         res.json({
-            "message": "Successfully entered stva-register"
+            "message": "Transaktion erfolgreich durchgeführt!"
         });
     }
 }
@@ -406,7 +415,7 @@ async function getAllAnnulmentTransactions(req, res) {
     if (results == null) {
         res.status(500);
         res.json({
-            "message": "Failure at getting annulment transactions"
+            "message": "Die Annulierungs-Transaktionen konnten nicht geladen werden!"
         });
     }
     else {
