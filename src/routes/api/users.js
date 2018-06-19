@@ -11,13 +11,13 @@ function initRoutes(app) {
     router.get('/login', authRoutesMethods.isAuthorised, authRoutesMethods.login);
 
     /* POST user register. */
-    router.post('/register', authRoutesMethods.registerUser);
+    router.post('/register', authRoutesMethods.isAuthorised, authRoutesMethods.registerUser);
 
     /* DELETE user register. */
-    router.delete('/register', authRoutesMethods.blockUser);
+    router.delete('/register', authRoutesMethods.isAuthorised, authRoutesMethods.blockUser);
 
     /* GET Users*/
-    router.get('/', authRoutesMethods.getUsers);
+    router.get('/', authRoutesMethods.isAuthorised, authRoutesMethods.getUsers);
 }
 
 

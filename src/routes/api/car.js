@@ -1,4 +1,5 @@
 import routeMethods from "../../car/routeMethods";
+import authRoutesMethods from "../../authorisation/routeMethods";
 
 /**
  *
@@ -13,24 +14,24 @@ const router = express.Router();
 router.get('/', routeMethods.getCarByVin);
 
 /* GET annulment trxs. */
-router.get('/annulment', routeMethods.getAllAnnulmentTransactions);
+router.get('/annulment', authRoutesMethods.isAuthorised, routeMethods.getAllAnnulmentTransactions);
 
 /* POST apply cancel transaction. */
-router.post('/applyCancelTransaction', routeMethods.applyCancelTransaction);
+router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.applyCancelTransaction);
 
 /* POST cancel transaction. */
-router.post('/cancelTransaction', routeMethods.cancelTransaction);
+router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.cancelTransaction);
 
 /* POST updateMileage. */
-router.post('/mileage', routeMethods.updateMileage);
+router.post('/mileage', authRoutesMethods.isAuthorised, routeMethods.updateMileage);
 
 /* POST stva register. */
-router.post('/register', routeMethods.stvaRegister);
+router.post('/register', authRoutesMethods.isAuthorised, routeMethods.stvaRegister);
 
 /* POST shop entry. */
-router.post('/service', routeMethods.shopService);
+router.post('/service', authRoutesMethods.isAuthorised, routeMethods.shopService);
 
 /* POST tuev entry. */
-router.post('/tuev', routeMethods.tuevEntry);
+router.post('/tuev', authRoutesMethods.isAuthorised, routeMethods.tuevEntry);
 
 module.exports = router;
