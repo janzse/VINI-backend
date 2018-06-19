@@ -414,22 +414,17 @@ async function getAllAnnulmentTransactions(req, res) {
     }
     else {
         let annulmentPayload = [];
+
+        let web3utils = require('web3-utils');
+        let trx = await getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
+        let trxInput = web3utils.toAscii(trx.input).replace(/"/g, "'");
+
         results.forEach(element => {
-            let transaction = getTransaction(element[0].transactionHash[0]).then((result) => {
-                let payloadItem = {
-                    transactionHash: element[0].transactionHash[0],
-                    Creationdate: element[1].creationDate[0],
-                    vin: element[2].vin[0],
-                    mileage: transaction.mileage,
-                    preowner: transaction.preowner,
-                    email: transaction.email,
-                    serviceOne: transaction.serviceOne,
-                    serviceTwo: transaction.serviceTwo
-                };
+            annulmentPayload.push(element);
             });
-            annulmentPayload.push(payloadItem);
-        });
-        res.send(JSON.stringify({"annulments": annulmentPayload}));
+        annulmentPayload.push(trxInput);
+        res.send({"annulments": annulmentPayload});
+        //res.send(JSON.stringify({"annulments": annulmentPayload}));
     }
 }
 

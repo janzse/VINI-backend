@@ -171,9 +171,8 @@ function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
 }
 
 async function getAnnulmentTransactionsFromDB() {
-    const queryString = `SELECT at.transactionHash, at.creationDate kfz.vin FROM annulment_transactions as at,
-                        kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
-
+    const queryString = `SELECT at.transactionHash, kfz.vin FROM annulment_transactions as at,
+                       kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
     return await dbConnection.query(queryString);
 }
 
