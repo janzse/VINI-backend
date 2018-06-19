@@ -22,7 +22,7 @@ async function registerUser(req, res) {
     if (doesUserExist) {
         res.status(400);
         res.json({
-            "message": "User with email <" + req.body.email + "> already exists"
+            "message": "Es existiert bereits ein Benutzer mit der E-Mail-Adresse."
         });
 
         return;
@@ -46,13 +46,13 @@ async function registerUser(req, res) {
     if (registerResult == null) {
         res.status(500);
         res.json({
-            "message": "Failed to register user due to a server error"
+            "message": "Fehler bei der Registrierung."
         });
     }
     else {
         res.status(200);
         res.json({
-            "message": "Registration was successful"
+            "message": "Der Benutzer wurde erfolgreich erstellt."
         });
     }
 }
@@ -75,7 +75,7 @@ async function blockUser(req, res) {
     if (!doesUserExists) {
         res.status(400);
         res.send({
-            "message": "User with email " + email + " does not exist"
+            "message": "Der Benutzer wurde nicht gefunden."
         });
 
         return;
@@ -86,13 +86,13 @@ async function blockUser(req, res) {
     if (blockResult != null && blockResult.length === 0) {
         res.status(200);
         res.json({
-            "message": "Block was successful"
+            "message": "Der Benutzer wurde erfolgreich entfernt."
         });
     }
     else {
         res.status(500);
         res.json({
-            "message": "Failed to block user due to a server error"
+            "message": "Der Benutzer konnte aufgrund eines Serverfehlers nicht gelöscht werden."
         });
     }
 }
