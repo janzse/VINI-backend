@@ -14,19 +14,19 @@ const router = express.Router();
 router.get('/', routeMethods.getCarByVin);
 
 /* GET apply cancel transaction. */
-//router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getApplyCancelTransaction);
+//router.get('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getApplyCancelTransaction);
 
 /* POST apply cancel transaction. */
-//router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.postAapplyCancelTransaction);
+router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.applyCancelTransaction);
 
 /* DEL apply cancel transaction. */
-//router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.delApplyCancelTransaction);
+//router.del('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.delApplyCancelTransaction);
 
 /* GET cancel transaction. */
-//router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getCancelTransaction);
+//router.get('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getCancelTransaction);
 
 /* POST cancel transaction. */
-//router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.postCancelTransaction);
+router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.cancelTransaction);
 
 /* POST updateMileage. */
 router.post('/mileage', authRoutesMethods.isAuthorised, routeMethods.updateMileage);
