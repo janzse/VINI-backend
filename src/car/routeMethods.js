@@ -142,7 +142,7 @@ function getCarByVin(req, res) {
             });
             return false;
         }
-        getCarAddressFromVin(req.query.vin, (err, carAddress) => {
+        dbHelper.getCarAddressFromVin(req.query.vin, (err, carAddress) => {
             if (carAddress === undefined) {
                 console.log("vin not found in DB!! aborting.");
                 res.status(400);
