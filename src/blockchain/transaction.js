@@ -2,32 +2,25 @@ import {toHexString} from "../utils"
 
 class Transaction {
 
-    constructor(from, to, timestamp) {
+    constructor(from, email, vin, preTransaction, to, timestamp) {
 
         this.from = toHexString(from); // String: sender address where the TX originated from (STVAWallet)
         this.to = toHexString(to); // String: recipient address (a carWallet)
         this.gas = 100000; // Default gas
         this.data = {
-            "email": null,
-            "preTransaction": null,
+            "email": email,
+            "vin": vin,
+            "preTransaction": preTransaction,
             "preOwner": null,
             "timestamp": timestamp,
             "mileage": null,
             "serviceOne": null,
             "serviceTwo": null,
             "oilChange": null,
-            "inspection": null,
-            "annulment": null,
-            "nextcheck": null
+            "mainInspection": null,
+            "annulmentTarget": null,
+            "nextCheck": null
         };
-    }
-
-    setEmail(email) {
-        this.data.email = email;
-    }
-
-    setPreTransaction(hash){
-        this.data.preTransaction = hash;
     }
 
     setPreOwner(preOwner){
@@ -46,21 +39,22 @@ class Transaction {
         this.data.serviceTwo = serviceTwo;
     }
 
-    setOilchange(oilchange){
-        this.data.oilChange = oilchange;
+    setOilChange(oilChange){
+        this.data.oilChange = oilChange;
     }
 
-    setInspection(inspection){
-        this.data.inspection = inspection;
+    setMainInspection(mainInspection){
+        this.data.mainInspection = mainInspection;
     }
 
-    setAnnulment(annulment){
-        this.data.annulment = annulment;
+    annulmentTarget(annulmentTarget){
+        this.data.annulmentTarget = annulmentTarget;
     }
 
-    setNextCheck(nextcheck){
-        this.data.nextcheck = nextcheck;
+    setNextCheck(nextCheck){
+        this.data.nextCheck = nextCheck;
     }
 }
+
 
 module.exports = Transaction;

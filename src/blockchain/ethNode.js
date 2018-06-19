@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import {toHexString, toBasicString} from "../utils"
+import dbHelper from "../database/dbHelper";
 
 let web3;
 let isConnected = false;
@@ -48,8 +49,15 @@ async function sendSignedTransaction(transaction, privateKey) {
             const singedTX = await web3.eth.accounts.signTransaction(transaction, privateKey);
 
             web3.eth.sendSignedTransaction(singedTX.rawTransaction)
-                .once('transactionHash', (hash) => {
+                .once('transactionHash', async (hash) => {
                     console.log("Sending signedTransaction successful:", hash);
+
+                    const result = await dbHelper.updateHeadTransactionHash(transaction.to, hash);
+
+                    if (result == null) {
+                        console.log("Transaction not saved to database.");
+                    }
+
                     resolve(toBasicString(hash));
                 });
         }
@@ -63,7 +71,7 @@ async function sendSignedTransaction(transaction, privateKey) {
 async function getTransaction(transHash) {
     try {
         await web3.eth.net.isListening();
-        return await web3.eth.getTransaction(transHash);
+        return await web3.eth.getTransaction(toHexString(transHash));
     }
     catch (err) {
         console.error("Error while getting Transaction: ", "\n", err);
@@ -130,6 +138,6 @@ module.exports = {
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
     "sendSignedTransaction": sendSignedTransaction,
-    "getAllTransactions": getAllTransactions,
-    "getTransaction": getTransaction
+    "getTransaction": getTransaction,
+    "getAllTransactions": getAllTransactions
 };

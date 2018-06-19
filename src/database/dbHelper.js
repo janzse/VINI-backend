@@ -1,23 +1,24 @@
 import dbConnection from "./msSqlWrapper";
+import {getTimestamp, toBasicString} from "../utils";
 
 async function registerUserInDB(email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName, creationDate, blocked) {
 
     const queryString = `INSERT INTO users (email, password, privateKey, publicKey, authorityLevel, forename, surname, companyName,
-  creationDate, blocked) VALUES ('${email}', '${password}', '${privateKey}', '${publicKey}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
+  creationDate, blocked) VALUES ('${email}', '${password}', '${toBasicString(privateKey)}', '${toBasicString(publicKey)}', '${authorityLevel}', '${forename}', '${surname}', '${companyName}', '${creationDate}', '${blocked}');`;
 
     return await dbConnection.query(queryString);
 }
 
 async function registerCarInDB(vin, privateKey, publicKey, creationDate) {
 
-    const queryString = `INSERT INTO kfz (vin, privateKey, publicKey, creationDate) VALUES ('${vin}', '${privateKey}', '${publicKey}', '${creationDate}')`;
+    const queryString = `INSERT INTO kfz (vin, privateKey, publicKey, creationDate) VALUES ('${vin}', '${toBasicString(privateKey)}', '${toBasicString(publicKey)}', '${creationDate}')`;
 
     return await dbConnection.query(queryString);
 }
 
 async function updateCarHeadTx(publicKey, hash) {
 
-    const queryString = `UPDATE kfz SET headTx = '${hash}' WHERE publicKey = '${publicKey}'`;
+    const queryString = `UPDATE kfz SET headTx = '${hash}' WHERE publicKey = '${toBasicString(publicKey)}'`;
 
     return await dbConnection.query(queryString);
 }
@@ -101,7 +102,7 @@ async function checkUserAuthorization(token) {
 }
 
 async function getAllUsers() {
-    const queryString = 'SELECT * FROM users';
+    const queryString = 'SELECT * FROM users WHERE users.blocked = \'false\'';
 
     const results = await dbConnection.query(queryString);
 
@@ -117,7 +118,6 @@ async function getAllUsers() {
     }
 
     return users.map(element => {
-
         return {
             date: element[8],
             forename: element[5],
@@ -125,6 +125,7 @@ async function getAllUsers() {
             authorityLevel: element[4],
             email: element[1],
             company: element[7]
+
         };
     });
 }
@@ -143,38 +144,46 @@ function addAnnulmentTransaction(transactionHash, timestamp) {
     dbConnection.query(queryString, sqlCallback);
 }
 
-//TODO: Testen
-//TODO: Auf async/await ändern, sofern verwendet
-function getHeadTransactionHash(publicKeyCar, callback) {
-    const queryString = `SELECT headTx FROM kfz WHERE publicKey = '${publicKeyCar}'`;
+async function getHeadTransactionHash(publicKeyCar) {
+    const queryString = `SELECT headTx FROM kfz WHERE publicKey = '${toBasicString(publicKeyCar)}'`;
 
-    const sqlCallback = (err, result) => {
-        callback(err, result);
-    };
+    const result = await dbConnection.query(queryString);
 
-    dbConnection.query(queryString, sqlCallback, true);
+    if(result == null || result.length === 0){
+        return null;
+    }
+
+    return result[0];
 }
 
-//TODO: Testen
-//TODO: Auf async/await ändern, sofern verwendet
-function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
+async function updateHeadTransactionHash(publicKeyCar, headTxHash) {
 
-    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${publicKeyCar}';`;
+    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${toBasicString(publicKeyCar)}';`;
 
-    const sqlCallback = (error, result) => {
-
-        const isHeadTxUpdated = (result) !== null ? result.length > 0 : null;
-        callback(error, isHeadTxUpdated);
-    };
-
-    dbConnection.query(queryString, sqlCallback);
+    return await dbConnection.query(queryString);
 }
 
 async function getAnnulmentTransactionsFromDB() {
-    const queryString = `SELECT at.transactionHash, kfz.vin FROM annulment_transactions as at,
-                       kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
+    const queryString = `SELECT at.transactionHash, at.pending, at.user_id, kfz.vin FROM annulment_transactions as at,
+                        kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
+
     return await dbConnection.query(queryString);
 }
+
+async function getAnnulment(hash, user_id){
+
+    const queryString = `SELECT * FROM annulment_transactions WHERE transactionHash = '${toBasicString(hash)}' AND user_id = ${user_id}`;
+
+    return await dbConnection.query(queryString);
+}
+
+async function insertAnnulment(hash, user_id){
+
+    const queryString = `INSERT INTO annulment_transactions (transactionHash, pending, creationDate, user_id) VALUES ('${toBasicString(hash)}', 0, '${getTimestamp()}', ${user_id})`;
+
+    return await dbConnection.query(queryString);
+}
+
 
 module.exports = {
     "registerUserInDB": registerUserInDB,
@@ -189,5 +198,7 @@ module.exports = {
     "getAllUsers": getAllUsers,
     "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB,
     "getHeadTransactionHash": getHeadTransactionHash,
-    "updateHeadTransactionHash": updateHeadTransactionHash
+    "updateHeadTransactionHash": updateHeadTransactionHash,
+    "getAnnulment": getAnnulment,
+    "insertAnnulment": insertAnnulment
 };

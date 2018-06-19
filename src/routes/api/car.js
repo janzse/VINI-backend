@@ -12,8 +12,13 @@ const router = express.Router();
 /* GET car by VIN. */
 router.get('/', routeMethods.getCarByVin);
 
-/* GET annulment trxs. */
+/* GET annulment Tx. */
 router.get('/annulment', routeMethods.getAllAnnulmentTransactions);
+
+/* POST annulment Tx  */
+router.post('/annulment', routeMethods.insertAnnulmentTransaction);
+
+//router.delete('/annulment', routeMethods.)
 
 /* POST apply cancel transaction. */
 router.post('/applyCancelTransaction', routeMethods.applyCancelTransaction);

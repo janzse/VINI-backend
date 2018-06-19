@@ -71,6 +71,7 @@ function executeSql(query) {
         });
 
         request.on('requestCompleted', () => {
+            console.log("Request completed");
             resolve(resultValues);
         });
 

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1951b9db-adfa-4f46-a19a-0e6816007eb2",
+		"_postman_id": "ba422f9a-b2f0-4ce1-99e4-f11fc1320a93",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -338,6 +338,55 @@
 								"api",
 								"car",
 								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "700df678-cc6e-4b51-a1f3-cadc4bdc65e7",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/users",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"users"
 							]
 						}
 					},
@@ -983,6 +1032,55 @@
 								"api",
 								"car",
 								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "21bff119-1556-4a82-91e5-8650f50909ab",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+						},
+						"url": {
+							"raw": "{{server_url}}/api/users",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"users"
 							]
 						}
 					},
