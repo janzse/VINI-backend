@@ -124,7 +124,8 @@ async function getAllUsers() {
             surname: element[6],
             authorityLevel: element[4],
             email: element[1],
-            company: element[7]
+            company: element[7],
+            blocked: element[9]
         };
     });
 }

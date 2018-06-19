@@ -119,36 +119,36 @@ async function getUsers(req, res) {
             forename: "Ernst",
             surname: "Mustermann",
             authorityLevel: "TUEV",
-            action: "dummy",
             email: "queryMail",
-            company: "TUEV"
+            company: "TUEV",
+            blocked: false
         };
         const payloadItem2 = {
             date: "11.06.2018",
             forename: "Brigitte",
             surname: "Mustermann",
             authorityLevel: "ZWS",
-            action: "dummy",
             email: "queryMail",
-            company: "KFZ Bongard"
+            company: "KFZ Bongard",
+            blocked: true
         };
         const payloadItem3 = {
             date: "11.06.2018",
             forename: "Johnathan",
             surname: "Mustermann",
             authorityLevel: "STVA",
-            action: "dummy",
             email: "queryMail",
-            company: "Amt X"
+            company: "Amt X",
+            blocked: false
         };
         const payloadItem4 = {
             date: "12.06.2018",
             forename: "Gabi",
             surname: "Mustermann",
             authorityLevel: "ASTVA",
-            action: "dummy",
             email: "queryMail",
-            company: "Amt Y"
+            company: "Amt Y",
+            blocked: true
         };
 
         transactionPayload.push(payloadItem1);
