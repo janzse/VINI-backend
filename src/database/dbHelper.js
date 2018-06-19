@@ -102,7 +102,7 @@ async function checkUserAuthorization(token) {
 }
 
 async function getAllUsers() {
-    const queryString = 'SELECT * FROM users WHERE users.blocked = \'false\'';
+    const queryString = `SELECT * FROM users WHERE users.blocked = 'false'`;
 
     const results = await dbConnection.query(queryString);
 

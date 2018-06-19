@@ -15,6 +15,16 @@ async function updateMileage(req, res) {
         });
         return;
     }
+
+    if (!(req.body.authorityLevel === 1 || req.body.authorityLevel === 2 || req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to update mileage for car"
+        });
+
+        return;
+    }
+
     let carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
     if (carAddress === null) {
         console.log("vin not found! aborting.");
@@ -223,8 +233,17 @@ async function shopService(req, res) {
         });
         return;
     }
-    const carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
 
+    if (req.body.authorityLevel !== 1){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to make service entry for car"
+        });
+
+        return;
+    }
+
+    const carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
     if (carAddress === null) {
         console.log("vin not found! aborting.");
         res.status(400);
@@ -298,6 +317,15 @@ async function tuevEntry(req, res) {
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage + nextCheck "
         });
+        return;
+    }
+
+    if (req.body.authorityLevel !== 2){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to make inspection entry for car"
+        });
+
         return;
     }
 
@@ -379,8 +407,16 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    let carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
+    if (!(req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to update registration data for car"
+        });
 
+        return;
+    }
+
+    let carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
     if (carAddress == null) {
         console.log("carAddress not found: Creating new one");
         // VIN not in DB yet -> Create it
@@ -466,8 +502,17 @@ async function stvaRegister(req, res) {
 }
 
 async function getAllAnnulmentTransactions(req, res) {
-    const results = await dbHelper.getAnnulmentTransactionsFromDB();
 
+    if (!(req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to retrieve annulment transactions"
+        });
+
+        return;
+    }
+
+    const results = await dbHelper.getAnnulmentTransactionsFromDB();
     if (results == null) {
         res.status(500);
         res.json({
