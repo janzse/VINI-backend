@@ -62,7 +62,7 @@ const getTimestamp = () => {
 };
 
 function getCarByVin(req, res) {
-    if (req.query.vin === "dummy") {
+    if (req.query.vin === "dummy" || "W0L000051T2123456") {
         let transactionPayload = [];
 
         // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
