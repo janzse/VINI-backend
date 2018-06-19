@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import dbHelper from "../database/dbHelper";
+import {toHexString} from "../utils"
 
 let web3;
 let isConnected = false;
@@ -48,6 +48,29 @@ function sendTransaction(transaction, callback) {
         });
 }
 
+async function sendSignedTransaction(transaction, privateKey) {
+    return new Promise(async (resolve) => {
+        try {
+            await web3.eth.net.isListening();
+
+            transaction.data = web3.utils.toHex(JSON.stringify(transaction.data));
+
+            privateKey = toHexString(privateKey);
+            const singedTX = await web3.eth.accounts.signTransaction(transaction, privateKey);
+
+            web3.eth.sendSignedTransaction(singedTX.rawTransaction)
+                .once('transactionHash', (hash) => {
+                    console.log("Transaction successful:", hash);
+                    resolve(hash);
+                });
+        }
+        catch (err) {
+            console.log("Error while sending signedTransaction: ", err);
+            resolve(null);
+        }
+    });
+}
+
 async function getTransaction(transHash) {
     try {
         await web3.eth.net.isListening();
@@ -64,13 +87,13 @@ async function getAllTransactions(headTxHash) {
     let currentHash = headTxHash;
     try {
         let currentTransaction = await getTransaction(lastTransactionHash);
-        while (currentTransaction.payload.pretransaction !== null){
+        while (currentTransaction.payload.pretransaction !== null) {
             currentHash = currentTransaction.payload.pretransaction;
             currentTransaction = await getTransaction(currentHash);
             transactions.add = currentTransaction;
         }
     }
-    catch(err){
+    catch (err) {
         console.log("Error while getting transactions", err);
     }
     return transactions;
@@ -83,6 +106,7 @@ function createUserAccount() {
         return;
     }
 
+    //TODO: Neue Accounts brauchen Money$$$
     const userAccount = web3.eth.accounts.create();
 
     return {
@@ -112,5 +136,5 @@ module.exports = {
     "createUserAccount": createUserAccount,
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
-    "getAllTransactions" : getAllTransactions
+    "getAllTransactions": getAllTransactions
 };
