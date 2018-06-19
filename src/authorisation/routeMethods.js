@@ -100,11 +100,11 @@ function getUsers(req, res) {
     //CHECK DB-Connection: if available - return select all result; if not return dummy values
 
     dbHelper.getAllUsers((err, results) => {
-        if (results.length > 0) {
+        if (results && results.length > 0) {
 
             let userPayload = [];
             results.forEach(element => {
-                if (element && element.length > 8) {
+                if (element && element.length > 8 && element.creationDate) { // does it contain data? TODO -> this is just a quick and dirty fix
                     let payloadItem = {
                         date: element[8].creationDate,
                         forename: element[5].forename,
@@ -113,7 +113,7 @@ function getUsers(req, res) {
                         email: element[1].email,
                         company: element[7].companyName
                     };
-                    if (payloadItem && payloadItem.date) { // does it contain data?
+                    if (payloadItem && payloadItem.date) { 
                         userPayload.push(payloadItem);
                     }
                 }
