@@ -45,6 +45,8 @@ async function sendSignedTransaction(transaction, privateKey) {
             transaction.data = web3.utils.toHex(JSON.stringify(transaction.data));
 
             privateKey = toHexString(privateKey);
+            console.log("PRIVKEY: ", privateKey);
+            console.log("TARAN", transaction);
             const singedTX = await web3.eth.accounts.signTransaction(transaction, privateKey);
 
             web3.eth.sendSignedTransaction(singedTX.rawTransaction)
@@ -63,7 +65,7 @@ async function sendSignedTransaction(transaction, privateKey) {
 async function getTransaction(transHash) {
     try {
         await web3.eth.net.isListening();
-        return await web3.eth.getTransaction(transHash);
+        return await web3.eth.getTransaction(toHexString(transHash));
     }
     catch (err) {
         console.error("Error while getting Transaction: ", "\n", err);
@@ -130,5 +132,6 @@ module.exports = {
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
     "sendSignedTransaction": sendSignedTransaction,
+    "getTransaction": getTransaction,
     "getAllTransactions": getAllTransactions
 };
