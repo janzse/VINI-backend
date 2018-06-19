@@ -136,5 +136,6 @@ module.exports = {
     "createUserAccount": createUserAccount,
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
-    "getAllTransactions": getAllTransactions
+    "getAllTransactions": getAllTransactions,
+    "getTransaction": getTransaction
 };

@@ -187,7 +187,7 @@ function updateHeadTransactionHash(publicKeyCar, headTxHash, callback) {
 
 function getAnnulmentTransactionsFromDB(callback)
 {
-    const queryString = `SELECT at.transactionHash, at.rejected, at.user_id, kfz.vin FROM annulment_transactions as at,
+    const queryString = `SELECT at.transactionHash, at.creationDate kfz.vin FROM annulment_transactions as at,
                         kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
 
     const sqlCallback = (error, results) => {

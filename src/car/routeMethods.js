@@ -1,5 +1,5 @@
 import Transaction from "../blockchain/transaction";
-import {sendTransaction, sendSignedTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
+import {sendTransaction, sendSignedTransaction, getAllTransactions, getTransaction, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
@@ -355,15 +355,20 @@ function getAllAnnulmentTransactions(req, res) {
             });
         }
         else {
-
             let annulmentPayload = [];
             results.forEach(element => {
-                let payloadItem = {
-                    transactionHash: element[0].transactionHash[0],
-                    rejected: element[1].rejected[0],
-                    user_id: element[2].user_id[0],
-                    vin: element[3].vin[0]
-                };
+                let transaction = getTransaction(element[0].transactionHash[0]).then((result) => {
+                    let payloadItem = {
+                        transactionHash: element[0].transactionHash[0],
+                        Creationdate: element[1].creationDate[0],
+                        vin: element[2].vin[0],
+                        mileage: transaction.mileage,
+                        preowner: transaction.preowner,
+                        email: transaction.email,
+                        serviceOne: transaction.serviceOne,
+                        serviceTwo: transaction.serviceTwo
+                    };
+                });
                 annulmentPayload.push(payloadItem);
             });
             res.send(JSON.stringify({"annulments": annulmentPayload}));
