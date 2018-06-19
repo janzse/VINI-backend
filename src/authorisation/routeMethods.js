@@ -104,17 +104,18 @@ function getUsers(req, res) {
 
             let userPayload = [];
             results.forEach(element => {
-                console.log(element)
                 if (element && element.length > 8) {
-                        let payloadItem = {
-                            date: element[8].creationDate,
-                            forename: element[5].forename,
-                            surname: element[6].surname,
-                            authorityLevel: element[4].authorityLevel,
-                            email: element[1].email,
-                            company: element[7].companyName
-                        };
+                    let payloadItem = {
+                        date: element[8].creationDate,
+                        forename: element[5].forename,
+                        surname: element[6].surname,
+                        authorityLevel: element[4].authorityLevel,
+                        email: element[1].email,
+                        company: element[7].companyName
+                    };
+                    if (payloadItem && payloadItem.date) { // does it contain data?
                         userPayload.push(payloadItem);
+                    }
                 }
             });
             res.status(200);
