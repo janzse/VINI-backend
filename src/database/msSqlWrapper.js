@@ -7,14 +7,15 @@ let dbConnection = null;
 function query(queryString, callback, json) {
 
     if (dbConnection == null) {
-        initConnection(queryString, callback);
+        initConnection(queryString, json, callback);
     }
-    else {
+    else if (json === undefined)
         executeSql(queryString, callback);
-    }
+    else
+        executeSqlJSON(queryString, callback);
 }
 
-function initConnection(query, callback) {
+function initConnection(query, json, callback) {
     console.log("Initializing DB connection");
 
     dbConnection = new Connection({
@@ -31,9 +32,14 @@ function initConnection(query, callback) {
         if (err) {
             console.log("Unable to connect to database!", err);
         }
-        else {
+        else if (json === undefined){
             console.log("Successfully connected to DB");
             executeSql(query, callback);
+        }
+        else
+        {
+            console.log("Successfully connected to DB");
+            executeSqlJSON(query, callback);
         }
     });
 

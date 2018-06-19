@@ -355,26 +355,18 @@ function getAllAnnulmentTransactions(req, res) {
             });
         }
         else {
-            /*
+
             let annulmentPayload = [];
             results.forEach(element => {
                 let payloadItem = {
                     transactionHash: element[0].transactionHash[0],
                     rejected: element[1].rejected[0],
-                    user_id: element[2].user_id[0]
+                    user_id: element[2].user_id[0],
+                    vin: element[3].vin[0]
                 };
                 annulmentPayload.push(payloadItem);
             });
             res.send(JSON.stringify({"annulments": annulmentPayload}));
-            //next();
-            */
-            const annulment = {
-                transactionHash: results[0],
-                rejected: results[1],
-                user_id: results[2],
-                vin: results[3]
-            };
-            res.send(JSON.stringify({"annulment": annulment}));
         }
     });
 }

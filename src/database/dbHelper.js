@@ -194,7 +194,7 @@ function getAnnulmentTransactionsFromDB(callback)
         callback(error, results)
     };
 
-    dbConnection.query(queryString, sqlCallback);
+    dbConnection.query(queryString, sqlCallback, true);
 }
 
 module.exports = {
