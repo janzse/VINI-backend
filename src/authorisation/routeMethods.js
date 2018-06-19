@@ -1,9 +1,9 @@
 import dbHelper from "../database/dbHelper";
-import { createUserAccount, createCarAccount } from "../blockchain/ethNode";
+import { createUserAccount } from "../blockchain/ethNode";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
-function registerUser(req, res) {
+async function registerUser(req, res) {
 
     if (req.body.email == null || req.get("Authorization") == null || req.body.password == null ||
         req.body.authorityLevel == null || req.body.forename == null || req.body.surname == null ||
@@ -14,213 +14,152 @@ function registerUser(req, res) {
             "message": "Request has to include: email, password, authorityLevel, forename," +
                 "surname, companyName & creationDate in the body and bearer_token in the header"
         });
-        return false;
+        return;
     }
 
-    dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
-        console.log("UserExist: ", doesUserExist);
-        if (doesUserExist !== null) {
-            res.status(400);
-            res.json({
-                "message": "User already exists"
-            });
+    const doesUserExist = await dbHelper.doesUserExist(req.body.email);
 
-            return false;
-        }
-        console.log("test");
-        const userKeys = createUserAccount();
-        console.log("test2");
-        //TODO: Alle Werte in die DB schreiben
-        dbHelper.registerUserInDB(req.body.email, req.body.password, userKeys.privateKey, userKeys.publicKey,
-            req.body.authorityLevel, req.body.forename, req.body.surname, req.body.companyName, req.body.creationDate,
-            false, (hasError, rowCount) => {
+    if (doesUserExist) {
+        res.status(400);
+        res.json({
+            "message": "User with email <" + req.body.email + "> already exists"
+        });
 
-                if (!hasError) {
-                    res.status(200);
-                    res.json({
-                        "message": "Registration was successful"
-                    })
-                }
-                else {
-                    res.status(500);
-                    res.json({
-                        "message": "Failed to register user due to a server error"
-                    })
-                }
-            });
-        console.log("test3");
-    })
+        return;
+    }
+
+    const userKeys = createUserAccount();
+
+    const registerResult = dbHelper.registerUserInDB(
+        req.body.email,
+        req.body.password,
+        userKeys.privateKey,
+        userKeys.publicKey,
+        req.body.authorityLevel,
+        req.body.forename,
+        req.body.surname,
+        req.body.companyName,
+        req.body.creationDate,
+        false
+    );
+
+    if (registerResult == null) {
+        res.status(500);
+        res.json({
+            "message": "Failed to register user due to a server error"
+        });
+    }
+    else {
+        res.status(200);
+        res.json({
+            "message": "Registration was successful"
+        });
+    }
 }
 
-function blockUser(req, res) {
+async function blockUser(req, res) {
 
-    if (req.body.email == null || req.get("Authorization") == null) {
+    const email = req.body.email;
+
+    if (email == null || req.get("Authorization") == null) {
         console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
         res.status(400);
         res.send({
             "message": "Request has to include: email in the body and bearer_token in the header"
         });
-        return false;
+        return;
     }
 
-    dbHelper.doesUserExist(req.body.email, (doesUserExist) => {
-        if (doesUserExist !== null) {
-            dbHelper.blockUserInDB(req.body.email, (err, isUserDeleted) => {
-                console.log("isUserDeleted: ", isUserDeleted);
-                if (isUserDeleted !== null) {
-                    res.status(200);
-                    res.send(({ "message": "Block was successful" }))
-                    return;
-                }
-                else {
-                    console.log("Error while block user: ", err);
-                    res.status(500);
-                    res.send({
-                        "message": "Failed to block user due to a server error"
-                    })
-                    return;
-                }
-            })
-        }
-        else {
-            res.status(400);
-            res.send({
-                "message": "User does not exists"
-            });
-            return;
-        }
-    })
+    const doesUserExists = await dbHelper.doesUserExist(email);
+
+    if (!doesUserExists) {
+        res.status(400);
+        res.send({
+            "message": "User with email " + email + " does not exist"
+        });
+
+        return;
+    }
+
+    const blockResult = await dbHelper.blockUserInDB(email);
+
+    if (blockResult != null && blockResult.length === 0) {
+        res.status(200);
+        res.json({
+            "message": "Block was successful"
+        });
+    }
+    else {
+        res.status(500);
+        res.json({
+            "message": "Failed to block user due to a server error"
+        });
+    }
 }
 
-
-
 //VINI.de/api/users
-function getUsers(req, res) {
+async function getUsers(req, res) {
 
     //CHECK DB-Connection: if available - return select all result; if not return dummy values
 
-    dbHelper.getAllUsers((err, results) => {
-        if (results && results.length > 0) {
+    const users = await dbHelper.getAllUsers();
 
-            let userPayload = [];
-            results.forEach(element => {
-                if (element && element.length > 8 && element.creationDate) { // does it contain data? TODO -> this is just a quick and dirty fix
-                    let payloadItem = {
-                        date: element[8].creationDate,
-                        forename: element[5].forename,
-                        surname: element[6].surname,
-                        authorityLevel: element[4].authorityLevel,
-                        email: element[1].email,
-                        company: element[7].companyName
-                    };
-                    if (payloadItem && payloadItem.date) { 
-                        userPayload.push(payloadItem);
-                    }
-                }
-            });
-            res.status(200);
-            res.send(JSON.stringify({ "users": userPayload }));
-
-
-        } else { //send dummy
-            let transactionPayload = [];
-
-
-            const payloadItem1 = {
-                date: "11.06.2008",
-                forename: "Ernst",
-                surname: "Mustermann",
-                authorityLevel: "TUEV",
-                action: "dummy",
-                email: "queryMail",
-                company: "TUEV"
-            };
-            const payloadItem2 = {
-                date: "11.06.2018",
-                forename: "Brigitte",
-                surname: "Mustermann",
-                authorityLevel: "ZWS",
-                action: "dummy",
-                email: "queryMail",
-                company: "KFZ Bongard"
-            };
-            const payloadItem3 = {
-                date: "11.06.2018",
-                forename: "Johnathan",
-                surname: "Mustermann",
-                authorityLevel: "STVA",
-                action: "dummy",
-                email: "queryMail",
-                company: "Amt X"
-            };
-            const payloadItem4 = {
-                date: "12.06.2018",
-                forename: "Gabi",
-                surname: "Mustermann",
-                authorityLevel: "ASTVA",
-                action: "dummy",
-                email: "queryMail",
-                company: "Amt Y"
-            };
-
-            transactionPayload.push(payloadItem1);
-            transactionPayload.push(payloadItem2);
-            transactionPayload.push(payloadItem3);
-            transactionPayload.push(payloadItem4);
-            const msg = JSON.stringify({ transactionPayload });
-            res.send(msg);
-        }
+    if (users != null) {
+        res.status(200);
+        res.json({
+            "users": users
+        });
     }
-    );
+    else {
+        //send dummy
+        let transactionPayload = [];
 
-    //DUMMY
-    /*
-    let transactionPayload = [];
+        const payloadItem1 = {
+            date: "11.06.2008",
+            forename: "Ernst",
+            surname: "Mustermann",
+            authorityLevel: "TUEV",
+            action: "dummy",
+            email: "queryMail",
+            company: "TUEV"
+        };
+        const payloadItem2 = {
+            date: "11.06.2018",
+            forename: "Brigitte",
+            surname: "Mustermann",
+            authorityLevel: "ZWS",
+            action: "dummy",
+            email: "queryMail",
+            company: "KFZ Bongard"
+        };
+        const payloadItem3 = {
+            date: "11.06.2018",
+            forename: "Johnathan",
+            surname: "Mustermann",
+            authorityLevel: "STVA",
+            action: "dummy",
+            email: "queryMail",
+            company: "Amt X"
+        };
+        const payloadItem4 = {
+            date: "12.06.2018",
+            forename: "Gabi",
+            surname: "Mustermann",
+            authorityLevel: "ASTVA",
+            action: "dummy",
+            email: "queryMail",
+            company: "Amt Y"
+        };
 
+        transactionPayload.push(payloadItem1);
+        transactionPayload.push(payloadItem2);
+        transactionPayload.push(payloadItem3);
+        transactionPayload.push(payloadItem4);
 
-    const payloadItem1 = {
-        date: "11.06.2008",
-        forename: "Ernst",
-        surname: "Mustermann",
-        authorityLevel: "TUEV",
-        action: "dummy",
-        email: "queryMail",
-        company: "TUEV"
-    };
-    const payloadItem2 = {
-        date: "11.06.2018",
-        forename: "Brigitte",
-        surname: "Mustermann",
-        authorityLevel: "ZWS",
-        action: "dummy",
-        email: "queryMail",
-        company: "KFZ Bongard"
-    };
-    const payloadItem3 = {
-        date: "11.06.2018",
-        forename: "Johnathan",
-        surname: "Mustermann",
-        authorityLevel: "STVA",
-        action: "dummy",
-        email: "queryMail",
-        company: "Amt X"
-    };
-    const payloadItem4 = {
-        date: "12.06.2018",
-        forename: "Gabi",
-        surname: "Mustermann",
-        authorityLevel: "ASTVA",
-        action: "dummy",
-        email: "queryMail",
-        company: "Amt Y"
-    };
-
-    transactionPayload.push(payloadItem1);
-    transactionPayload.push(payloadItem2);
-    transactionPayload.push(payloadItem3);
-    transactionPayload.push(payloadItem4);
-    const msg = JSON.stringify({transactionPayload});
-    res.send(msg);*/
+        res.json({
+            transactionPayload
+        });
+    }
 }
 
 
@@ -234,47 +173,38 @@ function login(req, res) {
         authorityLevel: authLevel
     };
 
-    res.send(loginBody);
+    res.status(200);
+    res.json(loginBody);
 }
 
-let app;
+async function isAuthorised(req, res, next) {
 
-//FIXME: Das herumreichen der "app" Instanz ist sehr unschön.
-// success ist die Funktion, die aufgerufen wird, wenn die Authorisierung geglückt ist.
-// TODO: Fehlerfälle
-function isAuthorised(req, res, next) {
+    if (req.get("Authorization") == null) {
+        errorHandling(res, 406, "No valid bearer token found");
+        return;
+    }
+    const token = req.get("Authorization").slice("Bearer ".length);
+    console.log("TOKEN: ", token);
 
-    if (req.get("Authorization") != null) {
-        const token = req.get("Authorization").slice("Bearer ".length);
-        console.log("TOKEN: ", token);
+    // Prüfen, ob der User deaktiviert ist
+    const authResult = await dbHelper.checkUserAuthorization(token);
 
-        // Prüfen, ob der User deaktiviert ist
-        dbHelper.checkUserAuthorization(token, (error, result) => {
-            if (error)
-                errorHandling(res, 400, `User Authorisierungsfehler: '${error}'`);
-            else {
-                if (result.length === 0)
-                    errorHandling(res, 403, "Kein Ergebnis von der Autorisierung erhalten");
-                else {
-                    if (result[0] === true)
-                        errorHandling(res, 401, "Der User ist blockiert");
-                    else {
-                        const userBody = {
-                            id: result[1],
-                            blocked: result[0],
-                            authorityLevel: result[2],
-                            expiration: result[3]
-                        };
-                        console.log("Check user authorization result: ", userBody);
-                        req.body = userBody;
-                        next();
-                    }
-                }
-            }
-        })
+    if (authResult == null || authResult.length === 0) {
+        errorHandling(res, 403, "No result from user authorization");
+    }
+    else if (authResult[0] === true) {
+        errorHandling(res, 401, "User is blocked");
     }
     else {
-        errorHandling(res, 406, "Kein valides Accesstoken gefunden")
+        const userBody = {
+            id: authResult[1],
+            blocked: authResult[0],
+            authorityLevel: authResult[2],
+            expiration: authResult[3]
+        };
+        console.log("Check user authorization result: ", userBody);
+        req.body = userBody;
+        next();
     }
 }
 
@@ -291,10 +221,8 @@ function errorHandling(response, status, message) {
     response.redirect(query);
 }
 
+
 module.exports = {
-    "setApp": (expressApp) => {
-        app = expressApp
-    },
     "registerUser": registerUser,
     "login": login,
     "isAuthorised": isAuthorised,

@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import {toHexString} from "../utils"
+import {toHexString, toBasicString} from "../utils"
 
 let web3;
 let isConnected = false;
@@ -19,33 +19,22 @@ function connectToNode() {
         });
 }
 
-function sendTransaction(transaction, callback) {
+function sendTransaction(transaction) {
 
-    if (!isConnected) {
-        console.log("Not connected to node!");
-        callback({
-            "err": "Not connected to node"
-        });
-        return;
-    }
+    return new Promise(async (resolve) => {
+        try {
+            await web3.eth.net.isListening();
 
-    //let lastTransacctionHash = dbHelper.getHeadTransactionHash(transaction.to);
-
-    web3.eth.net.isListening()
-        .then(() => {
-            web3.eth.sendTransaction({
-                "from": transaction.from,
-                "to": transaction.to,
-                "gas": 100000,
-                "data": web3.utils.toHex(JSON.stringify(transaction.data))
-            }, (err, hash) => {
-                //dbHelper.updateHeadTransactionHash(transaction.to, hash);
-                callback(err)
-            });
-        })
-        .catch((err) => {
-            console.error("Error while sending Transaction: \n", err);
-        });
+            web3.eth.sendTransaction(transaction)
+                .once("transactionHash", (hash) => {
+                    console.log("Sending transaction successful:", hash);
+                    resolve(hash);
+                });
+        } catch (err) {
+            console.log("Error while sending transaction: ", err);
+            resolve(null);
+        }
+    });
 }
 
 async function sendSignedTransaction(transaction, privateKey) {
@@ -60,8 +49,8 @@ async function sendSignedTransaction(transaction, privateKey) {
 
             web3.eth.sendSignedTransaction(singedTX.rawTransaction)
                 .once('transactionHash', (hash) => {
-                    console.log("Transaction successful:", hash);
-                    resolve(hash);
+                    console.log("Sending signedTransaction successful:", hash);
+                    resolve(toBasicString(hash));
                 });
         }
         catch (err) {
@@ -78,13 +67,16 @@ async function getTransaction(transHash) {
     }
     catch (err) {
         console.error("Error while getting Transaction: ", "\n", err);
+        return null;
     }
 }
 
 //TODO: Testing on real blockchain transactions
 async function getAllTransactions(headTxHash) {
     let transactions = [];
+    /*
     let currentHash = headTxHash;
+
     try {
         let currentTransaction = await getTransaction(lastTransactionHash);
         while (currentTransaction.payload.pretransaction !== null) {
@@ -95,7 +87,8 @@ async function getAllTransactions(headTxHash) {
     }
     catch (err) {
         console.log("Error while getting transactions", err);
-    }
+        return null;
+    }*/
     return transactions;
 }
 
@@ -110,8 +103,8 @@ function createUserAccount() {
     const userAccount = web3.eth.accounts.create();
 
     return {
-        "privateKey": userAccount.privateKey,
-        "publicKey": userAccount.address
+        "privateKey": toBasicString(userAccount.privateKey),
+        "publicKey": toBasicString(userAccount.address)
     };
 }
 
@@ -125,8 +118,8 @@ function createCarAccount() {
     const carAccount = web3.eth.accounts.create();
 
     return {
-        "privateKey": carAccount.privateKey,
-        "publicKey": carAccount.address
+        "privateKey": toBasicString(carAccount.privateKey),
+        "publicKey": toBasicString(carAccount.address)
     }
 }
 
@@ -136,5 +129,6 @@ module.exports = {
     "createUserAccount": createUserAccount,
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
+    "sendSignedTransaction": sendSignedTransaction,
     "getAllTransactions": getAllTransactions
 };

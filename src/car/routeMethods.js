@@ -1,10 +1,11 @@
 import Transaction from "../blockchain/transaction";
 import {sendTransaction, sendSignedTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
+import {getTimestamp} from "../utils";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
-function updateMileage(req, res) {
+async function updateMileage(req, res) {
 
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null || req.body.mileage == null) {
         console.log("Invalid request on updating mileage: ", req.body, req.get("Authorization"));
@@ -12,58 +13,63 @@ function updateMileage(req, res) {
         res.json({
             "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
         });
-        return false;
+        return;
     }
-    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if (carAddress === null) {
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
-        }
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), async (privateKey, userAddress, email) => {
+    let carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
+    if (carAddress === null) {
+        console.log("vin not found! aborting.");
+        res.status(400);
+        res.json({"message": "Unknown vin!"});
+        return;
+    }
 
-            const transaction = new Transaction(userAddress, carAddress, req.body.timestamp);
-            transaction.setMileage(req.body.mileage);
-            transaction.setEmail(email);
+    const token = req.get("Authorization").slice("Bearer ".length);
+    const userInfo = await dbHelper.getUserInfoFromToken(token);
 
-            const transHash = await sendSignedTransaction(transaction, privateKey);
-            if (transHash == null) {
-                console.log("An error occurred while sending transaction: ", transaction, ": ", err);
-                res.status(500);
-                res.json({
-                    "message": "Updating mileage failed"
-                });
-            } else {
-                res.status(200);
-                res.json({
-                    "message": "Successfully updated mileage"
-                });
-            }
+    if (userInfo == null) {
+        console.log("Could not find user for token <" + token + ">");
+        res.status(400);
+        res.json({
+            "message": "Could not find user for token <" + token + ">"
         });
-    });
+        return;
+    }
+
+    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    transaction.setMileage(req.body.mileage);
+    transaction.setEmail(userInfo.email);
+
+    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+
+    if (transHash == null) {
+        console.log("An error occurred while sending transaction: ", transaction);
+        res.status(500);
+        res.json({
+            "message": "Updating mileage failed"
+        });
+    } else {
+
+        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
+
+        if (updateResult == null) {
+            console.log("An error occurred while updating headTx in DB");
+            res.status(500);
+            res.json({
+                "message": "An error occurred while updating headTx in DB"
+            });
+        }
+
+        res.status(200);
+        res.json({
+            "message": "Successfully updated mileage"
+        });
+    }
 }
 
-const getTimestamp = () => {
-    const today = new Date();
-    const todayStr = today.getFullYear();
-    let month = today.getMonth() + 1;
-    month = month < 10 ? "0" + month : month;
-    let day = today.getDate();
-    day = day < 10 ? "0" + day : day;
-
-    let hours = today.getHours();
-    hours = hours < 10 ? "0" + hours : hours;
-    let minute = today.getMinutes();
-    minute = minute < 10 ? "0" + minute : minute;
-    let seconds = today.getSeconds();
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-    return todayStr + "-" + month + "-" + day + "T" + hours + ":" + minute + ":" + seconds;
-};
-
-function getCarByVin(req, res) {
+async function getCarByVin(req, res) {
     // TODO delete me (when this is working)
     if (req.query.vin === "dummy" || "W0L000051T2123456") {
+
         let transactionPayload = [];
 
         // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
@@ -126,13 +132,10 @@ function getCarByVin(req, res) {
         transactionPayload.push(payloadItem3);
         transactionPayload.push(payloadItem4);
 
-
-        let jsonResponse = {
+        res.json({
             "vin": req.query.vin,
-            transactionPayload
-        };
-
-        res.send(JSON.stringify(jsonResponse));
+            "payload": transactionPayload
+        });
     } else {
 
         if (req.query.vin == null) {
@@ -143,48 +146,45 @@ function getCarByVin(req, res) {
             });
             return false;
         }
-        dbHelper.getCarAddressFromVin(req.query.vin, (err, carAddress) => {
-            if (carAddress === undefined) {
-                console.log("vin not found in DB!! aborting.");
-                res.status(400);
-                res.json({"message": "Unknown vin!"});
-                return false;
+
+        const carAddress = await dbHelper.getCarAddressFromVin(req.query.vin);
+
+        if (carAddress == null) {
+            console.log("vin not found in DB!! aborting.");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return;
+        }
+
+        const transactions = await getAllTransactions(carAddress);
+
+        if (transactions == null) {
+            console.log("Could not find vin in blockchain");
+            res.status(400);
+            res.json({"message": "Unknown vin!"});
+            return;
+        }
+
+        const transactionPayload = transactions.map((element) => {
+            return {
+                timestamp: element.data.timestamp,
+                mileage: element.data.mileage,
+                service1: element.data.serviceOne,
+                service2: element.data.serviceTwo,
+                oilchange: element.data.oilChange,
+                nextcheck: element.data.inspection,
+                ownerCount: element.data.preOwner,
+                entrant: element.data.entrant,
+                state: element.data.state
             }
-            let transactions = getAllTransactions(carAddress).then((result) => {
-                let transactionPayload = [];
-                transactions.array.forEach(element => {
-                    let payloadItem = {
-                        timestamp: element.data.timestamp,
-                        mileage: element.data.mileage,
-                        service1: element.data.serviceOne,
-                        service2: element.data.serviceTwo,
-                        oilchange: element.data.oilChange,
-                        nextcheck: element.data.inspection,
-                        ownerCount: element.data.preOwner,
-                        entrant: element.data.entrant,
-                        state: element.data.state
-                    };
-                    transactionPayload.push(payloadItem);
-                });
-                let jsonResponse = {
-                    vin: req.query.vin,
-                    transactionPayload
-                };
-                res.send(JSON.stringify(jsonResponse));
-            }, (error) => {
-            });
-            // if (transactions === undefined) {
-            //     console.log("vin not found in Blockchain! aborting.");
-            //     res.status(400);
-            //     res.json({"message": "Unknown vin!"});
-            //     return false;
-            // }
+        });
 
-
+        res.status(200);
+        res.json({
+            "vin": req.query.vin,
+            "payload": transactionPayload
         });
     }
-
-
 }
 
 function cancelTransaction(req, res) {
@@ -197,7 +197,7 @@ function applyCancelTransaction(req, res) {
     res.send(req.body);    // echo the result back
 }
 
-function shopService(req, res) {
+async function shopService(req, res) {
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
         req.body.oilChange == null) {
@@ -207,46 +207,63 @@ function shopService(req, res) {
             "message": "Request has to include: vin, bearer_token, timestamp, mileage, service1," +
             " service2 + oilchange"
         });
-        return false;
+        return;
     }
-    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if (carAddress === null) {
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
-        }
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (privateKey, userAddress, email) => {
+    const carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
 
-            const transaction = new Transaction(privateKey, carAddress, req.body.timestamp);
-            transaction.setMileage(req.body.mileage);
-            transaction.setServiceOne(req.body.service1);
-            transaction.setServiceTwo(req.body.service1);
-            transaction.setOilchange(req.body.oilChange);
-            transaction.setEmail(email);
+    if (carAddress === null) {
+        console.log("vin not found! aborting.");
+        res.status(400);
+        res.json({"message": "Unknown vin!"});
+        return;
+    }
 
-            sendTransaction(transaction, (err) => {
-                if (err) {
-                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
-                    res.status(500);
-                    res.json({
-                        "message": "Entering shop-service failed"
-                    });
-                } else {
-                    console.log("Transaction was sent: ", transaction);
-                    res.status(200);
-                    res.json({
-                        "message": "Successfully entered shop-service"
-                    });
-                }
-            });
+    const token = req.get("Authorization").slice("Bearer ".length);
+    const userInfo = await dbHelper.getUserInfoFromToken(token);
+
+    if (userInfo == null) {
+        console.log("Could not find user for token <" + token + ">");
+        res.status(400);
+        res.json({
+            "message": "Could not find user for token <" + token + ">"
         });
-    });
+        return;
+    }
+
+    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    transaction.setMileage(req.body.mileage);
+    transaction.setServiceOne(req.body.service1);
+    transaction.setServiceTwo(req.body.service1);
+    transaction.setOilchange(req.body.oilChange);
+    transaction.setEmail(userInfo.email);
+
+    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+
+    if (transHash == null) {
+        console.log("An error occurred while sending transaction: ", transaction);
+        res.status(500);
+        res.json({
+            "message": "Entering shop-service failed"
+        });
+    } else {
+
+        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
+
+        if (updateResult == null) {
+            console.log("An error occurred while updating headTx in DB");
+            res.status(500);
+            res.json({
+                "message": "An error occurred while updating headTx in DB"
+            });
+        }
+        res.status(200);
+        res.json({
+            "message": "Successfully entered shop-service"
+        });
+    }
 }
 
-function tuevEntry(req, res) {
-    console.log(req.body);
-
+async function tuevEntry(req, res) {
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.nextCheck == null) {
         console.log("Invalid request on tuev-report: ", req.body, req.get("Authorization"));
@@ -254,43 +271,62 @@ function tuevEntry(req, res) {
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage + nextCheck "
         });
-        return false;
+        return;
     }
 
-    dbHelper.getCarAddressFromVin(req.body.vin, (err, carAddress) => {
-        if (carAddress === null) {
-            console.log("vin not found! aborting.");
-            res.status(400);
-            res.json({"message": "Unknown vin!"});
-            return false;
-        }
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (privateKey, userAddress, email) => {
+    const carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
+    if (carAddress === null) {
+        console.log("vin not found! aborting.");
+        res.status(400);
+        res.json({"message": "Unknown vin!"});
+        return;
+    }
 
-            const transaction = new Transaction(privateKey, carAddress, req.body.timestamp);
-            transaction.setMileage(req.body.mileage);
-            transaction.setNextCheck(req.body.nextCheck);
-            transaction.setEmail(email);
+    const token = req.get("Authorization").slice("Bearer ".length);
+    const userInfo = await dbHelper.getUserInfoFromToken(token);
 
-            sendTransaction(transaction, (err) => {
-                if (err) {
-                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
-                    res.status(500);
-                    res.json({
-                        "message": "Entering tuev-report failed"
-                    });
-                } else {
-                    console.log("Transaction was sent: ", transaction);
-                    res.status(200);
-                    res.json({
-                        "message": "Successfully entered tuev-report"
-                    });
-                }
-            });
+    if (userInfo == null) {
+        console.log("Could not find user for token <" + token + ">");
+        res.status(400);
+        res.json({
+            "message": "Could not find user for token <" + token + ">"
         });
-    });
+        return;
+    }
+
+    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    transaction.setMileage(req.body.mileage);
+    transaction.setNextCheck(req.body.nextCheck);
+    transaction.setEmail(userInfo.email);
+
+    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+
+    if (transHash == null) {
+        console.log("An error occurred while sending transaction: ", transaction);
+        res.status(500);
+        res.json({
+            "message": "Entering tuev-report failed"
+        });
+    } else {
+
+        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
+
+        if (updateResult == null) {
+            console.log("An error occurred while updating headTx in DB");
+            res.status(500);
+            res.json({
+                "message": "An error occurred while updating headTx in DB"
+            });
+        }
+
+        res.status(200);
+        res.json({
+            "message": "Successfully entered tuev-report"
+        });
+    }
 }
 
-function stvaRegister(req, res) {
+async function stvaRegister(req, res) {
     console.log(req.body);
 
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
@@ -300,84 +336,108 @@ function stvaRegister(req, res) {
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage + ownerCount "
         });
-        return false;
+        return;
     }
 
-    dbHelper.getCarAddressFromVin(req.body.vin, async (err, carAddress) => {
-        if (carAddress === null) {
-            console.log("carAddress not found: Creating new one");
-            // VIN not in DB yet -> Create it
-            const carAccount = createCarAccount();
+    let carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
 
-            const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, getTimestamp());
+    if (carAddress == null) {
+        console.log("carAddress not found: Creating new one");
+        // VIN not in DB yet -> Create it
+        const carAccount = createCarAccount();
+        carAddress = carAccount.publicKey;
 
-            if (result == null) {
-                console.log("Error while registering new car");
-                res.status(500);
-                res.json({
-                    "message": "Error while registering new car"
-                });
-            }
-        }
+        const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, getTimestamp());
 
-        dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length), (privateKey, userAddress, email) => {
-
-            const transaction = new Transaction(privateKey, carAddress, req.body.timestamp);
-            transaction.setMileage(req.body.mileage);
-            transaction.setpreOwner(req.body.ownerCount);
-            transaction.setEmail(email);
-
-            sendTransaction(transaction, (err) => {
-                if (err) {
-                    console.log("An error occurred while sending transaction: ", transaction, ": ", err);
-                    res.status(500);
-                    res.json({
-                        "message": "Entering stva-register failed"
-                    });
-                } else {
-                    console.log("Transaction was sent: ", transaction);
-                    res.status(200);
-                    res.json({
-                        "message": "Successfully entered stva-register"
-                    });
-                }
-            });
-        });
-    });
-}
-
-function getAllAnnulmentTransactions(req, res) {
-    dbHelper.getAnnulmentTransactionsFromDB((error, results) => {
-        if (error) {
+        if (result == null) {
+            console.log("Error while registering new car");
             res.status(500);
             res.json({
-                "message": "Failure at getting annulment transactions"
+                "message": "Error while registering new car"
+            });
+            return;
+        }
+    }
+
+    const token = req.get("Authorization").slice("Bearer ".length);
+    const userInfo = await dbHelper.getUserInfoFromToken(token);
+
+    if (userInfo == null) {
+        console.log("Could not find user for token <" + token + ">");
+        res.status(400);
+        res.json({
+            "message": "Could not find user for token <" + token + ">"
+        });
+        return;
+    }
+
+    const transaction = new Transaction(userInfo.address, carAddress, req.body.timestamp);
+    transaction.setMileage(req.body.mileage);
+    transaction.setPreOwner(req.body.ownerCount);
+    transaction.setEmail(userInfo.email);
+
+    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+
+    if (transHash == null) {
+        console.log("An error occurred while sending transaction: ", transaction);
+        res.status(500);
+        res.json({
+            "message": "Entering stva-register failed"
+        });
+    } else {
+
+        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
+
+        if (updateResult == null) {
+            console.log("An error occurred while updating headTx in DB");
+            res.status(500);
+            res.json({
+                "message": "An error occurred while updating headTx in DB"
             });
         }
-        else {
-            /*
-            let annulmentPayload = [];
-            results.forEach(element => {
-                let payloadItem = {
-                    transactionHash: element[0].transactionHash[0],
-                    rejected: element[1].rejected[0],
-                    user_id: element[2].user_id[0]
-                };
-                annulmentPayload.push(payloadItem);
-            });
-            res.send(JSON.stringify({"annulments": annulmentPayload}));
-            //next();
-            */
-            const annulment = {
-                transactionHash: results[0],
-                rejected: results[1],
-                user_id: results[2],
-                vin: results[3]
-            };
-            res.send(JSON.stringify({"annulment": annulment}));
-        }
-    });
+
+        res.status(200);
+        res.json({
+            "message": "Successfully entered stva-register"
+        });
+    }
 }
+
+async function getAllAnnulmentTransactions(req, res) {
+    const results = await dbHelper.getAnnulmentTransactionsFromDB();
+
+    if (results == null) {
+        res.status(500);
+        res.json({
+            "message": "Failure at getting annulment transactions"
+        });
+    }
+    else {
+        /*
+        let annulmentPayload = [];
+        results.forEach(element => {
+            let payloadItem = {
+                transactionHash: element[0].transactionHash[0],
+                rejected: element[1].rejected[0],
+                user_id: element[2].user_id[0]
+            };
+            annulmentPayload.push(payloadItem);
+        });
+        res.send(JSON.stringify({"annulments": annulmentPayload}));
+        //next();
+        */
+        const annulment = {
+            transactionHash: results[0],
+            rejected: results[1],
+            user_id: results[2],
+            vin: results[3]
+        };
+        res.json({
+            "annulment": annulment
+        });
+    }
+}
+
 
 module.exports = {
     "updateMileage": updateMileage,
