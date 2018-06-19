@@ -180,7 +180,7 @@ function login(req, res) {
 async function isAuthorised(req, res, next) {
 
     if (req.get("Authorization") == null) {
-        errorHandling(res, 406, "No valid bearer token found");
+        errorHandling(res, 406, "Kein gültiges Bearer-Token gefunden.");
         return;
     }
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -190,23 +190,18 @@ async function isAuthorised(req, res, next) {
     const authResult = await dbHelper.checkUserAuthorization(token);
 
     if (authResult == null || authResult.length === 0) {
-        errorHandling(res, 403, "No result from user authorization");
+        errorHandling(res, 403, "Kein Ergebnis bei der Abfrage des Users.");
     }
     else if ((Date.parse(authResult[3]) - Date.now()) < 0){
-        errorHandling(res, 401, "Bearer token expired");
+        errorHandling(res, 401, "Das Bearer-Token ist abgelaufen.");
     }
     else if (authResult[0] === true) {
-        errorHandling(res, 401, "User is blocked");
+        errorHandling(res, 401, "Der Benutzer wurde blockiert.");
     }
     else {
-        const userBody = {
-            id: authResult[1],
-            blocked: authResult[0],
-            authorityLevel: authResult[2],
-            expiration: authResult[3]
-        };
+        req.body.blocked = authResult[0];
+        req.body.authorityLevel = authResult[2];
         console.log("Check user authorization result: ", userBody);
-        req.body = userBody;
         next();
     }
 }
