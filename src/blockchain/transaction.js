@@ -2,7 +2,7 @@ import {toHexString} from "../utils"
 
 class Transaction {
 
-    constructor(from, email, vin, to, timestamp) {
+    constructor(from, email, vin, preTransaction, to, timestamp) {
 
         this.from = toHexString(from); // String: sender address where the TX originated from (STVAWallet)
         this.to = toHexString(to); // String: recipient address (a carWallet)
@@ -10,7 +10,7 @@ class Transaction {
         this.data = {
             "email": email,
             "vin": vin,
-            "preTransaction": null,
+            "preTransaction": preTransaction,
             "preOwner": null,
             "timestamp": timestamp,
             "mileage": null,
@@ -21,10 +21,6 @@ class Transaction {
             "annulmentTarget": null,
             "nextCheck": null
         };
-    }
-
-    setPreTransaction(hash){
-        this.data.preTransaction = hash;
     }
 
     setPreOwner(preOwner){

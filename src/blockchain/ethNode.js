@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import {toHexString, toBasicString} from "../utils"
+import dbHelper from "../database/dbHelper";
 
 let web3;
 let isConnected = false;
@@ -45,13 +46,18 @@ async function sendSignedTransaction(transaction, privateKey) {
             transaction.data = web3.utils.toHex(JSON.stringify(transaction.data));
 
             privateKey = toHexString(privateKey);
-            console.log("PRIVKEY: ", privateKey);
-            console.log("TARAN", transaction);
             const singedTX = await web3.eth.accounts.signTransaction(transaction, privateKey);
 
             web3.eth.sendSignedTransaction(singedTX.rawTransaction)
-                .once('transactionHash', (hash) => {
+                .once('transactionHash', async (hash) => {
                     console.log("Sending signedTransaction successful:", hash);
+
+                    const result = await dbHelper.updateHeadTransactionHash(transaction.to, hash);
+
+                    if (result == null) {
+                        console.log("Transaction not saved to database.");
+                    }
+
                     resolve(toBasicString(hash));
                 });
         }
