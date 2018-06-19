@@ -17,8 +17,16 @@ async function registerUser(req, res) {
         return;
     }
 
-    const doesUserExist = await dbHelper.doesUserExist(req.body.email);
+    if (req.body.authorityLevel !== 4){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to register new user"
+        });
 
+        return;
+    }
+
+    const doesUserExist = await dbHelper.doesUserExist(req.body.email);
     if (doesUserExist) {
         res.status(400);
         res.json({
@@ -67,6 +75,15 @@ async function blockUser(req, res) {
         res.send({
             "message": "Request has to include: email in the body and bearer_token in the header"
         });
+        return;
+    }
+
+    if (req.body.authorityLevel !== 4){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to register new user"
+        });
+
         return;
     }
 
