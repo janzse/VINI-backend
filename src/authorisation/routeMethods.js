@@ -117,7 +117,14 @@ async function blockUser(req, res) {
 //VINI.de/api/users
 async function getUsers(req, res) {
 
-    //CHECK DB-Connection: if available - return select all result; if not return dummy values
+    if (req.body.authorityLevel !== 4){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to register new user"
+        });
+
+        return;
+    }
 
     const users = await dbHelper.getAllUsers();
 
