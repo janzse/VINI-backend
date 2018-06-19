@@ -1,5 +1,5 @@
 import dbHelper from "../database/dbHelper";
-import {createUserAccount, createCarAccount} from "../blockchain/ethNode";
+import { createUserAccount, createCarAccount } from "../blockchain/ethNode";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -12,7 +12,7 @@ function registerUser(req, res) {
         res.status(400);
         res.json({
             "message": "Request has to include: email, password, authorityLevel, forename," +
-            "surname, companyName & creationDate in the body and bearer_token in the header"
+                "surname, companyName & creationDate in the body and bearer_token in the header"
         });
         return false;
     }
@@ -69,7 +69,7 @@ function blockUser(req, res) {
                 console.log("isUserDeleted: ", isUserDeleted);
                 if (isUserDeleted !== null) {
                     res.status(200);
-                    res.send(({"message": "Block was successful"}))
+                    res.send(({ "message": "Block was successful" }))
                     return;
                 }
                 else {
@@ -100,73 +100,77 @@ function getUsers(req, res) {
     //CHECK DB-Connection: if available - return select all result; if not return dummy values
 
     dbHelper.getAllUsers((err, results) => {
-            if (results.length > 0) {
+        if (results && results.length > 0) {
 
-                let userPayload = [];
-                results.forEach(element => {
+            let userPayload = [];
+            results.forEach(element => {
+                if (element && element.length > 8 && element.creationDate) { // does it contain data? TODO -> this is just a quick and dirty fix
                     let payloadItem = {
-                        date: element[8].creationDate[0],
-                        forename: element[5].forename[0],
-                        surname: element[6].surname[0],
-                        authorityLevel: element[4].authorityLevel[0],
-                        email: element[1].email[0],
-                        company: element[7].companyName[0]
+                        date: element[8].creationDate,
+                        forename: element[5].forename,
+                        surname: element[6].surname,
+                        authorityLevel: element[4].authorityLevel,
+                        email: element[1].email,
+                        company: element[7].companyName
                     };
-                    userPayload.push(payloadItem);
-                });
-                res.status(200);
-                res.send(JSON.stringify({"users": userPayload}));
+                    if (payloadItem && payloadItem.date) { 
+                        userPayload.push(payloadItem);
+                    }
+                }
+            });
+            res.status(200);
+            res.send(JSON.stringify({ "users": userPayload }));
 
 
-            } else { //send dummy
-                let transactionPayload = [];
+        } else { //send dummy
+            let transactionPayload = [];
 
 
-                const payloadItem1 = {
-                    date: "11.06.2008",
-                    forename: "Ernst",
-                    surname: "Mustermann",
-                    authorityLevel: "TUEV",
-                    action: "dummy",
-                    email: "queryMail",
-                    company: "TUEV"
-                };
-                const payloadItem2 = {
-                    date: "11.06.2018",
-                    forename: "Brigitte",
-                    surname: "Mustermann",
-                    authorityLevel: "ZWS",
-                    action: "dummy",
-                    email: "queryMail",
-                    company: "KFZ Bongard"
-                };
-                const payloadItem3 = {
-                    date: "11.06.2018",
-                    forename: "Johnathan",
-                    surname: "Mustermann",
-                    authorityLevel: "STVA",
-                    action: "dummy",
-                    email: "queryMail",
-                    company: "Amt X"
-                };
-                const payloadItem4 = {
-                    date: "12.06.2018",
-                    forename: "Gabi",
-                    surname: "Mustermann",
-                    authorityLevel: "ASTVA",
-                    action: "dummy",
-                    email: "queryMail",
-                    company: "Amt Y"
-                };
+            const payloadItem1 = {
+                date: "11.06.2008",
+                forename: "Ernst",
+                surname: "Mustermann",
+                authorityLevel: "TUEV",
+                action: "dummy",
+                email: "queryMail",
+                company: "TUEV"
+            };
+            const payloadItem2 = {
+                date: "11.06.2018",
+                forename: "Brigitte",
+                surname: "Mustermann",
+                authorityLevel: "ZWS",
+                action: "dummy",
+                email: "queryMail",
+                company: "KFZ Bongard"
+            };
+            const payloadItem3 = {
+                date: "11.06.2018",
+                forename: "Johnathan",
+                surname: "Mustermann",
+                authorityLevel: "STVA",
+                action: "dummy",
+                email: "queryMail",
+                company: "Amt X"
+            };
+            const payloadItem4 = {
+                date: "12.06.2018",
+                forename: "Gabi",
+                surname: "Mustermann",
+                authorityLevel: "ASTVA",
+                action: "dummy",
+                email: "queryMail",
+                company: "Amt Y"
+            };
 
-                transactionPayload.push(payloadItem1);
-                transactionPayload.push(payloadItem2);
-                transactionPayload.push(payloadItem3);
-                transactionPayload.push(payloadItem4);
-                const msg = JSON.stringify({transactionPayload});
-                res.send(msg);
-            }
+            transactionPayload.push(payloadItem1);
+            transactionPayload.push(payloadItem2);
+            transactionPayload.push(payloadItem3);
+            transactionPayload.push(payloadItem4);
+            const msg = JSON.stringify({ transactionPayload });
+            res.send(msg);
         }
+    }
     );
 
     //DUMMY
@@ -247,13 +251,13 @@ function isAuthorised(req, res, next) {
         // Prüfen, ob der User deaktiviert ist
         dbHelper.checkUserAuthorization(token, (error, result) => {
             if (error)
-                errorHandling(res, 400, `User authorization error: '${error}'`);
+                errorHandling(res, 400, `User Authorisierungsfehler: '${error}'`);
             else {
                 if (result.length === 0)
-                    errorHandling(res, 403, "No result from user authorization");
+                    errorHandling(res, 403, "Kein Ergebnis von der Autorisierung erhalten");
                 else {
                     if (result[0] === true)
-                        errorHandling(res, 401, "User is blocked");
+                        errorHandling(res, 401, "Der User ist blockiert");
                     else {
                         const userBody = {
                             id: result[1],

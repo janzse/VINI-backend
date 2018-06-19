@@ -62,7 +62,8 @@ const getTimestamp = () => {
 };
 
 function getCarByVin(req, res) {
-    if (req.query.vin === "dummy") {
+    // TODO delete me (when this is working)
+    if (req.query.vin === "dummy" || "W0L000051T2123456") {
         let transactionPayload = [];
 
         // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
@@ -142,7 +143,7 @@ function getCarByVin(req, res) {
             });
             return false;
         }
-        getCarAddressFromVin(req.query.vin, (err, carAddress) => {
+        dbHelper.getCarAddressFromVin(req.query.vin, (err, carAddress) => {
             if (carAddress === undefined) {
                 console.log("vin not found in DB!! aborting.");
                 res.status(400);
