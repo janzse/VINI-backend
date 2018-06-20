@@ -133,7 +133,6 @@ async function getCarByVin(req, res) {
                 transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.PENDING;
             }
         }
-        console.log("Transaction state: ", transactionsWithoutAnnulments[i].data.state);
     }
 
     let transactionPayload = transactionsWithoutAnnulments.map((element) => {
