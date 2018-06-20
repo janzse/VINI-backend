@@ -173,7 +173,6 @@ async function isAuthorised(req, res, next) {
         return;
     }
     const token = req.get("Authorization").slice("Bearer ".length);
-    console.log("TOKEN: ", token);
 
     // Prüfen, ob der User deaktiviert ist
     const authResult = await dbHelper.checkUserAuthorization(token);
