@@ -72,7 +72,13 @@ async function sendSignedTransaction(transaction, privateKey) {
 async function getTransaction(transHash) {
     try {
         await web3.eth.net.isListening();
-        return await web3.eth.getTransaction(toHexString(transHash));
+
+        const rawTransaction = await web3.eth.getTransaction(toHexString(transHash));
+
+        const transaction = new Transaction(rawTransaction.from, null, null, null, rawTransaction.to, null);
+        transaction.data = JSON.parse(web3.utils.toAscii(rawTransaction.input));
+
+        return transaction;
     }
     catch (err) {
         console.error("Error while getting Transaction: ", "\n", err);
