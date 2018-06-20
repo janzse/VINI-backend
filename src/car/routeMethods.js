@@ -1,7 +1,7 @@
 import Transaction from "../blockchain/transaction";
 import {sendTransaction, sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {getTimestamp} from "../utils";
+import {getTimestamp, USER_LEVEL} from "../utils";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
@@ -16,7 +16,7 @@ async function updateMileage(req, res) {
         return;
     }
 
-    if (!(req.body.authorityLevel === 1 || req.body.authorityLevel === 2 || req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+    if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
         res.status(401);
         res.json({
             "message": "User is not authorized to update mileage for car"
@@ -209,11 +209,13 @@ async function getCarByVin(req, res) {
     }
 }
 
+//TODO: DELETE ME?
 function cancelTransaction(req, res) {
     console.log(req.body);
     res.send(req.body);    // echo the result back
 }
 
+//TODO: DELETE ME?
 function applyCancelTransaction(req, res) {
     console.log(req.body);
     res.send(req.body);    // echo the result back
@@ -232,7 +234,7 @@ async function shopService(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== 1){
+    if (req.body.authorityLevel !== USER_LEVEL.ZWS){
         res.status(401);
         res.json({
             "message": "User is not authorized to make service entry for car"
@@ -318,7 +320,7 @@ async function tuevEntry(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== 2){
+    if (req.body.authorityLevel !== USER_LEVEL.TUEV){
         res.status(401);
         res.json({
             "message": "User is not authorized to make inspection entry for car"
@@ -438,8 +440,6 @@ async function stvaRegister(req, res) {
             "message": "Error while registering new car: car already exists!"
         });
         return;
-
-
     }
 
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -454,19 +454,7 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-
-    if(preTransaction == null){
-        console.log("Error while getting preTransaction from DB");
-        res.status(500);
-        res.json({
-            "message": "Error while getting preTransaction from DB"
-        });
-        return;
-    }
-    if(preTransaction.length === 0){
-        preTransaction = null;
-    }
+    const preTransaction = null;
 
     const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
@@ -510,7 +498,7 @@ async function getAllAnnulmentTransactions(req, res) {
         return;
     }
 
-    const results = await dbHelper.getAnnulmentTransactionsFromDB();
+    const results = await dbHelper.getAllAnnulmentTransactions();
     if (results == null) {
         res.status(500);
         res.json({
@@ -544,15 +532,35 @@ async function getAllAnnulmentTransactions(req, res) {
         res.send(JSON.stringify({"annulments": annulmentPayload}));
         //next();
         */
-
+        console.log(results)
         const annulment = {
             transactionHash: results[0],
             pending: results[1],
             user_id: results[2],
             vin: results[3]
         };
-        res.json({
-            "annulment": annulment
+
+        // benötigt werden folgende Attribute:
+        // date // Transaktion von wann?
+        // vin
+        // mileage
+        // ownerCount
+        // entrant
+        // mainInspection
+        // service1
+        // service2
+        // oilChange
+        // applicant // wer hat den Antrag erstellt? (aus der DB)
+        // state    "pending"     nicht bearbeitet
+        //          "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
+        // transactionHash
+
+        res.json({ "annulments": [
+            annulment,
+            //2. annulment,
+            // ...
+        ]
+
         });
     }
 }
@@ -560,6 +568,7 @@ async function getAllAnnulmentTransactions(req, res) {
 async function insertAnnulmentTransaction(req, res){
 
     const hash = req.body.transactionHash;
+    //TODO: Evtl userId aus Bearer Token holen -> Nicht sonderlich wichtig
     const userId =  req.body.userId;
 
     if(hash == null || hash.length < 64 || req.body.userId == null){
@@ -610,6 +619,48 @@ async function insertAnnulmentTransaction(req, res){
     });
 }
 
+async function rejectAnnulmentTransaction(req, res){
+
+    const hash = req.body.transactionHash;
+    const userId = req.body.userId;
+    //TODO: Evtl userId aus Bearer Token holen -> Nicht sonderlich wichtig
+    if(hash == null || hash.length < 64 || userId == null){
+        console.log("Invalid request to reject an annulment. A transactionHash and a userId is required.");
+        res.status(400);
+        res.json({
+            "message": "Invalid request to reject an annulment. A transactionHash and a userId is required."
+        });
+        return;
+    }
+
+    const annulment = await dbHelper.getAnnulment(hash, userId);
+
+    if(annulment == null || annulment.length === 0){
+        console.log("Could not find annulment transaction from user " + userId + " with hash " + hash);
+        res.status(400);
+        res.json({
+            "message": "Could not find annulment transaction from user " + userId + " with hash " + hash
+        });
+        return;
+    }
+
+    const deletion = await dbHelper.rejectAnnulment(hash, userId);
+
+    if(deletion == null){
+        console.log("Error while deleting annulment transaction from DB.");
+        res.status(500);
+        res.json({
+            "message": "Error while deleting annulment transaction from DB."
+        });
+        return;
+    }
+
+    res.status(200);
+    res.json({
+        "message": "Successfully rejected annulment transaction"
+    });
+}
+
 
 module.exports = {
     "updateMileage": updateMileage,
@@ -620,5 +671,6 @@ module.exports = {
     "stvaRegister": stvaRegister,
     "getCarByVin": getCarByVin,
     "getAllAnnulmentTransactions": getAllAnnulmentTransactions,
-    "insertAnnulmentTransaction": insertAnnulmentTransaction
+    "insertAnnulmentTransaction": insertAnnulmentTransaction,
+    "rejectAnnulmentTransaction": rejectAnnulmentTransaction
 };

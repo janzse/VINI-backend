@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import {toHexString, toBasicString} from "../utils"
 import dbHelper from "../database/dbHelper";
+import Transaction from "./transaction";
 
 let web3;
 let isConnected = false;
@@ -71,7 +72,13 @@ async function sendSignedTransaction(transaction, privateKey) {
 async function getTransaction(transHash) {
     try {
         await web3.eth.net.isListening();
-        return await web3.eth.getTransaction(toHexString(transHash));
+
+        const rawTransaction = await web3.eth.getTransaction(toHexString(transHash));
+
+        const transaction = new Transaction(rawTransaction.from, null, null, null, rawTransaction.to, null);
+        transaction.data = JSON.parse(web3.utils.toAscii(rawTransaction.input));
+
+        return transaction;
     }
     catch (err) {
         console.error("Error while getting Transaction: ", "\n", err);
@@ -100,15 +107,32 @@ async function getAllTransactions(headTxHash) {
     return transactions;
 }
 
-function createUserAccount() {
+async function createUserAccount() {
 
     if (!isConnected) {
         console.log("Not connected to node!");
         return;
     }
 
-    //TODO: Neue Accounts brauchen Money$$$
     const userAccount = web3.eth.accounts.create();
+
+    const acc = await web3.eth.getAccounts();
+
+    const transaction = {
+        "from": acc[0],
+        "to": userAccount.address,
+        "gas": 100000,
+        "value": 500000000000
+    };
+
+    console.log("Trasnaction: ", transaction);
+
+    const result = sendTransaction(transaction);
+
+    if(result == null){
+        console.log("Could not pre-fund new userAccount");
+        return null;
+    }
 
     return {
         "privateKey": toBasicString(userAccount.privateKey),

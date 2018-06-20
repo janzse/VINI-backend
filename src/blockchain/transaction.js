@@ -10,7 +10,7 @@ class Transaction {
         this.data = {
             "email": email,
             "vin": vin,
-            "preTransaction": preTransaction,
+            "preTransaction": toHexString(preTransaction),
             "preOwner": null,
             "timestamp": timestamp,
             "mileage": null,
