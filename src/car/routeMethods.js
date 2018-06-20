@@ -553,6 +553,7 @@ async function getAllAnnulmentTransactions(req, res) {
         // applicant // wer hat den Antrag erstellt? (aus der DB)
         // state    "pending"     nicht bearbeitet
         //          "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
+        // transactionHash
 
         res.json({ "annulments": [
             annulment,
