@@ -1,9 +1,7 @@
 import Transaction from "../blockchain/transaction";
-import {sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
+import ethNode from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {getTimestamp, USER_LEVEL, toHexString} from "../utils";
-
-//TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
+import {getTimestamp, USER_LEVEL, TRANS_HASH_SIZE} from "../utils";
 
 async function updateMileage(req, res) {
 
@@ -16,7 +14,7 @@ async function updateMileage(req, res) {
         return;
     }
 
-    if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+    if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
         res.status(401);
         res.json({
             "message": "User is not authorized to update mileage for car"
@@ -46,7 +44,8 @@ async function updateMileage(req, res) {
     }
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-    if(preTransaction == null){
+
+    if (preTransaction == null) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
@@ -54,14 +53,14 @@ async function updateMileage(req, res) {
         });
         return;
     }
-    if(preTransaction.length === 0){
+    if (preTransaction.length === 0) {
         preTransaction = null;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
 
-    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+    const transHash = await ethNode.sendSignedTransaction(transaction, userInfo.privateKey);
 
     if (transHash == null) {
         console.log("An error occurred while sending transaction: ", transaction);
@@ -69,23 +68,12 @@ async function updateMileage(req, res) {
         res.json({
             "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
-    } else {
-
-        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
-
-        if (updateResult == null) {
-            console.log("An error occurred while updating headTx in DB");
-            res.status(500);
-            res.json({
-                "message": "An error occurred while updating headTx in DB"
-            });
-        }
-
-        res.status(200);
-        res.json({
-            "message": "Transaktion erfolgreich durchgeführt"
-        });
     }
+
+    res.status(200);
+    res.json({
+        "message": "Transaktion erfolgreich durchgeführt"
+    });
 }
 
 async function getCarByVin(req, res) {
@@ -176,16 +164,8 @@ async function getCarByVin(req, res) {
             return;
         }
 
-        let headTxHash = await dbHelper.getHeadTransactionHash(carAddress);
-        if (headTxHash == null) {
-            console.log("Car not found in DB!! aborting.");
-            res.status(400);
-            res.json({"message": "Fahrzeug nicht gefunden!"});
-            return;
-        }
+        const transactions = await ethNode.getAllTransactions(carAddress);
 
-        let transactions = await getAllTransactions(headTxHash);
-        console.log("Transactions: ", transactions)
         if (transactions == null) {
             console.log("Could not find vin in blockchain");
             res.status(400);
@@ -216,18 +196,6 @@ async function getCarByVin(req, res) {
     }
 }
 
-//TODO: DELETE ME?
-function cancelTransaction(req, res) {
-    console.log(req.body);
-    res.send(req.body);    // echo the result back
-}
-
-//TODO: DELETE ME?
-function applyCancelTransaction(req, res) {
-    console.log(req.body);
-    res.send(req.body);    // echo the result back
-}
-
 async function shopService(req, res) {
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
@@ -241,7 +209,7 @@ async function shopService(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== USER_LEVEL.ZWS){
+    if (req.body.authorityLevel !== USER_LEVEL.ZWS) {
         res.status(401);
         res.json({
             "message": "User is not authorized to make service entry for car"
@@ -272,7 +240,7 @@ async function shopService(req, res) {
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
 
-    if(preTransaction == null){
+    if (preTransaction == null) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
@@ -280,17 +248,17 @@ async function shopService(req, res) {
         });
         return;
     }
-    if(preTransaction.length === 0){
+    if (preTransaction.length === 0) {
         preTransaction = null;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setServiceOne(req.body.service1);
     transaction.setServiceTwo(req.body.service2);
     transaction.setOilChange(req.body.oilChange);
 
-    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+    const transHash = await ethNode.sendSignedTransaction(transaction, userInfo.privateKey);
 
     if (transHash == null) {
         console.log("An error occurred while sending transaction: ", transaction);
@@ -298,26 +266,18 @@ async function shopService(req, res) {
         res.json({
             "message": "Entering shop-service failed"
         });
-    } else {
-
-        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
-
-        if (updateResult == null) {
-            console.log("An error occurred while updating headTx in DB");
-            res.status(500);
-            res.json({
-                "message": "Die Transaktion konnte nicht durchgeführt werden!"
-            });
-        }
-        res.status(200);
-        res.json({
-            "message": "Transaktion erfolgreich durchgeführt!"
-        });
     }
+
+    res.status(200);
+    res.json({
+        "message": "Transaktion erfolgreich durchgeführt!"
+    });
 }
 
 async function tuevEntry(req, res) {
-    if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
+    const token = req.get("Authorization").slice("Bearer ".length);
+
+    if (req.body.vin == null || token == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.nextCheck == null) {
         console.log("Invalid request on tuev-report: ", req.body, req.get("Authorization"));
         res.status(400);
@@ -327,7 +287,7 @@ async function tuevEntry(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== USER_LEVEL.TUEV){
+    if (req.body.authorityLevel !== USER_LEVEL.TUEV) {
         res.status(401);
         res.json({
             "message": "User is not authorized to make inspection entry for car"
@@ -344,7 +304,6 @@ async function tuevEntry(req, res) {
         return;
     }
 
-    const token = req.get("Authorization").slice("Bearer ".length);
     const userInfo = await dbHelper.getUserInfoFromToken(token);
 
     if (userInfo == null) {
@@ -358,7 +317,7 @@ async function tuevEntry(req, res) {
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
 
-    if(preTransaction == null){
+    if (preTransaction == null) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
@@ -366,16 +325,16 @@ async function tuevEntry(req, res) {
         });
         return;
     }
-    if(preTransaction.length === 0){
+    if (preTransaction.length === 0) {
         preTransaction = null;
     }
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setMainInspection(true);
     transaction.setNextCheck(req.body.nextCheck);
 
-    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+    const transHash = await ethNode.sendSignedTransaction(transaction, userInfo.privateKey);
 
     if (transHash == null) {
         console.log("An error occurred while sending transaction: ", transaction);
@@ -383,27 +342,15 @@ async function tuevEntry(req, res) {
         res.json({
             "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
-    } else {
-
-        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
-
-        if (updateResult == null) {
-            console.log("An error occurred while updating headTx in DB");
-            res.status(500);
-            res.json({
-                "message": "Die Transaktion konnte nicht durchgeführt werden!"
-            });
-        }
-
-        res.status(200);
-        res.json({
-            "message": "Transaktion erfolgreich durchgeführt"
-        });
     }
+
+    res.status(200);
+    res.json({
+        "message": "Transaktion erfolgreich durchgeführt"
+    });
 }
 
 async function stvaRegister(req, res) {
-    console.log(req.body);
 
     if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.ownerCount == null) {
@@ -416,6 +363,7 @@ async function stvaRegister(req, res) {
     }
 
     if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+        console.log("User is not authorized to update registration data for car");
         res.status(401);
         res.json({
             "message": "User is not authorized to update registration data for car"
@@ -428,7 +376,7 @@ async function stvaRegister(req, res) {
     if (carAddress == null) {
         console.log("carAddress not found: Creating new one");
         // VIN not in DB yet -> Create it
-        const carAccount = createCarAccount();
+        const carAccount = ethNode.createCarAccount();
         carAddress = carAccount.publicKey;
 
         const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, getTimestamp());
@@ -464,11 +412,11 @@ async function stvaRegister(req, res) {
 
     const preTransaction = null;
 
-    const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
+    const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setPreOwner(req.body.ownerCount);
 
-    const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
+    const transHash = await ethNode.sendSignedTransaction(transaction, userInfo.privateKey);
 
     if (transHash == null) {
         console.log("An error occurred while sending transaction: ", transaction);
@@ -476,28 +424,18 @@ async function stvaRegister(req, res) {
         res.json({
             "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
-    } else {
-
-        const updateResult = await dbHelper.updateCarHeadTx(carAddress, transHash);
-
-        if (updateResult == null) {
-            console.log("An error occurred while updating headTx in DB");
-            res.status(500);
-            res.json({
-                "message": "Die Transaktion konnte nicht durchgeführt werden!"
-            });
-        }
-
-        res.status(200);
-        res.json({
-            "message": "Transaktion erfolgreich durchgeführt!"
-        });
     }
+
+    res.status(200);
+    res.json({
+        "message": "Transaktion erfolgreich durchgeführt!"
+    });
 }
 
 async function getAllAnnulmentTransactions(req, res) {
 
     if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+        console.log("User is not authorized to retrieve annulment transactions");
         res.status(401);
         res.json({
             "message": "User is not authorized to retrieve annulment transactions"
@@ -517,12 +455,12 @@ async function getAllAnnulmentTransactions(req, res) {
         let annulmentPayload = [];
 
         let web3utils = require('web3-utils');
-        let trx = await getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
+        let trx = await ethNode.getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
         let trxInput = web3utils.toAscii(trx.input).replace(/"/g, "'");
 
         results.forEach(element => {
             annulmentPayload.push(element);
-            });
+        });
         annulmentPayload.push(trxInput);
         //res.send({"annulments": annulmentPayload});
         //res.send(JSON.stringify({"annulments": annulmentPayload}));
@@ -573,13 +511,12 @@ async function getAllAnnulmentTransactions(req, res) {
     }
 }
 
-async function insertAnnulmentTransaction(req, res){
+async function insertAnnulmentTransaction(req, res) {
 
     const hash = req.body.transactionHash;
-    //TODO: Evtl userId aus Bearer Token holen -> Nicht sonderlich wichtig
-    const userId =  req.body.userId;
+    const token = req.get("Authorization").slice("Bearer ".length);
 
-    if(hash == null || hash.length < 64 || req.body.userId == null){
+    if (hash == null || hash.length < TRANS_HASH_SIZE || token == null) {
         console.log("Invalid request for annulment. To create an annulment transaction a transactionHash and a userId is required.");
         res.status(400);
         res.json({
@@ -588,20 +525,31 @@ async function insertAnnulmentTransaction(req, res){
         return;
     }
 
-    const annulment = await dbHelper.getAnnulment(hash, userId);
+    const creator = await dbHelper.getUserInfoFromToken(token);
 
-    if(annulment.length > 0){
-        console.log("Annulment transaction already exists.");
-        res.status(409);
+    if (creator == null || creator.length === 0) {
+        console.log("Could not get creator from bearer token:", token);
+        res.status(500);
         res.json({
-           "message": "Annulment transaction already exists."
+            "message": "Could not get creator from bearer token: " + token
         });
         return;
     }
 
-    const transaction = await getTransaction(hash);
+    const annulment = await dbHelper.getAnnulment(hash);
 
-    if(transaction == null){
+    if (annulment != null) {
+        console.log("Annulment transaction already exists.");
+        res.status(409);
+        res.json({
+            "message": "Annulment transaction already exists."
+        });
+        return;
+    }
+
+    const transaction = await ethNode.getTransaction(hash);
+
+    if (transaction == null) {
         console.log("No transaction found with hash:", hash);
         res.status(400);
         res.json({
@@ -610,9 +558,9 @@ async function insertAnnulmentTransaction(req, res){
         return;
     }
 
-    const insertResult = await dbHelper.insertAnnulment(hash, userId);
+    const insertResult = await dbHelper.insertAnnulment(hash, creator.id);
 
-    if(insertResult == null){
+    if (insertResult == null) {
         console.log("Could not insert annulment transaction in DB");
         res.status(500);
         res.json({
@@ -623,38 +571,37 @@ async function insertAnnulmentTransaction(req, res){
 
     res.status(200);
     res.json({
-       "message": "Successfully inserted annulment transaction"
+        "message": "Successfully inserted annulment transaction"
     });
 }
 
-async function rejectAnnulmentTransaction(req, res){
+async function rejectAnnulmentTransaction(req, res) {
 
     const hash = req.body.transactionHash;
-    const userId = req.body.userId;
-    //TODO: Evtl userId aus Bearer Token holen -> Nicht sonderlich wichtig
-    if(hash == null || hash.length < 64 || userId == null){
-        console.log("Invalid request to reject an annulment. A transactionHash and a userId is required.");
+
+    if (hash == null || hash.length < TRANS_HASH_SIZE) {
+        console.log("Invalid request to reject an annulment. A transactionHash is required.");
         res.status(400);
         res.json({
-            "message": "Invalid request to reject an annulment. A transactionHash and a userId is required."
+            "message": "Invalid request to reject an annulment. A transactionHash is required."
         });
         return;
     }
 
-    const annulment = await dbHelper.getAnnulment(hash, userId);
+    const annulment = await dbHelper.getAnnulment(hash);
 
-    if(annulment == null || annulment.length === 0){
-        console.log("Could not find annulment transaction from user " + userId + " with hash " + hash);
+    if (annulment == null) {
+        console.log("Could not find annulment transaction with hash " + hash);
         res.status(400);
         res.json({
-            "message": "Could not find annulment transaction from user " + userId + " with hash " + hash
+            "message": "Could not find annulment transaction with hash " + hash
         });
         return;
     }
 
-    const deletion = await dbHelper.rejectAnnulment(hash, userId);
+    const deletion = await dbHelper.rejectAnnulment(hash);
 
-    if(deletion == null){
+    if (deletion == null) {
         console.log("Error while deleting annulment transaction from DB.");
         res.status(500);
         res.json({
@@ -669,16 +616,101 @@ async function rejectAnnulmentTransaction(req, res){
     });
 }
 
+async function acceptAnnulmentTransaction(req, res) {
+
+    const hash = req.body.transactionHash;
+    const token = req.get("Authorization").slice("Bearer ".length);
+
+    if (hash == null || hash.length < TRANS_HASH_SIZE || token == null) {
+        console.log("Invalid request to reject an annulment. A transactionHash and a userId is required.");
+        res.status(400);
+        res.json({
+            "message": "Invalid request to reject an annulment. A transactionHash and a userId is required."
+        });
+        return;
+    }
+
+    const stvaEmployee = await dbHelper.getUserInfoFromToken(token);
+
+    if (stvaEmployee == null || stvaEmployee.length === 0) {
+        console.log("Could not get stvaEmployee from bearer token:", token);
+        res.status(500);
+        res.json({
+            "message": "Could not get stvaEmployee from bearer token: " + token
+        });
+        return;
+    }
+
+    // Get annulmentTransaction from DB annulment_transaction
+    const annulment = await dbHelper.getAnnulment(hash);
+
+    if (annulment == null) {
+        console.log("Could not find annulment transaction with hash " + hash);
+        res.status(400);
+        res.json({
+            "message": "Could not find annulment transaction with hash " + hash
+        });
+        return;
+    }
+
+    // Get Transaction which should be annulled
+    const annulmentTarget = await ethNode.getTransaction(hash);
+
+    if (annulmentTarget == null) {
+        console.log("No transaction found with hash:", hash);
+        res.status(400);
+        res.json({
+            "message": "No transaction found with hash: " + hash
+        });
+        return;
+    }
+
+    // Get preTransaction Hash from the publicKey of the car
+    const preTransaction = await dbHelper.getHeadTransactionHash(annulmentTarget.to);
+
+    // Get Information about the original creator of the annulment transaction
+    const creator = await dbHelper.getUserInfoFromUserId(annulment.userId);
+
+    const transaction = new Transaction(stvaEmployee.publicKey, creator.email, annulmentTarget.data.vin, preTransaction, annulmentTarget.to, getTimestamp());
+    transaction.setAnnulmentTarget(annulmentTarget.hash);
+
+    const result = await ethNode.sendSignedTransaction(transaction, stvaEmployee.privateKey);
+
+    if (result == null) {
+        console.log("Error while accepting annulmentTransaction.");
+        res.status(500);
+        res.json({
+            "message": "Error while accepting annulmentTransaction."
+        });
+        return;
+    }
+
+    const pendingResult = await dbHelper.acceptAnnulment(annulment.transactionHash);
+
+    if (pendingResult == null) {
+        console.log("Error while updating pending annulmentTransaction");
+        res.status(500);
+        res.json({
+            "message": "Error while updating pending annulmentTransaction"
+        });
+        return;
+    }
+
+    res.status(200);
+    res.json({
+        "message": "Successfully accepted annulmentTransaction"
+    });
+}
+
 
 module.exports = {
     "updateMileage": updateMileage,
-    "cancelTransaction": cancelTransaction,
-    "applyCancelTransaction": applyCancelTransaction,
     "shopService": shopService,
     "tuevEntry": tuevEntry,
     "stvaRegister": stvaRegister,
     "getCarByVin": getCarByVin,
     "getAllAnnulmentTransactions": getAllAnnulmentTransactions,
     "insertAnnulmentTransaction": insertAnnulmentTransaction,
-    "rejectAnnulmentTransaction": rejectAnnulmentTransaction
+    "rejectAnnulmentTransaction": rejectAnnulmentTransaction,
+    "acceptAnnulmentTransaction": acceptAnnulmentTransaction
 };

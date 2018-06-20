@@ -1,13 +1,12 @@
-
 function toHexString(key) {
-    if(key != null && key.substring(0, 2) !== "0x"){
+    if (key != null && key.substring(0, 2) !== "0x") {
         return "0x" + key;
     }
     return key;
 }
 
-function toBasicString(key){
-    if(key != null && key.substring(0,2) === "0x"){
+function toBasicString(key) {
+    if (key != null && key.substring(0, 2) === "0x") {
         return key.substring(2);
     }
     return key;
@@ -38,10 +37,13 @@ const USER_LEVEL = {
     ASTVA: 4
 };
 
+const TRANS_HASH_SIZE = 64;
+
 
 module.exports = {
     "toHexString": toHexString,
     "toBasicString": toBasicString,
     "getTimestamp": getTimestamp,
-    "USER_LEVEL": USER_LEVEL
+    "USER_LEVEL": USER_LEVEL,
+    "TRANS_HASH_SIZE": TRANS_HASH_SIZE
 };
