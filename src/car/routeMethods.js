@@ -372,7 +372,7 @@ async function tuevEntry(req, res) {
 
     const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
-    transaction.setMainInspection(req.body.mainInspection);
+    transaction.setMainInspection(true);
     transaction.setNextCheck(req.body.nextCheck);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
