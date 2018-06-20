@@ -39,11 +39,17 @@ const USER_LEVEL = {
 
 const TRANS_HASH_SIZE = 64;
 
+const TRANSACTION_STATUS = {
+    VALID : "valid",
+    INVALID : "invalid",
+    PENDING : "open"
+}
 
 module.exports = {
     "toHexString": toHexString,
     "toBasicString": toBasicString,
     "getTimestamp": getTimestamp,
     "USER_LEVEL": USER_LEVEL,
-    "TRANS_HASH_SIZE": TRANS_HASH_SIZE
+    "TRANS_HASH_SIZE": TRANS_HASH_SIZE,
+    "TRANSACTION_STATUS": TRANSACTION_STATUS
 };
