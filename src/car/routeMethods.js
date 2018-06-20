@@ -526,7 +526,6 @@ async function insertAnnulmentTransaction(req, res) {
     }
 
     const creator = await dbHelper.getUserInfoFromToken(token);
-<<<<<<< HEAD
 
     if (creator == null || creator.length === 0) {
         console.log("Could not get creator from bearer token:", token);
@@ -539,20 +538,6 @@ async function insertAnnulmentTransaction(req, res) {
 
     const annulment = await dbHelper.getAnnulment(hash);
 
-=======
-
-    if (creator == null || creator.length === 0) {
-        console.log("Could not get creator from bearer token:", token);
-        res.status(500);
-        res.json({
-            "message": "Could not get creator from bearer token: " + token
-        });
-        return;
-    }
-
-    const annulment = await dbHelper.getAnnulment(hash);
-
->>>>>>> 20669f1af2d2e4e8c4fe2b90012af2fbd559d1cc
     if (annulment != null) {
         console.log("Annulment transaction already exists.");
         res.status(409);
