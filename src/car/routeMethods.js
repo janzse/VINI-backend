@@ -472,7 +472,6 @@ async function getAllAnnulmentTransactions(req, res) {
             oilChange: transaction.data.oilChange,
             applicant: userEmail[0],
             state: state,
-            invalid: null,
             transactionHash: results[0]
         };
         // from : user publicKey
@@ -490,7 +489,7 @@ async function getAllAnnulmentTransactions(req, res) {
         // [x] oilChange
         // [x] applicant // wer hat den Antrag erstellt? (aus der DB) -> userID aus annulment_transactions
         // [x] state    "pending"     nicht bearbeitet
-        // [ ] "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
+        //     "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
         // [x] transactionHash
 
         res.json({ "annulments": [
