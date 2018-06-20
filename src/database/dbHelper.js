@@ -187,8 +187,8 @@ async function updateHeadTransactionHash(publicKeyCar, headTxHash) {
 }
 
 async function getAllAnnulmentTransactions() {
-    const queryString = `SELECT at.transactionHash, at.pending, at.user_id, kfz.vin FROM annulment_transactions as at,
-                        kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
+
+    const queryString = `SELECT transactionHash, pending, user_id FROM annulment_transactions`;
 
     return await dbConnection.query(queryString);
 }
@@ -232,6 +232,20 @@ async function acceptAnnulment(hash){
     return await dbConnection.query(queryString)
 }
 
+async function getVinByPublicKey(publicKey)
+{
+    const queryString = `SELECT vin from kfz WHERE publicKey = '${toBasicString(publicKey)}'`;
+
+    return await dbConnection.query(queryString);
+}
+
+async function getUserByID(userID)
+{
+    const queryString = `SELECT email from users WHERE id = '${userID}'`;
+
+    return await dbConnection.query(queryString);
+}
+
 
 module.exports = {
     "registerUserInDB": registerUserInDB,
@@ -250,5 +264,7 @@ module.exports = {
     "getAnnulment": getAnnulment,
     "insertAnnulment": insertAnnulment,
     "rejectAnnulment": rejectAnnulment,
-    "acceptAnnulment": acceptAnnulment
+    "acceptAnnulment": acceptAnnulment,
+    "getVinByPublicKey": getVinByPublicKey,
+    "getUserByID": getUserByID
 };

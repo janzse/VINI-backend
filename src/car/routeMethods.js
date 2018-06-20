@@ -443,61 +443,55 @@ async function getAllAnnulmentTransactions(req, res) {
     }
 
     const results = await dbHelper.getAllAnnulmentTransactions();
-    if (results == null) {
+    if (results === null) {
         res.status(500);
         res.json({
             "message": "Die Annulierungs-Transaktionen konnten nicht geladen werden!"
         });
     }
     else {
-        let annulmentPayload = [];
+        //let annulmentPayload = [];
+        let transaction = await ethNode.getTransaction(results[0]);
 
-        let web3utils = require('web3-utils');
-        let trx = await ethNode.getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
-        let trxInput = web3utils.toAscii(trx.input).replace(/"/g, "'");
+        const vin = await dbHelper.getVinByPublicKey(transaction.to);
+        const user = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
+        const userEmail = await dbHelper.getUserByID(results[2]);
 
-        results.forEach(element => {
-            annulmentPayload.push(element);
-        });
-        annulmentPayload.push(trxInput);
-        //res.send({"annulments": annulmentPayload});
-        //res.send(JSON.stringify({"annulments": annulmentPayload}));
+        let state = results[1] == true ? "pending" : "invalid";
 
-        /*
-         let annulmentPayload = [];
-         results.forEach(element => {
-             let payloadItem = {
-               transactionHash: element[0].transactionHash[0],
-                rejected: element[1].rejected[0],
-                user_id: element[2].user_id[0]
-             };
-              annulmentPayload.push(payloadItem);
-        });
-        res.send(JSON.stringify({"annulments": annulmentPayload}));
-        //next();
-        */
         console.log(results)
         const annulment = {
-            transactionHash: results[0],
-            pending: results[1],
-            user_id: results[2],
-            vin: results[3]
+            date: transaction.data.timestamp,
+            vin: vin[0],
+            mileage: transaction.data.mileage,
+            ownerCount: transaction.data.ownerCount,
+            entrant: user.email,
+            mainInspection: transaction.data.mainInspection,
+            service1: transaction.data.serviceOne,
+            service2: transaction.data.serviceTwo,
+            oilChange: transaction.data.oilChange,
+            applicant: userEmail[0],
+            state: state,
+            invalid: null,
+            transactionHash: results[0]
         };
+        // from : user publicKey
+        // to:  kfz publicKey
 
         // benötigt werden folgende Attribute:
-        // date // Transaktion von wann?
-        // vin
-        // mileage
-        // ownerCount
-        // entrant
-        // mainInspection
-        // service1
-        // service2
-        // oilChange
-        // applicant // wer hat den Antrag erstellt? (aus der DB)
-        // state    "pending"     nicht bearbeitet
-        //          "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
-        // transactionHash
+        // [x] date // Transaktion von wann?
+        // [x] vin
+        // [x] mileage
+        // [x] ownerCount
+        // [x] entrant
+        // [x] mainInspection
+        // [x] service1
+        // [x] service2
+        // [x] oilChange
+        // [x] applicant // wer hat den Antrag erstellt? (aus der DB) -> userID aus annulment_transactions
+        // [x] state    "pending"     nicht bearbeitet
+        // [ ] "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
+        // [x] transactionHash
 
         res.json({ "annulments": [
             annulment,
