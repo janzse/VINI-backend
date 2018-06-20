@@ -16,13 +16,11 @@ router.get('/', routeMethods.getCarByVin);
 /* GET apply cancel transaction. */
 //router.get('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getApplyCancelTransaction);
 
-//router.delete('/annulment', routeMethods.)
-
 /* POST apply cancel transaction. */
-router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.applyCancelTransaction);
+router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.insertAnnulmentTransaction);
 
-/* DEL apply cancel transaction. */
-//router.del('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.delApplyCancelTransaction);
+//TODO: isAuthorised hinzufügen
+router.delete('/cancelTransaction', routeMethods.rejectAnnulmentTransaction);
 
 /* GET cancel transaction. */
 //router.get('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getCancelTransaction);

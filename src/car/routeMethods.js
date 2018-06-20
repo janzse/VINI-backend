@@ -211,11 +211,13 @@ async function getCarByVin(req, res) {
     }
 }
 
+//TODO: DELETE ME?
 function cancelTransaction(req, res) {
     console.log(req.body);
     res.send(req.body);    // echo the result back
 }
 
+//TODO: DELETE ME?
 function applyCancelTransaction(req, res) {
     console.log(req.body);
     res.send(req.body);    // echo the result back
@@ -498,7 +500,7 @@ async function getAllAnnulmentTransactions(req, res) {
         return;
     }
 
-    const results = await dbHelper.getAnnulmentTransactionsFromDB();
+    const results = await dbHelper.getAllAnnulmentTransactions();
     if (results == null) {
         res.status(500);
         res.json({
@@ -548,6 +550,7 @@ async function getAllAnnulmentTransactions(req, res) {
 async function insertAnnulmentTransaction(req, res){
 
     const hash = req.body.transactionHash;
+    //TODO: Evtl userId aus Bearer Token holen -> Nicht sonderlich wichtig
     const userId =  req.body.userId;
 
     if(hash == null || hash.length < 64 || req.body.userId == null){
@@ -598,6 +601,48 @@ async function insertAnnulmentTransaction(req, res){
     });
 }
 
+async function rejectAnnulmentTransaction(req, res){
+
+    const hash = req.body.transactionHash;
+    const userId = req.body.userId;
+    //TODO: Evtl userId aus Bearer Token holen -> Nicht sonderlich wichtig
+    if(hash == null || hash.length < 64 || userId == null){
+        console.log("Invalid request to reject an annulment. A transactionHash and a userId is required.");
+        res.status(400);
+        res.json({
+            "message": "Invalid request to reject an annulment. A transactionHash and a userId is required."
+        });
+        return;
+    }
+
+    const annulment = await dbHelper.getAnnulment(hash, userId);
+
+    if(annulment == null || annulment.length === 0){
+        console.log("Could not find annulment transaction from user " + userId + " with hash " + hash);
+        res.status(400);
+        res.json({
+            "message": "Could not find annulment transaction from user " + userId + " with hash " + hash
+        });
+        return;
+    }
+
+    const deletion = await dbHelper.rejectAnnulment(hash, userId);
+
+    if(deletion == null){
+        console.log("Error while deleting annulment transaction from DB.");
+        res.status(500);
+        res.json({
+            "message": "Error while deleting annulment transaction from DB."
+        });
+        return;
+    }
+
+    res.status(200);
+    res.json({
+        "message": "Successfully rejected annulment transaction"
+    });
+}
+
 
 module.exports = {
     "updateMileage": updateMileage,
@@ -608,5 +653,6 @@ module.exports = {
     "stvaRegister": stvaRegister,
     "getCarByVin": getCarByVin,
     "getAllAnnulmentTransactions": getAllAnnulmentTransactions,
-    "insertAnnulmentTransaction": insertAnnulmentTransaction
+    "insertAnnulmentTransaction": insertAnnulmentTransaction,
+    "rejectAnnulmentTransaction": rejectAnnulmentTransaction
 };
