@@ -44,17 +44,13 @@ async function updateMileage(req, res) {
     }
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-
-    if (preTransaction == null) {
+    if (preTransaction == null || preTransaction === 0) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
             "message": "Error while getting preTransaction from DB"
         });
         return;
-    }
-    if (preTransaction.length === 0) {
-        preTransaction = null;
     }
 
     const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
@@ -164,8 +160,15 @@ async function getCarByVin(req, res) {
             return;
         }
 
-        const transactions = await ethNode.getAllTransactions(carAddress);
+        let headTxHash = await dbHelper.getHeadTransactionHash(carAddress);
+        if (headTxHash === null) {
+            console.log("Head transaction hash not found! aborting.");
+            res.status(400);
+            res.json({"message": "Fahrzeug nicht gefunden!"});
+            return;
+        }
 
+        const transactions = await ethNode.getAllTransactions(headTxHash);
         if (transactions == null) {
             console.log("Could not find vin in blockchain");
             res.status(400);
@@ -239,17 +242,13 @@ async function shopService(req, res) {
     }
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-
-    if (preTransaction == null) {
+    if (preTransaction == null || preTransaction.length === 0) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
             "message": "Error while getting preTransaction from DB"
         });
         return;
-    }
-    if (preTransaction.length === 0) {
-        preTransaction = null;
     }
 
     const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
@@ -317,16 +316,13 @@ async function tuevEntry(req, res) {
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
 
-    if (preTransaction == null) {
+    if (preTransaction == null || preTransaction.length === 0) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
             "message": "Error while getting preTransaction from DB"
         });
         return;
-    }
-    if (preTransaction.length === 0) {
-        preTransaction = null;
     }
 
     const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
@@ -373,13 +369,14 @@ async function stvaRegister(req, res) {
     }
 
     let carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
+    let preTransaction = null;
     if (carAddress == null) {
         console.log("carAddress not found: Creating new one");
         // VIN not in DB yet -> Create it
         const carAccount = ethNode.createCarAccount();
         carAddress = carAccount.publicKey;
 
-        const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, getTimestamp());
+        const result = await dbHelper.registerCarInDB(req.body.vin, carAccount.privateKey, carAccount.publicKey, req.body.timestamp);
 
         if (result == null) {
             console.log("Error while registering new car");
@@ -389,13 +386,16 @@ async function stvaRegister(req, res) {
             });
             return;
         }
-    } else { //car already exists, abort!
-        console.log("Error while registering new car: car already exists!");
-        res.status(400);
-        res.json({
-            "message": "Es existiert bereits ein Fahrzeug mit dem VIN."
-        });
-        return;
+    } else { //car already exists, update
+        preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
+        if (preTransaction == null || preTransaction.length === 0) {
+            console.log("Error while getting preTransaction from DB");
+            res.status(500);
+            res.json({
+                "message": "Error while getting preTransaction from DB"
+            });
+            return;
+        }
     }
 
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -409,8 +409,6 @@ async function stvaRegister(req, res) {
         });
         return;
     }
-
-    const preTransaction = null;
 
     const transaction = new Transaction(userInfo.publicKey, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
@@ -665,6 +663,7 @@ async function acceptAnnulmentTransaction(req, res) {
     // Get Information about the original creator of the annulment transaction
     const creator = await dbHelper.getUserInfoFromUserId(annulment.userId);
 
+    //TODO: getTimestamp() sollte nicht benötigt werden, da Patrick den Timestamp immer übergeben will.
     const transaction = new Transaction(stvaEmployee.publicKey, creator.email, annulmentTarget.data.vin, preTransaction, annulmentTarget.to, getTimestamp());
     transaction.setAnnulmentTarget(annulmentTarget.hash);
 
