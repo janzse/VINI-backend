@@ -203,7 +203,7 @@ async function getCarByVin(req, res) {
                 mainInspection: element.data.mainInspection,
                 nextCheck: element.data.nextCheck,
                 ownerCount: element.data.preOwner,
-                entrant: element.data.entrant,
+                entrant: element.data.email,
                 state: element.data.state
             }
         });
@@ -372,6 +372,7 @@ async function tuevEntry(req, res) {
 
     const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
+    transaction.setMainInspection(req.body.mainInspection);
     transaction.setNextCheck(req.body.nextCheck);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
@@ -444,7 +445,7 @@ async function stvaRegister(req, res) {
         console.log("Error while registering new car: car already exists!");
         res.status(400);
         res.json({
-            "message": "Error while registering new car: car already exists!"
+            "message": "Es existiert bereits ein Fahrzeug mit dem VIN."
         });
         return;
     }
