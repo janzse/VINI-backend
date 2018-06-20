@@ -46,7 +46,6 @@ async function updateMileage(req, res) {
     }
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-
     if(preTransaction == null){
         console.log("Error while getting preTransaction from DB");
         res.status(500);
@@ -95,7 +94,6 @@ async function getCarByVin(req, res) {
 
         let transactionPayload = [];
 
-        // TODO es ist wichtig, dass das Timestamp Format eingehalten wird (einstellige Zahlen
         // mit einer 0 auffüllen)
         let payloadItem1 = {
             timestamp: getTimestamp(),
@@ -170,17 +168,24 @@ async function getCarByVin(req, res) {
             return false;
         }
 
-        const carAddress = await dbHelper.getCarAddressFromVin(req.query.vin);
-
-        if (carAddress == null) {
-            console.log("vin not found in DB!! aborting.");
+        let carAddress = await dbHelper.getCarAddressFromVin(req.query.vin);
+        if (carAddress === null) {
+            console.log("vin not found! aborting.");
             res.status(400);
             res.json({"message": "Fahrzeug nicht gefunden!"});
             return;
         }
 
-        const transactions = await getAllTransactions(carAddress);
+        let headTxHash = await dbHelper.getHeadTransactionHash(carAddress);
+        if (headTxHash == null) {
+            console.log("Car not found in DB!! aborting.");
+            res.status(400);
+            res.json({"message": "Fahrzeug nicht gefunden!"});
+            return;
+        }
 
+        let transactions = await getAllTransactions(headTxHash);
+        console.log("Transactions: ", transactions)
         if (transactions == null) {
             console.log("Could not find vin in blockchain");
             res.status(400);
@@ -188,7 +193,7 @@ async function getCarByVin(req, res) {
             return;
         }
 
-        const transactionPayload = transactions.map((element) => {
+        let transactionPayload = transactions.map((element) => {
             return {
                 timestamp: element.data.timestamp,
                 mileage: element.data.mileage,
@@ -409,7 +414,7 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    if (!(req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
         res.status(401);
         res.json({
             "message": "User is not authorized to update registration data for car"
@@ -491,7 +496,7 @@ async function stvaRegister(req, res) {
 
 async function getAllAnnulmentTransactions(req, res) {
 
-    if (!(req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
         res.status(401);
         res.json({
             "message": "User is not authorized to retrieve annulment transactions"
