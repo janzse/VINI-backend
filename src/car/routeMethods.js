@@ -1,5 +1,5 @@
 import Transaction from "../blockchain/transaction";
-import {sendTransaction, sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
+import {sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 import {getTimestamp, USER_LEVEL} from "../utils";
 
