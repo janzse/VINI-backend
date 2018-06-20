@@ -6,8 +6,9 @@ import {USER_LEVEL} from "../utils";
   The req body should contain an email and a password. */
 async function registerUser(req, res) {
 
+    console.log(req.body)
     if (req.body.email == null || req.get("Authorization") == null || req.body.password == null ||
-        req.body.authorityLevel == null || req.body.forename == null || req.body.surname == null ||
+        req.body.authorityLevel == null || req.body.authLevel == null || req.body.forename == null || req.body.surname == null ||
         req.body.companyName == null || req.body.creationDate == null) {
         console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
         res.status(400);
@@ -53,7 +54,7 @@ async function registerUser(req, res) {
         req.body.password,
         userKeys.privateKey,
         userKeys.publicKey,
-        req.body.authorityLevel,
+        req.body.authLevel,
         req.body.forename,
         req.body.surname,
         req.body.companyName,
@@ -146,7 +147,7 @@ async function getUsers(req, res) {
     }
     else {
         res.status(500);
-        res.json({"message": "Datenbankverbindung fehlgeschlagen."});
+        res.json({ "message": "Datenbankverbindung fehlgeschlagen." });
     }
 }
 

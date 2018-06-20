@@ -532,15 +532,35 @@ async function getAllAnnulmentTransactions(req, res) {
         res.send(JSON.stringify({"annulments": annulmentPayload}));
         //next();
         */
-
+        console.log(results)
         const annulment = {
             transactionHash: results[0],
             pending: results[1],
             user_id: results[2],
             vin: results[3]
         };
-        res.json({
-            "annulment": annulment
+
+        // benötigt werden folgende Attribute:
+        // date // Transaktion von wann?
+        // vin
+        // mileage
+        // ownerCount
+        // entrant
+        // mainInspection
+        // service1
+        // service2
+        // oilChange
+        // applicant // wer hat den Antrag erstellt? (aus der DB)
+        // state    "pending"     nicht bearbeitet
+        //          "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
+        // transactionHash
+
+        res.json({ "annulments": [
+            annulment,
+            //2. annulment,
+            // ...
+        ]
+
         });
     }
 }
