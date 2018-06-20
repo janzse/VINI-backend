@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1951b9db-adfa-4f46-a19a-0e6816007eb2",
+		"_postman_id": "1f18f241-8d1c-49a9-a5b7-21c19e9b4bec",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -224,6 +224,56 @@
 								"api",
 								"car",
 								"tuev"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "395cee1d-8f39-4f50-9976-d6c9902b3473",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/users/login",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
 							]
 						}
 					},
@@ -928,6 +978,55 @@
 					"response": []
 				},
 				{
+					"name": "api_users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d36dd9c4-af4b-419f-b6d1-94420e1329ba",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server_url}}/api/users",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "api_users_login",
 					"event": [
 						{
@@ -953,7 +1052,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
