@@ -20,7 +20,7 @@ class Transaction {
             "oilChange": null,
             "mainInspection": null,
             "annulmentTarget": null,
-            "nextCheck": null
+            "nextCheck": null,
         };
     }
 
