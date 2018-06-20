@@ -25,7 +25,7 @@ router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMeth
 //router.del('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.delApplyCancelTransaction);
 
 /* GET cancel transaction. */
-//router.get('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getCancelTransaction);
+router.get('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getAllAnnulmentTransactions);
 
 /* POST cancel transaction. */
 router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.cancelTransaction);
