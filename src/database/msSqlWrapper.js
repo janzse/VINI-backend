@@ -13,10 +13,8 @@ async function query(queryString) {
             return null;
         }
     }
-    //if (jsonArray === undefined)
-        return await executeSql(queryString);
-    //else
-    //    return await executeSqlJSON(queryString);
+
+    return await executeSql(queryString);
 }
 
 function initConnection() {
@@ -62,6 +60,7 @@ function executeSql(query) {
         const request = new Request(query, (err, rowCount) => {
             if (err) {
                 console.log("Error while request was performed: ", err);
+                resolve(null);
                 return;
             }
             else {

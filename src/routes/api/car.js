@@ -1,11 +1,6 @@
 import routeMethods from "../../car/routeMethods";
 import authRoutesMethods from "../../authorisation/routeMethods";
 
-/**
- *
- * @author mteuber, lstuckstette
- */
-
 const express = require('express');
 const router = express.Router();
 
@@ -13,20 +8,14 @@ const router = express.Router();
 /* GET car by VIN. */
 router.get('/', routeMethods.getCarByVin);
 
-/* GET apply cancel transaction. */
-//router.get('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getApplyCancelTransaction);
-
-/* POST apply cancel transaction. */
+// Create a new annulment transaction
 router.post('/applyCancelTransaction', authRoutesMethods.isAuthorised, routeMethods.insertAnnulmentTransaction);
 
-//TODO: isAuthorised hinzufügen
-router.delete('/cancelTransaction', routeMethods.rejectAnnulmentTransaction);
+// Reject an existing annulment transaction
+router.delete('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.rejectAnnulmentTransaction);
 
-/* GET cancel transaction. */
-//router.get('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.getCancelTransaction);
-
-/* POST cancel transaction. */
-router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.cancelTransaction);
+// Accept and existing annulment transaction
+router.post('/cancelTransaction', authRoutesMethods.isAuthorised, routeMethods.acceptAnnulmentTransaction);
 
 /* POST updateMileage. */
 router.post('/mileage', authRoutesMethods.isAuthorised, routeMethods.updateMileage);
@@ -39,5 +28,6 @@ router.post('/service', authRoutesMethods.isAuthorised, routeMethods.shopService
 
 /* POST tuev entry. */
 router.post('/tuev', authRoutesMethods.isAuthorised, routeMethods.tuevEntry);
+
 
 module.exports = router;

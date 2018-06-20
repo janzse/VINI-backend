@@ -31,7 +31,10 @@ function sendTransaction(transaction) {
                 .once("transactionHash", (hash) => {
                     console.log("Sending transaction successful:", hash);
                     resolve(hash);
-                });
+                }).catch((err) => {
+                console.log("Error while sending Transaction\n", err);
+                resolve(null);
+            });
         } catch (err) {
             console.log("Error while sending transaction: ", err);
             resolve(null);
@@ -58,9 +61,11 @@ async function sendSignedTransaction(transaction, privateKey) {
                     if (result == null) {
                         console.log("Transaction not saved to database.");
                     }
-
                     resolve(toBasicString(hash));
-                });
+                }).catch((err) => {
+                console.log("Error while sending signed Transaction\n", err);
+                resolve(null);
+            });
         }
         catch (err) {
             console.log("Error while sending signedTransaction: ", err);
@@ -76,6 +81,7 @@ async function getTransaction(transHash) {
         const rawTransaction = await web3.eth.getTransaction(toHexString(transHash));
 
         const transaction = new Transaction(rawTransaction.from, null, null, null, rawTransaction.to, null);
+        transaction.setHash(rawTransaction.hash);
         transaction.data = JSON.parse(web3.utils.toAscii(rawTransaction.input));
 
         return transaction;
@@ -129,7 +135,7 @@ async function createUserAccount() {
 
     const result = sendTransaction(transaction);
 
-    if(result == null){
+    if (result == null) {
         console.log("Could not pre-fund new userAccount");
         return null;
     }
