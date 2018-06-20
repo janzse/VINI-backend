@@ -1,23 +1,25 @@
 import dbHelper from "../database/dbHelper";
-import { createUserAccount } from "../blockchain/ethNode";
+import {createUserAccount} from "../blockchain/ethNode";
+import {USER_LEVEL} from "../utils";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
 async function registerUser(req, res) {
 
+    console.log(req.body)
     if (req.body.email == null || req.get("Authorization") == null || req.body.password == null ||
-        req.body.authorityLevel == null || req.body.forename == null || req.body.surname == null ||
+        req.body.authorityLevel == null || req.body.authLevel == null || req.body.forename == null || req.body.surname == null ||
         req.body.companyName == null || req.body.creationDate == null) {
         console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
         res.status(400);
         res.json({
             "message": "Request has to include: email, password, authorityLevel, forename," +
-                "surname, companyName & creationDate in the body and bearer_token in the header"
+            "surname, companyName & creationDate in the body and bearer_token in the header"
         });
         return;
     }
 
-    if (req.body.authorityLevel !== 4){
+    if (req.body.authorityLevel !== USER_LEVEL.ASTVA) {
         res.status(401);
         res.json({
             "message": "User is not authorized to register new user"
@@ -36,14 +38,23 @@ async function registerUser(req, res) {
         return;
     }
 
-    const userKeys = createUserAccount();
+    const userKeys = await createUserAccount();
 
-    const registerResult = dbHelper.registerUserInDB(
+    if (userKeys == null) {
+        console.log("Error while creating new userAccount");
+        res.status(500);
+        res.json({
+            "message": "Error while creating new userAccount"
+        });
+        return;
+    }
+
+    const registerResult = await dbHelper.registerUserInDB(
         req.body.email,
         req.body.password,
         userKeys.privateKey,
         userKeys.publicKey,
-        req.body.authorityLevel,
+        req.body.authLevel,
         req.body.forename,
         req.body.surname,
         req.body.companyName,
@@ -78,7 +89,7 @@ async function blockUser(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== 4){
+    if (req.body.authorityLevel !== USER_LEVEL.ASTVA) {
         res.status(401);
         res.json({
             "message": "User is not authorized to block user"
@@ -117,7 +128,7 @@ async function blockUser(req, res) {
 //VINI.de/api/users
 async function getUsers(req, res) {
 
-    if (req.body.authorityLevel !== 4){
+    if (req.body.authorityLevel !== USER_LEVEL.ASTVA) {
         res.status(401);
         res.json({
             "message": "User is not authorized to retrieve user data"
@@ -136,7 +147,7 @@ async function getUsers(req, res) {
     }
     else {
         res.status(500);
-        res.json({"message": "Datenbankverbindung fehlgeschlagen."});
+        res.json({ "message": "Datenbankverbindung fehlgeschlagen." });
     }
 }
 
@@ -158,7 +169,7 @@ function login(req, res) {
 async function isAuthorised(req, res, next) {
 
     if (req.get("Authorization") == null) {
-        errorHandling(res, 406, "Kein gültiges Bearer-Token gefunden.");
+        errorHandling(res, 406, "No bearer_token found in header.");
         return;
     }
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -168,9 +179,9 @@ async function isAuthorised(req, res, next) {
     const authResult = await dbHelper.checkUserAuthorization(token);
 
     if (authResult == null || authResult.length === 0) {
-        errorHandling(res, 403, "Kein Ergebnis bei der Abfrage des Users.");
+        errorHandling(res, 403, "Bitte neu einloggen.");
     }
-    else if ((Date.parse(authResult[3]) - Date.now()) < 0){
+    else if ((Date.parse(authResult[3]) - Date.now()) < 0) {
         errorHandling(res, 401, "Das Bearer-Token ist abgelaufen.");
     }
     else if (authResult[0] === true) {

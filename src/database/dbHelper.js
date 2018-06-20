@@ -163,7 +163,7 @@ async function updateHeadTransactionHash(publicKeyCar, headTxHash) {
     return await dbConnection.query(queryString);
 }
 
-async function getAnnulmentTransactionsFromDB() {
+async function getAllAnnulmentTransactions() {
     const queryString = `SELECT at.transactionHash, at.pending, at.user_id, kfz.vin FROM annulment_transactions as at,
                         kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
 
@@ -179,7 +179,14 @@ async function getAnnulment(hash, user_id){
 
 async function insertAnnulment(hash, user_id){
 
-    const queryString = `INSERT INTO annulment_transactions (transactionHash, pending, creationDate, user_id) VALUES ('${toBasicString(hash)}', 0, '${getTimestamp()}', ${user_id})`;
+    const queryString = `INSERT INTO annulment_transactions (transactionHash, pending, creationDate, user_id) VALUES ('${toBasicString(hash)}', 1, '${getTimestamp()}', ${user_id})`;
+
+    return await dbConnection.query(queryString);
+}
+
+async function rejectAnnulment(hash, user_id){
+
+    const queryString = `DELETE FROM annulment_transactions WHERE transactionHash = '${hash}' AND user_id = ${user_id}`;
 
     return await dbConnection.query(queryString);
 }
@@ -196,9 +203,10 @@ module.exports = {
     "getUserInfoFromToken": getUserInfoFromToken,
     "checkUserAuthorization": checkUserAuthorization,
     "getAllUsers": getAllUsers,
-    "getAnnulmentTransactionsFromDB": getAnnulmentTransactionsFromDB,
+    "getAllAnnulmentTransactions": getAllAnnulmentTransactions,
     "getHeadTransactionHash": getHeadTransactionHash,
     "updateHeadTransactionHash": updateHeadTransactionHash,
     "getAnnulment": getAnnulment,
-    "insertAnnulment": insertAnnulment
+    "insertAnnulment": insertAnnulment,
+    "rejectAnnulment": rejectAnnulment
 };
