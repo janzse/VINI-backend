@@ -160,8 +160,15 @@ async function getCarByVin(req, res) {
             return;
         }
 
-        const transactions = await ethNode.getAllTransactions(carAddress);
+        let headTxHash = await dbHelper.getHeadTransactionHash(carAddress);
+        if (headTxHash === null) {
+            console.log("Head transaction hash not found! aborting.");
+            res.status(400);
+            res.json({"message": "Fahrzeug nicht gefunden!"});
+            return;
+        }
 
+        const transactions = await ethNode.getAllTransactions(headTxHash);
         if (transactions == null) {
             console.log("Could not find vin in blockchain");
             res.status(400);
