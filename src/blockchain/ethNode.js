@@ -82,21 +82,21 @@ async function getTransaction(transHash) {
 //TODO: Testing on real blockchain transactions
 async function getAllTransactions(headTxHash) {
     let transactions = [];
-    /*
+
     let currentHash = headTxHash;
 
     try {
-        let currentTransaction = await getTransaction(lastTransactionHash);
-        while (currentTransaction.payload.pretransaction !== null) {
-            currentHash = currentTransaction.payload.pretransaction;
+        let currentTransaction = await getTransaction(currentHash);
+        while (currentTransaction.payload.preTransaction !== null) {
+            currentHash = currentTransaction.data.preTransaction;
             currentTransaction = await getTransaction(currentHash);
-            transactions.add = currentTransaction;
+            transactions.push = currentTransaction;
         }
     }
     catch (err) {
         console.log("Error while getting transactions", err);
         return null;
-    }*/
+    }
     return transactions;
 }
 

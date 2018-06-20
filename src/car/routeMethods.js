@@ -171,7 +171,6 @@ async function getCarByVin(req, res) {
         }
 
         const carAddress = await dbHelper.getCarAddressFromVin(req.query.vin);
-
         if (carAddress == null) {
             console.log("vin not found in DB!! aborting.");
             res.status(400);
@@ -180,7 +179,6 @@ async function getCarByVin(req, res) {
         }
 
         const transactions = await getAllTransactions(carAddress);
-
         if (transactions == null) {
             console.log("Could not find vin in blockchain");
             res.status(400);

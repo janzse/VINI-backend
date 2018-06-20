@@ -158,7 +158,7 @@ function login(req, res) {
 async function isAuthorised(req, res, next) {
 
     if (req.get("Authorization") == null) {
-        errorHandling(res, 406, "Kein gültiges Bearer-Token gefunden.");
+        errorHandling(res, 406, "No bearer_token found in header.");
         return;
     }
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -168,7 +168,7 @@ async function isAuthorised(req, res, next) {
     const authResult = await dbHelper.checkUserAuthorization(token);
 
     if (authResult == null || authResult.length === 0) {
-        errorHandling(res, 403, "Kein Ergebnis bei der Abfrage des Users.");
+        errorHandling(res, 403, "Bitte neu einloggen.");
     }
     else if ((Date.parse(authResult[3]) - Date.now()) < 0){
         errorHandling(res, 401, "Das Bearer-Token ist abgelaufen.");
