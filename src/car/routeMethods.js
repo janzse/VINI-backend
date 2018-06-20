@@ -1,7 +1,7 @@
 import Transaction from "../blockchain/transaction";
 import {sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {getTimestamp, USER_LEVEL, toHexString} from "../utils";
+import {getTimestamp, USER_LEVEL} from "../utils";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
@@ -506,26 +506,13 @@ async function getAllAnnulmentTransactions(req, res) {
     }
 
     const results = await dbHelper.getAllAnnulmentTransactions();
-    if (results == null) {
+    if (results === null) {
         res.status(500);
         res.json({
             "message": "Die Annulierungs-Transaktionen konnten nicht geladen werden!"
         });
     }
     else {
-        let annulmentPayload = [];
-
-        let web3utils = require('web3-utils');
-        let trx = await getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
-        let trxInput = web3utils.toAscii(trx.input).replace(/"/g, "'");
-
-        results.forEach(element => {
-            annulmentPayload.push(element);
-            });
-        annulmentPayload.push(trxInput);
-        //res.send({"annulments": annulmentPayload});
-        //res.send(JSON.stringify({"annulments": annulmentPayload}));
-
         /*
          let annulmentPayload = [];
          results.forEach(element => {
@@ -539,26 +526,39 @@ async function getAllAnnulmentTransactions(req, res) {
         res.send(JSON.stringify({"annulments": annulmentPayload}));
         //next();
         */
+        let annulmentPayload = [];
+        let web3utils = require('web3-utils');
+         let transaction = await getTransaction('0xf542d12f7b7987b79f844c097dc76fc9a59763699a4466de407b500b93fc6f15');
+        //const transaction = await getTransaction(results[0]);
+
         console.log(results)
         const annulment = {
             transactionHash: results[0],
             pending: results[1],
-            user_id: results[2],
-            vin: results[3]
+            applicant: results[2],
+            vin: results[3],
+            date: transaction.data.timestamp,
+            mileage: transaction.data.mileage,
+            ownerCount: transaction.data.ownerCount,
+            mainInspection: transaction.data.inspection,
+            service1: transaction.data.serviceOne,
+            service2: transaction.data.serviceTwo,
+            oilChange: transaction.data.oilChange,
+            entrant: transaction.data.email
         };
 
         // benötigt werden folgende Attribute:
-        // date // Transaktion von wann?
-        // vin
-        // mileage
-        // ownerCount
-        // entrant
-        // mainInspection
-        // service1
-        // service2
-        // oilChange
-        // applicant // wer hat den Antrag erstellt? (aus der DB)
-        // state    "pending"     nicht bearbeitet
+        // [x] date // Transaktion von wann?
+        // [x] vin
+        // [x] mileage
+        // [x] ownerCount
+        // [ ] entrant
+        // [x] mainInspection
+        // [x] service1
+        // [x] service2
+        // [x] oilChange
+        // [x] applicant // wer hat den Antrag erstellt? (aus der DB)
+        // [x] state    "pending"     nicht bearbeitet
         //          "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
         // transactionHash
 
