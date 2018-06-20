@@ -1,7 +1,7 @@
 import Transaction from "../blockchain/transaction";
 import ethNode from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {getTimestamp, USER_LEVEL, TRANS_HASH_SIZE} from "../utils";
+import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS} from "../utils";
 
 async function updateMileage(req, res) {
 
@@ -99,15 +99,44 @@ async function getCarByVin(req, res) {
         return;
     }
 
-    const transactions = await ethNode.getAllTransactions(headTxHash);
-    if (transactions == null) {
+    const allTransactions = await ethNode.getAllTransactions(headTxHash);
+    console.log("Transactions: ", allTransactions);
+    if (allTransactions == null) {
         console.log("Could not find vin in blockchain");
         res.status(400);
         res.json({"message": "Fahrzeug nicht gefunden!"});
         return;
     }
 
-    let transactionPayload = transactions.map((element) => {
+    let annulmentTransactions = [];
+    let transactionsWithoutAnnulments = [];
+    for (let i=0; i<allTransactions.length; i++){
+        if (allTransactions[i].annulmentTarget != null){
+            annulmentTransactions.push(allTransactions[i]);
+        }
+        else {
+            transactionsWithoutAnnulments.push(allTransactions[i]);
+        }
+    }
+
+    for (let i=0; i<transactionsWithoutAnnulments.length; i++){
+        transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.VALID;
+        for (let j=0; j<annulmentTransactions.length; j++){
+            if (transactionsWithoutAnnulments[i].hash === annulmentTransactions[j].data.annulmentTarget){
+                transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.INVALID;
+                break;
+            }
+        }
+        if (transactionsWithoutAnnulments[i].data.state === TRANSACTION_STATUS.VALID){
+            let annulment = await dbHelper.getAnnulment(toBasicString(transactionsWithoutAnnulments[i].hash));
+            if (annulment == null){
+                transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.PENDING;
+            }
+        }
+        console.log("Transaction state: ", transactionsWithoutAnnulments[i].data.state);
+    }
+
+    let transactionPayload = transactionsWithoutAnnulments.map((element) => {
         return {
             timestamp: element.data.timestamp,
             mileage: element.data.mileage,
