@@ -1,7 +1,7 @@
 import Transaction from "../blockchain/transaction";
 import {sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {getTimestamp, USER_LEVEL} from "../utils";
+import {getTimestamp, USER_LEVEL, toHexString} from "../utils";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
