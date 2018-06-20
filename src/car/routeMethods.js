@@ -1,5 +1,5 @@
 import Transaction from "../blockchain/transaction";
-import {sendTransaction, sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
+import {sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 import {getTimestamp, USER_LEVEL} from "../utils";
 
@@ -287,7 +287,7 @@ async function shopService(req, res) {
     const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
     transaction.setServiceOne(req.body.service1);
-    transaction.setServiceTwo(req.body.service1);
+    transaction.setServiceTwo(req.body.service2);
     transaction.setOilChange(req.body.oilChange);
 
     const transHash = await sendSignedTransaction(transaction, userInfo.privateKey);
