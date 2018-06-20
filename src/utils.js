@@ -28,10 +28,20 @@ function getTimestamp() {
     let seconds = today.getSeconds();
     seconds = seconds < 10 ? "0" + seconds : seconds;
     return todayStr + "-" + month + "-" + day + "T" + hours + ":" + minute + ":" + seconds;
+}
+
+const USER_LEVEL = {
+    NOT_LOGGED_IN: 0,
+    ZWS: 1,
+    TUEV: 2,
+    STVA: 3,
+    ASTVA: 4
 };
+
 
 module.exports = {
     "toHexString": toHexString,
     "toBasicString": toBasicString,
-    "getTimestamp": getTimestamp
+    "getTimestamp": getTimestamp,
+    "USER_LEVEL": USER_LEVEL
 };

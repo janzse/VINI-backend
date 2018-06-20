@@ -1,7 +1,7 @@
 import Transaction from "../blockchain/transaction";
 import {sendTransaction, sendSignedTransaction, getTransaction, getAllTransactions, createCarAccount} from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {getTimestamp} from "../utils";
+import {getTimestamp, USER_LEVEL} from "../utils";
 
 //TODO: Funktionalität für Annulment hinzufügen. Großer Sonderfall!
 
@@ -16,7 +16,7 @@ async function updateMileage(req, res) {
         return;
     }
 
-    if (!(req.body.authorityLevel === 1 || req.body.authorityLevel === 2 || req.body.authorityLevel === 3 || req.body.authorityLevel === 4)){
+    if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
         res.status(401);
         res.json({
             "message": "User is not authorized to update mileage for car"
@@ -234,7 +234,7 @@ async function shopService(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== 1){
+    if (req.body.authorityLevel !== USER_LEVEL.ZWS){
         res.status(401);
         res.json({
             "message": "User is not authorized to make service entry for car"
@@ -320,7 +320,7 @@ async function tuevEntry(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== 2){
+    if (req.body.authorityLevel !== USER_LEVEL.TUEV){
         res.status(401);
         res.json({
             "message": "User is not authorized to make inspection entry for car"
@@ -440,8 +440,6 @@ async function stvaRegister(req, res) {
             "message": "Error while registering new car: car already exists!"
         });
         return;
-
-
     }
 
     const token = req.get("Authorization").slice("Bearer ".length);
@@ -456,19 +454,7 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-
-    if(preTransaction == null){
-        console.log("Error while getting preTransaction from DB");
-        res.status(500);
-        res.json({
-            "message": "Error while getting preTransaction from DB"
-        });
-        return;
-    }
-    if(preTransaction.length === 0){
-        preTransaction = null;
-    }
+    const preTransaction = null;
 
     const transaction = new Transaction(userInfo.address, userInfo.email, req.body.vin, preTransaction, carAddress, req.body.timestamp);
     transaction.setMileage(req.body.mileage);
