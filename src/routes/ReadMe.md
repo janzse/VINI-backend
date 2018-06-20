@@ -6,17 +6,15 @@ Stand 19.06.2018
 
 - [GET] Gibt Test-Nachricht mit der übergebenen vin zurück.
 
-## /api/car/annulment
+## /api/car/applyCancelTransaction
 
-- [POST] Erstellt eine neue Annulment Transaktion zu einem übergebenen transactionsHash + userId
-
-## /api/car/applyCancelTransactions
-
-- [POST] Gibt json Test-Nachricht mit allen übergebenen Parametern zurück.
+- [POST] Erstellt eine neue Annulment Transaktion zu einem übergebenen transactionHash + userId
 
 ## /api/car/cancelTransaction
 
-- [POST] Gibt json Test-Nachricht mit allen übergebenen Parametern zurück.
+- [POST] Akzeptiert eine existierende Annulment Transaktion anhand eines übergebenen transactionHash + userId
+
+- [DELETE] Löscht eine existierende Annulment Transaktion anhand eines übergebenen transactionHash
 
 ## /api/car/mileage
 
