@@ -476,7 +476,7 @@ async function getAllAnnulmentTransactions(req, res) {
                 service2: trx.data.serviceTwo,
                 oilChange: trx.data.oilChange,
                 applicant: userEmail[0],
-                state: state,
+                state: state, // TODO: Eventuell überarbeiten
                 transactionHash: arr[0]
             }
             annulmentPayload.push(body);
