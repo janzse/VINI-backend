@@ -380,7 +380,7 @@ async function stvaRegister(req, res) {
             return;
         }
     } else { //car already exists, update
-        preTransaction = await getHeadTransactionHash(carAddress);
+        preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
         if (preTransaction == null || preTransaction.length === 0) {
             console.log("Error while getting preTransaction from DB");
             res.status(500);
@@ -662,6 +662,7 @@ async function acceptAnnulmentTransaction(req, res) {
     // Get Information about the original creator of the annulment transaction
     const creator = await dbHelper.getUserInfoFromUserId(annulment.userId);
 
+    //TODO: getTimestamp() sollte nicht benötigt werden, da Patrick den Timestamp immer übergeben will.
     const transaction = new Transaction(stvaEmployee.publicKey, creator.email, annulmentTarget.data.vin, preTransaction, annulmentTarget.to, getTimestamp());
     transaction.setAnnulmentTarget(annulmentTarget.hash);
 
