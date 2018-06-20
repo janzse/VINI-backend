@@ -89,7 +89,7 @@ async function blockUser(req, res) {
         return;
     }
 
-    if (req.body.authorityLevel !== 4) {
+    if (req.body.authorityLevel !== USER_LEVEL.ASTVA) {
         res.status(401);
         res.json({
             "message": "User is not authorized to block user"
@@ -128,7 +128,7 @@ async function blockUser(req, res) {
 //VINI.de/api/users
 async function getUsers(req, res) {
 
-    if (req.body.authorityLevel !== 4) {
+    if (req.body.authorityLevel !== USER_LEVEL.ASTVA) {
         res.status(401);
         res.json({
             "message": "User is not authorized to retrieve user data"

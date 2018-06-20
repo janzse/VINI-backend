@@ -94,14 +94,15 @@ async function getAllTransactions(headTxHash) {
 
     try {
         let currentTransaction = await getTransaction(currentHash);
-        while (currentTransaction.payload.preTransaction !== null) {
+        transactions.push(currentTransaction);
+        while (currentTransaction.data.preTransaction !== null) {
             currentHash = currentTransaction.data.preTransaction;
             currentTransaction = await getTransaction(currentHash);
-            transactions.push = currentTransaction;
+            transactions.push(currentTransaction);
         }
     }
     catch (err) {
-        console.log("Error while getting transactions", err);
+        console.log("Error while getting all transactions", err);
         return null;
     }
     return transactions;

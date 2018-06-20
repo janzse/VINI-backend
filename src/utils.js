@@ -1,13 +1,13 @@
 
 function toHexString(key) {
-    if(key.substring(0, 2) !== "0x"){
+    if(key != null && key.substring(0, 2) !== "0x"){
         return "0x" + key;
     }
     return key;
 }
 
 function toBasicString(key){
-    if(key.substring(0,2) === "0x"){
+    if(key != null && key.substring(0,2) === "0x"){
         return key.substring(2);
     }
     return key;
