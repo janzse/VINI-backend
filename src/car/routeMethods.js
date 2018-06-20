@@ -457,7 +457,7 @@ async function getAllAnnulmentTransactions(req, res) {
         const user = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
         const userEmail = await dbHelper.getUserByID(results[2]);
 
-        let state = results[1] == true ? "pending" : "invalid";
+        let state = results[1] === true ? "pending" : "invalid";
 
         console.log(results)
         const annulment = {
