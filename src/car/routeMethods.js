@@ -147,7 +147,8 @@ async function getCarByVin(req, res) {
             nextCheck: element.data.nextCheck,
             ownerCount: element.data.preOwner,
             entrant: element.data.email,
-            state: element.data.state
+            state: element.data.state,
+            hash: element.hash
         }
     });
 

@@ -1,6 +1,8 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount} from "../blockchain/ethNode";
 import {USER_LEVEL} from "../utils";
+import nodemailer from "nodemailer";
+import {PASSWORD} from "../passwords";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -205,6 +207,33 @@ function errorHandling(response, status, message) {
     response.redirect(query);
 }
 
+async function statusMessage(req, res) {
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'maildeamon.vini@gmail.com',
+            pass: PASSWORD.MAILACCOUNT,
+        }
+    });
+
+    userInfo = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
+
+    let mailOptions = {
+        from: 'maildeamon.vini@gmail.com',
+        to: userInfo.email,
+        subject: 'Annulment request status update - Accepted',
+        text: 'Your annulment request for car XX was accepted/rejected.'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 module.exports = {
     "registerUser": registerUser,
@@ -212,5 +241,6 @@ module.exports = {
     "isAuthorised": isAuthorised,
     "blockUser": blockUser,
     "getUsers": getUsers,
-    "errorHandling": errorHandling
+    "errorHandling": errorHandling,
+    "statusMessage": statusMessage
 };
