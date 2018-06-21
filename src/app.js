@@ -3,10 +3,9 @@ import express from "express";
 import logger from "morgan";
 import oAuth2Server from "node-oauth2-server";
 import oAuthModel from "./authorisation/accessTokenModel";
+import tokenDBHelper from "./database/tokenDBHelper";
 import userRoutes from "./routes/api/users";
-import {isAuthorised} from "./authorisation/routeMethods";
-
-import ethNodeCon from "./blockchain/ethNode";
+import ethNode from "./blockchain/ethNode";
 import fs from 'fs';
 import https from 'https';
 import cors from 'cors';
@@ -19,9 +18,9 @@ const app = express();
 let pathToKey = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/privkey.pem";
 let pathToCert = "/etc/letsencrypt/live/vini-ethereum.westeurope.cloudapp.azure.com/fullchain.pem";
 
-if(process.platform === "win32" || process.platform === "darwin" || process.env['HOME'] == null || process.env['HOME'] === undefined){
-  pathToKey = "./sslcert/server.key";
-  pathToCert = "./sslcert/server.crt";
+if (process.platform === "win32" || process.platform === "darwin" || process.env['HOME'] == null || process.env['HOME'] === undefined) {
+    pathToKey = "./sslcert/server.key";
+    pathToCert = "./sslcert/server.crt";
 }
 
 const privateKey = fs.readFileSync(pathToKey, 'utf8');
@@ -34,15 +33,15 @@ console.log("HTTPS-Server is running on", "https://localhost:" + httpsPort, " or
 
 // Allow Cross-Origin Header
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
 
 app.oauth = oAuth2Server({
-  model: oAuthModel,
-  grants: ['password'],
-  debug: true
+    model: oAuthModel,
+    grants: ['password'],
+    debug: true
 });
 userRoutes.initRoutes(app);
 
@@ -64,7 +63,7 @@ Pfaden die mit /api beginnen die Rechte geprüft.
 
 //TODO: Routen zusammenlegen (z.B. /api/car Unterpfade in eine Datei zusammenführen)?
 //rest API routes
-app.use('/', require("./routes/root"));;
+app.use('/', require("./routes/root"));
 app.use('/api/car', require('./routes/api/car'));
 app.use('/api/users', userRoutes.router); // This can't be required directly, because of the oAuthServer
 app.use('/ethTest', require('./routes/ethTest'));
@@ -72,14 +71,19 @@ app.use('/error', require("./routes/root"));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  req.next(createError(404));
+    req.next(createError(404));
 });
 
 app.listen(port);
 console.log("HTTP-Server is running on", "http://localhost:" + port, " or", "http://vini-ethereum.westeurope.cloudapp.azure.com/\n");
 
 
-ethNodeCon.connectToNode();
+// Check the node Connection every 2 Minutes
+ethNode.connectToNode();
+setInterval(ethNode.connectToNode, 120000);
+
+// Remove expired Bearer Token every 5 Minutes
+setInterval(tokenDBHelper.deleteExpiredTokens, 300000);
 
 
 module.exports = app;

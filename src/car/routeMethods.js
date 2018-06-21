@@ -15,11 +15,11 @@ async function updateMileage(req, res) {
     }
 
     if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
+        console.log("User is not authorized to update mileage for car");
         res.status(401);
         res.json({
             "message": "User is not authorized to update mileage for car"
         });
-
         return;
     }
 
@@ -44,7 +44,7 @@ async function updateMileage(req, res) {
     }
 
     let preTransaction = await dbHelper.getHeadTransactionHash(carAddress);
-    if (preTransaction == null || preTransaction === 0) {
+    if (preTransaction == null || preTransaction.length === 0) {
         console.log("Error while getting preTransaction from DB");
         res.status(500);
         res.json({
@@ -64,6 +64,7 @@ async function updateMileage(req, res) {
         res.json({
             "message": "Die Transaktion konnte nicht durchgeführt werden!"
         });
+        return;
     }
 
     res.status(200);
