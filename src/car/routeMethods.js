@@ -408,30 +408,38 @@ async function getAllAnnulmentTransactions(req, res) {
         });
     }
     else {
-        //let annulmentPayload = [];
-        let transaction = await ethNode.getTransaction(results[0]);
+        let annulmentPayload = [];
+        let annulments = [];
 
-        const vin = await dbHelper.getVinByPublicKey(transaction.to);
-        const user = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
-        const userEmail = await dbHelper.getUserByID(results[2]);
+        for (let i = 0; i < results.length; i += 3)
+        {
+            annulments.push(results.slice(i, i + 3));
+        }
 
-        let state = results[1] === true ? "pending" : "invalid";
+        for (let j = 0; j < annulments.length; j++){
+            let arr = annulments[j];
+            let state = arr[1] === true ? TRANSACTION_STATUS.VALID : TRANSACTION_STATUS.INVALID;
+            let trx = await ethNode.getTransaction(arr[0]);
+            let vin = await dbHelper.getVinByPublicKey(trx.to);
+            const user = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
+            const userEmail = await dbHelper.getUserByID(arr[2]);
+            let body = {
+                date: trx.data.timestamp,
+                vin: vin[0],
+                mileage: trx.data.mileage,
+                ownerCount: trx.data.ownerCount,
+                entrant: user.email,
+                mainInspection: trx.data.mainInspection,
+                service1: trx.data.serviceOne,
+                service2: trx.data.serviceTwo,
+                oilChange: trx.data.oilChange,
+                applicant: userEmail[0],
+                state: state, // TODO: Eventuell überarbeiten
+                transactionHash: arr[0]
+            }
+            annulmentPayload.push(body);
+        }
 
-        console.log(results);
-        const annulment = {
-            date: transaction.data.timestamp,
-            vin: vin[0],
-            mileage: transaction.data.mileage,
-            ownerCount: transaction.data.ownerCount,
-            entrant: user.email,
-            mainInspection: transaction.data.mainInspection,
-            service1: transaction.data.serviceOne,
-            service2: transaction.data.serviceTwo,
-            oilChange: transaction.data.oilChange,
-            applicant: userEmail[0],
-            state: state,
-            transactionHash: results[0]
-        };
         // from : user publicKey
         // to:  kfz publicKey
 
@@ -451,7 +459,7 @@ async function getAllAnnulmentTransactions(req, res) {
         // [x] transactionHash
 
         res.json({ "annulments": [
-            annulment,
+                annulmentPayload,
             //2. annulment,
             // ...
         ]
