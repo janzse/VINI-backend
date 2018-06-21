@@ -5,11 +5,11 @@ import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_ST
 
 async function updateMileage(req, res) {
 
-    if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null || req.body.mileage == null) {
-        console.log("Invalid request on updating mileage: ", req.body, req.get("Authorization"));
+    if (req.body.vin == null || req.body.timestamp == null || req.body.mileage == null) {
+        console.log("Invalid request on updating mileage: ", req.body);
         res.status(400);
         res.json({
-            "message": "Request has to include: vin, timestamp and a mileage value in body and bearer_token in header.Authorization"
+            "message": "Request has to include: vin, timestamp and a mileage value in body"
         });
         return;
     }
@@ -158,10 +158,9 @@ async function getCarByVin(req, res) {
 }
 
 async function shopService(req, res) {
-    if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
-        req.body.mileage == null || req.body.service1 == null || req.body.service2 == null ||
-        req.body.oilChange == null) {
-        console.log("Invalid request on shop service: ", req.body, req.get("Authorization"));
+    if (req.body.vin == null || req.body.timestamp == null || req.body.mileage == null || req.body.service1 == null ||
+        req.body.service2 == null || req.body.oilChange == null) {
+        console.log("Invalid request on shop service: ", req.body);
         res.status(400);
         res.json({
             "message": "Request has to include: vin, bearer_token, timestamp, mileage, service1," +
@@ -234,12 +233,12 @@ async function shopService(req, res) {
 async function tuevEntry(req, res) {
     const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (req.body.vin == null || token == null || req.body.timestamp == null ||
+    if (req.body.vin == null || req.body.timestamp == null ||
         req.body.mileage == null || req.body.nextCheck == null) {
-        console.log("Invalid request on tuev-report: ", req.body, req.get("Authorization"));
+        console.log("Invalid request on tuev-report: ", req.body);
         res.status(400);
         res.json({
-            "message": "Request has to include: vin, bearer_token, timestamp, mileage + nextCheck "
+            "message": "Request has to include: vin, timestamp, mileage + nextCheck "
         });
         return;
     }
@@ -306,12 +305,11 @@ async function tuevEntry(req, res) {
 
 async function stvaRegister(req, res) {
 
-    if (req.body.vin == null || req.get("Authorization") == null || req.body.timestamp == null ||
-        req.body.mileage == null || req.body.ownerCount == null) {
-        console.log("Invalid request on stva-register: ", req.body, req.get("Authorization"));
+    if (req.body.vin == null || req.body.timestamp == null || req.body.mileage == null || req.body.ownerCount == null) {
+        console.log("Invalid request on stva-register: ", req.body);
         res.status(400);
         res.json({
-            "message": "Request has to include: vin, bearer_token, timestamp, mileage + ownerCount "
+            "message": "Request has to include: vin, timestamp, mileage + ownerCount "
         });
         return;
     }
@@ -436,7 +434,7 @@ async function getAllAnnulmentTransactions(req, res) {
                 applicant: userEmail[0],
                 state: state, // TODO: Eventuell überarbeiten
                 transactionHash: arr[0]
-            }
+            };
             annulmentPayload.push(body);
         }
 
@@ -470,15 +468,24 @@ async function getAllAnnulmentTransactions(req, res) {
 
 async function insertAnnulmentTransaction(req, res) {
 
+    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
+        console.log("Invalid request for annulment. To create an annulment transaction a transactionHash is required.");
+        res.status(400);
+        res.json({
+            "message": "Invalid request for annulment. To create an annulment transaction a transactionHash is required."
+        });
+        return;
+    }
     const hash = req.body.transactionHash;
     const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (hash == null || hash.length < TRANS_HASH_SIZE || token == null) {
-        console.log("Invalid request for annulment. To create an annulment transaction a transactionHash and a userId is required.");
-        res.status(400);
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA ||
+        req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.ZWS)){
+        res.status(401);
         res.json({
-            "message": "Invalid request for annulment. To create an annulment transaction a transactionHash and a userId is required."
+            "message": "User is not authorized to create an annulment request"
         });
+
         return;
     }
 
@@ -534,14 +541,22 @@ async function insertAnnulmentTransaction(req, res) {
 
 async function rejectAnnulmentTransaction(req, res) {
 
-    const hash = req.body.transactionHash;
-
-    if (hash == null || hash.length < TRANS_HASH_SIZE) {
+    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
         console.log("Invalid request to reject an annulment. A transactionHash is required.");
         res.status(400);
         res.json({
             "message": "Invalid request to reject an annulment. A transactionHash is required."
         });
+        return;
+    }
+    const hash = req.body.transactionHash;
+
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+        res.status(401);
+        res.json({
+            "message": "User is not authorized to reject an annulment request"
+        });
+
         return;
     }
 
@@ -575,15 +590,23 @@ async function rejectAnnulmentTransaction(req, res) {
 
 async function acceptAnnulmentTransaction(req, res) {
 
+    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
+        console.log("Invalid request to accept annulment. A transactionHash is required.");
+        res.status(400);
+        res.json({
+            "message": "Invalid request to accept annulment. A transactionHash is required."
+        });
+        return;
+    }
     const hash = req.body.transactionHash;
     const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (hash == null || hash.length < TRANS_HASH_SIZE || token == null) {
-        console.log("Invalid request to reject an annulment. A transactionHash and a userId is required.");
-        res.status(400);
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+        res.status(401);
         res.json({
-            "message": "Invalid request to reject an annulment. A transactionHash and a userId is required."
+            "message": "User is not authorized to accept an annulment request"
         });
+
         return;
     }
 
