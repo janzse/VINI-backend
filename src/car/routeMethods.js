@@ -129,7 +129,7 @@ async function getCarByVin(req, res) {
         }
         if (transactionsWithoutAnnulments[i].data.state === TRANSACTION_STATUS.VALID){
             let annulment = await dbHelper.getAnnulment(toBasicString(transactionsWithoutAnnulments[i].hash));
-            if (annulment == null){
+            if (annulment !== null){
                 transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.PENDING;
             }
         }
