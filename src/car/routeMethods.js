@@ -417,7 +417,7 @@ async function getAllAnnulmentTransactions(req, res) {
 
         for (let j = 0; j < annulments.length; j++){
             let arr = annulments[j];
-            let state = arr[1] === true ? TRANSACTION_STATUS.VALID : TRANSACTION_STATUS.INVALID;
+            let state = arr[1] === true ? TRANSACTION_STATUS.PENDING : TRANSACTION_STATUS.INVALID;
             let trx = await ethNode.getTransaction(arr[0]);
             let vin = await dbHelper.getVinByPublicKey(trx.to);
             const user = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
@@ -433,7 +433,7 @@ async function getAllAnnulmentTransactions(req, res) {
                 service2: trx.data.serviceTwo,
                 oilChange: trx.data.oilChange,
                 applicant: userEmail[0],
-                state: state, // TODO: Eventuell überarbeiten
+                state: state,
                 transactionHash: arr[0]
             };
             annulmentPayload.push(body);
