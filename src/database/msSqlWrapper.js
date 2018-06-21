@@ -77,9 +77,7 @@ function executeSql(query) {
         request.on('row', (columns) => {
             // This collects all non-null rows in an array
             columns.forEach((column) => {
-                if (column.value != null) {
-                    resultValues.push(column.value);
-                }
+                resultValues.push(column.value);
             });
         });
 
