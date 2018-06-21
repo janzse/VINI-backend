@@ -1,5 +1,5 @@
 import {Connection, Request} from "tedious";
-import {PASSWORD} from "../passwords";
+import {DATABASE} from "../passwords";
 
 let dbConnection = null;
 
@@ -24,12 +24,12 @@ function initConnection() {
         console.log("Initializing DB connection");
 
         dbConnection = new Connection({
-            userName: 'vini@vini.database.windows.net',
-            password: PASSWORD.DATABASE,
-            server: 'vini.database.windows.net',
+            userName: DATABASE.USER,
+            password: DATABASE.PASSWORD,
+            server: DATABASE.SERVER,
             options: {
                 encrypt: true,
-                database: 'vini-database'
+                database: DATABASE.DATABASE
             }
         });
 
