@@ -4,7 +4,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  res.send('My fancy page')
+  res.redirect("https://sgse18.github.io/VINI/");
 });
 
 router.get('/error', (req, res, next) => {
