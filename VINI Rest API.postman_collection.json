@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1f18f241-8d1c-49a9-a5b7-21c19e9b4bec",
+		"_postman_id": "0845b0b6-35ea-4aa7-b5d7-0a7d8a8a7384",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -54,17 +54,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{zws_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer aaa4da366558f015b184c4677529fb07210oooor"
 							}
 						],
 						"body": {
@@ -102,17 +105,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer 1116203371f5b7428b85291e36ea053aaf3f5222"
 							}
 						],
 						"body": {
@@ -150,17 +156,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{zws_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer aaa4da366558f015b184c4677529fb07210oooor"
 							}
 						],
 						"body": {
@@ -198,17 +207,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tuev_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer 1t52fa008e6a6569c54c14afd24a0e290c27dck2"
 							}
 						],
 						"body": {
@@ -249,7 +261,56 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{astva_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/users",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_users_login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "22918817-4fe7-4acb-8e9d-c6a86fec886b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{zws_token}}",
 									"type": "string"
 								}
 							]
@@ -280,73 +341,28 @@
 					"response": []
 				},
 				{
-					"name": "api_users_login",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
-								"type": "text/javascript",
-								"exec": [
-									"var moment = require('moment');",
-									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer 1t52fa008e6a6569c54c14afd24a0e290c27dck2"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n}"
-						},
-						"url": {
-							"raw": "{{local_url}}/api/users/login",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "api_users_register_delete",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{astva_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer 1t52fa008e6a6569c54c14afd24a0e290c27dck2"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\" : \"testguy@tuev.de\"\n}"
+							"raw": "{\n  \"email\" : \"testguy@test.de\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -379,22 +395,25 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{astva_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer 1116203371f5b7428b85291e36ea053aaf3f5222"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\" : \"testguy@tuev.de\",\n\t\"password\" : \"IamOkay\",\n\t\"authLevel\": 1,\n\t\"forename\": \"Detlef\",\n\t\"surname\": \"Brömer\",\n\t\"companyName\": \"WohnwagenVerleih\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
+							"raw": "{\n\t\"email\" : \"testguy@test.de\",\n\t\"password\" : \"6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090\",\n\t\"authLevel\": 4,\n\t\"forename\": \"Test\",\n\t\"surname\": \"Guy\",\n\t\"companyName\": \"Testing Co. KG\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -468,91 +487,23 @@
 					"response": []
 				},
 				{
-					"name": "ethTest_firstBlock",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{local_url}}/ethTest/firstBlock",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"ethTest",
-								"firstBlock"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ethTest_lastBlockNumber",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{local_url}}/ethTest/lastBlockNumber",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"ethTest",
-								"lastBlockNumber"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ethTest_lastTransaction",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "publicKeyCar",
-								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{local_url}}/ethTest/lastTransaction",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"ethTest",
-								"lastTransaction"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "insert_annulment",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{zws_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer 1116203371f5b7428b85291e36ea053aaf3f5222"
 							}
 						],
 						"body": {
@@ -576,12 +527,18 @@
 				{
 					"name": "reject_annulment",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer 1116203371f5b7428b85291e36ea053aaf3f5222"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -608,12 +565,18 @@
 				{
 					"name": "accept_annulment",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer 1116203371f5b7428b85291e36ea053aaf3f5222"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -623,6 +586,36 @@
 							"mode": "raw",
 							"raw": "{\n\t\"transactionHash\": \"1d447cd008770b3870e67e3af3414e4e0d7e7b56b6abe72d3de2aa607a660fc9\"\n}"
 						},
+						"url": {
+							"raw": "{{local_url}}/api/car/cancelTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"cancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_all_annulment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"url": {
 							"raw": "{{local_url}}/api/car/cancelTransaction",
 							"host": [
@@ -1344,23 +1337,51 @@
 	],
 	"variable": [
 		{
-			"id": "90cd2ff8-2a50-4558-9c7e-52ed2b835b55",
+			"id": "bcd2f7cb-23f7-42f8-89ff-8b158cdf1041",
 			"key": "bearer_token",
 			"value": "666443ab43e7db38508dfba70eae4a51eb5d13e3",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "12abc973-2054-4f51-8efc-63c3e607c0bf",
+			"id": "aa77410a-0d46-4dfe-ae7d-fd1faf03f9fe",
 			"key": "server_url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "886cf03e-0c62-48b2-93ae-6aab28d3dc12",
+			"id": "37c42283-69f1-4e11-9128-245f1710ebb5",
 			"key": "local_url",
 			"value": "http://localhost:4711",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "dba4e4ae-79e9-4493-b286-4d5e6fb04cf8",
+			"key": "zws_token",
+			"value": "aaa4da366558f015b184c4677529fb07210oooor",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "22739c5b-f391-4f3d-b9a5-b1ca09b07241",
+			"key": "tuev_token",
+			"value": "bbb4da366558f015b184c4677529fb07210oorrr",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "1c03ea3c-89c5-4332-9e61-473cd921b207",
+			"key": "stva_token",
+			"value": "ccc4da366558f015b184c4677529fb07210orrrr",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "222fe644-1226-4dec-a438-303cbbebae31",
+			"key": "astva_token",
+			"value": "ddd4da366558f015b184c4677529fb07210rrrrr",
 			"type": "string",
 			"description": ""
 		}
