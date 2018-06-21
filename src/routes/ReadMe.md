@@ -4,54 +4,47 @@ Stand 19.06.2018
 
 ## /api/car
 
-- [GET] Gibt Test-Nachricht mit der übergebenen vin zurück.
+- [GET] Gibt alle Transaktionen zu einer gegebenen VIN zurück.
 
-## /api/car/annulment
+## /api/car/applyCancelTransaction
 
-- [POST] Erstellt eine neue Annulment Transaktion zu einem übergebenen transactionsHash + userId
-
-## /api/car/applyCancelTransactions
-
-- [POST] Gibt json Test-Nachricht mit allen übergebenen Parametern zurück.
+- [POST] Erstellt eine neue Annulment Transaktion zu einem übergebenen transactionHash.
 
 ## /api/car/cancelTransaction
 
-- [POST] Gibt json Test-Nachricht mit allen übergebenen Parametern zurück.
+- [GET] Gibt alle existierenden Annulment Transaktionen zurück.
+
+- [POST] Akzeptiert eine existierende Annulment Transaktion anhand eines übergebenen transactionHash.
+
+- [DELETE] Löscht eine existierende Annulment Transaktion anhand eines übergebenen transactionHash.
 
 ## /api/car/mileage
 
-- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
+- [POST] Aktualisiert den Kilometerstand zu einer übergebenen VIN auf einem gegebenen Wert.
 
 ## /api/car/register
 
-- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
+- [POST] Aktualisiert den Zähler der Vorbesitzer und den Kilometerstand zu einer übergebenen VIN. Sollte das Auto
+noch nicht exisiteren, wird ein neues angelegt.
 
 ## /api/car/service
 
-- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
+- [POST] Trägt einen gemachten Service oder Ölwechsel zu einer übergebenen VIN ein und aktualisiert den Kilometerstand.
 
 ## /api/car/tuev
 
-- [POST] Funktioniert. Schreibt Transaktion in die BlockChain.
-
-## /api/login
-
-- [POST] VERALTET De siehe /api/users/login
-
-## /api/register
-
-- [DEL] VERALTET De siehe /api/users/register
-- [POST] VERALTET De siehe /api/users/register
+- [POST] Aktualisiert den TÜV-Status eines Autos, den Kilometerstand und den Termin für die nächste HU.
 
 ## /api/users/token
 
-- [POST] Funktioniert.
+- [POST] Liefert ein Bearer Token für gültige, übergebene Password + Benutzername.
 
 ## /api/users/login
 
-- [GET] Funktioniert.
+- [GET] Gibt den aktuellen Login-Status und das Rechte-Level zu einem übergebenen Bearer Token zurück.
 
 ## /api/users/register
 
-- [DEL] Funktioniert.
-- [POST] Funktioniert.
+- [DEL] Setzt den Benutzer zu einer übergebenen Email-Adresse auf blocked.
+- [POST] Legt einen neuen Benutzer zu übergebenen Email, Passwort, Authorisierungs-Level, Vorname, Nachname,
+Firmenname und Zeitstempel Daten an.

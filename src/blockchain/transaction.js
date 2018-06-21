@@ -4,6 +4,7 @@ class Transaction {
 
     constructor(from, email, vin, preTransaction, to, timestamp) {
 
+        this.hash = null;
         this.from = toHexString(from); // String: sender address where the TX originated from (STVAWallet)
         this.to = toHexString(to); // String: recipient address (a carWallet)
         this.gas = 100000; // Default gas
@@ -19,8 +20,12 @@ class Transaction {
             "oilChange": null,
             "mainInspection": null,
             "annulmentTarget": null,
-            "nextCheck": null
+            "nextCheck": null,
         };
+    }
+
+    setHash(hash){
+        this.hash = toHexString(hash);
     }
 
     setPreOwner(preOwner){
@@ -47,7 +52,7 @@ class Transaction {
         this.data.mainInspection = mainInspection;
     }
 
-    annulmentTarget(annulmentTarget){
+    setAnnulmentTarget(annulmentTarget){
         this.data.annulmentTarget = annulmentTarget;
     }
 

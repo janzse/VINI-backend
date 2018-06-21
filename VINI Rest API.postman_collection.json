@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ba422f9a-b2f0-4ce1-99e4-f11fc1320a93",
+		"_postman_id": "0845b0b6-35ea-4aa7-b5d7-0a7d8a8a7384",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,7 +19,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{local_url}}/api/car?vin=123",
+							"raw": "{{local_url}}/api/car?vin=W0L012051T2123456",
 							"host": [
 								"{{local_url}}"
 							],
@@ -30,110 +30,8 @@
 							"query": [
 								{
 									"key": "vin",
-									"value": "123"
+									"value": "W0L012051T2123456"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "api_car_applyCancelTransaction",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c38c94c4-361c-456b-9301-8ad3f7f91d07",
-								"type": "text/javascript",
-								"exec": [
-									"var moment = require('moment');",
-									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearer_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
-						},
-						"url": {
-							"raw": "{{local_url}}/api/car/applyCancelTransaction",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"api",
-								"car",
-								"applyCancelTransaction"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "api_car_cancelTransaction",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "6e454506-6e89-46fc-90a5-612a0c03a8a5",
-								"type": "text/javascript",
-								"exec": [
-									"var moment = require('moment');",
-									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearer_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"transactionId\" : \"123456abcdef\"\n}"
-						},
-						"url": {
-							"raw": "{{local_url}}/api/car/cancelTransaction",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"api",
-								"car",
-								"cancelTransaction"
 							]
 						}
 					},
@@ -160,7 +58,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{zws_token}}",
 									"type": "string"
 								}
 							]
@@ -174,7 +72,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"W0L000051T2123456\"\n}"
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"WD3LMN1J4664M7766\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/mileage",
@@ -211,7 +109,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{stva_token}}",
 									"type": "string"
 								}
 							]
@@ -225,7 +123,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"WD3LMN1J4664M7766\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 5000,\n\t\"ownerCount\" : 2\n}"
+							"raw": "{\n\t\"vin\": \"WD3LMN1J4665M2100\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 5000,\n\t\"ownerCount\" : 2\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/register",
@@ -262,7 +160,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{zws_token}}",
 									"type": "string"
 								}
 							]
@@ -276,7 +174,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"XD1LOL1KEKXD\",\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
+							"raw": "{\n\t\"vin\": \"XD1LOL1KEK1ROFLXD\",\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/service",
@@ -313,7 +211,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{tuev_token}}",
 									"type": "string"
 								}
 							]
@@ -327,7 +225,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"XD1LOL1KEKXD\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+							"raw": "{\n\t\"vin\": \"XD1LOL1KEK1ROFLXD\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/tuev",
@@ -349,7 +247,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "700df678-cc6e-4b51-a1f3-cadc4bdc65e7",
+								"id": "395cee1d-8f39-4f50-9976-d6c9902b3473",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -363,7 +261,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{astva_token}}",
 									"type": "string"
 								}
 							]
@@ -398,11 +296,10 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0b2d6e46-fe3d-47ab-85dd-bcf47b8a9756",
+								"id": "22918817-4fe7-4acb-8e9d-c6a86fec886b",
 								"type": "text/javascript",
 								"exec": [
-									"var moment = require('moment');",
-									"pm.globals.set(\"$timestamp\", moment().format('YYYY-MM-DD hh:mm:ss').toString());"
+									""
 								]
 							}
 						}
@@ -413,7 +310,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{zws_token}}",
 									"type": "string"
 								}
 							]
@@ -451,7 +348,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{astva_token}}",
 									"type": "string"
 								}
 							]
@@ -465,7 +362,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\" : \"alibaba\"\n}"
+							"raw": "{\n  \"email\" : \"testguy@test.de\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -502,7 +399,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{astva_token}}",
 									"type": "string"
 								}
 							]
@@ -516,7 +413,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\" : \"async@test.de\",\n\t\"password\" : \"geheim\",\n\t\"authorityLevel\": 1,\n\t\"forename\": \"Async\",\n\t\"surname\": \"Await\",\n\t\"companyName\": \"CleanCode.com\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
+							"raw": "{\n\t\"email\" : \"testguy@test.de\",\n\t\"password\" : \"6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090\",\n\t\"authLevel\": 4,\n\t\"forename\": \"Test\",\n\t\"surname\": \"Guy\",\n\t\"companyName\": \"Testing Co. KG\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -555,12 +452,12 @@
 								},
 								{
 									"key": "username",
-									"value": "testuser",
+									"value": "ethnodeTest",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "abc123",
+									"value": "secret",
 									"type": "text"
 								},
 								{
@@ -590,85 +487,14 @@
 					"response": []
 				},
 				{
-					"name": "ethTest_firstBlock",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{local_url}}/ethTest/firstBlock",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"ethTest",
-								"firstBlock"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ethTest_lastBlockNumber",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{local_url}}/ethTest/lastBlockNumber",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"ethTest",
-								"lastBlockNumber"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ethTest_lastTransaction",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "publicKeyCar",
-								"value": "0x21b210476a0a9e21d4d1ef6201255682c8f37af6"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{local_url}}/ethTest/lastTransaction",
-							"host": [
-								"{{local_url}}"
-							],
-							"path": [
-								"ethTest",
-								"lastTransaction"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "restricted",
+					"name": "insert_annulment",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{bearer_token}}",
+									"value": "{{zws_token}}",
 									"type": "string"
 								}
 							]
@@ -682,16 +508,123 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n\t\"transactionHash\": \"1d447cd008770b3870e67e3af3414e4e0d7e7b56b6abe72d3de2aa607a660fc9\"\n}"
 						},
 						"url": {
-							"raw": "{{local_url}}/restricted/enter",
+							"raw": "{{local_url}}/api/car/applyCancelTransaction",
 							"host": [
 								"{{local_url}}"
 							],
 							"path": [
-								"restricted",
-								"enter"
+								"api",
+								"car",
+								"applyCancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reject_annulment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"transactionHash\": \"1d447cd008770b3870e67e3af3414e4e0d7e7b56b6abe72d3de2aa607a660fc9\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/cancelTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"cancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept_annulment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"transactionHash\": \"1d447cd008770b3870e67e3af3414e4e0d7e7b56b6abe72d3de2aa607a660fc9\"\n}"
+						},
+						"url": {
+							"raw": "{{local_url}}/api/car/cancelTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"cancelTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_all_annulment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{stva_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{local_url}}/api/car/cancelTransaction",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"api",
+								"car",
+								"cancelTransaction"
 							]
 						}
 					},
@@ -1043,7 +976,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "21bff119-1556-4a82-91e5-8650f50909ab",
+								"id": "d36dd9c4-af4b-419f-b6d1-94420e1329ba",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1071,7 +1004,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{server_url}}/api/users",
@@ -1112,7 +1045,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -1404,23 +1337,51 @@
 	],
 	"variable": [
 		{
-			"id": "f73f94d9-1868-44fb-801f-19acabc31ecc",
+			"id": "bcd2f7cb-23f7-42f8-89ff-8b158cdf1041",
 			"key": "bearer_token",
 			"value": "666443ab43e7db38508dfba70eae4a51eb5d13e3",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "ff9de1c4-e462-4bec-8d37-cec61709c545",
+			"id": "aa77410a-0d46-4dfe-ae7d-fd1faf03f9fe",
 			"key": "server_url",
 			"value": "https://vini-ethereum.westeurope.cloudapp.azure.com",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "f5708555-52ee-4e66-8227-3ed4b21ec053",
+			"id": "37c42283-69f1-4e11-9128-245f1710ebb5",
 			"key": "local_url",
 			"value": "http://localhost:4711",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "dba4e4ae-79e9-4493-b286-4d5e6fb04cf8",
+			"key": "zws_token",
+			"value": "aaa4da366558f015b184c4677529fb07210oooor",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "22739c5b-f391-4f3d-b9a5-b1ca09b07241",
+			"key": "tuev_token",
+			"value": "bbb4da366558f015b184c4677529fb07210oorrr",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "1c03ea3c-89c5-4332-9e61-473cd921b207",
+			"key": "stva_token",
+			"value": "ccc4da366558f015b184c4677529fb07210orrrr",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "222fe644-1226-4dec-a438-303cbbebae31",
+			"key": "astva_token",
+			"value": "ddd4da366558f015b184c4677529fb07210rrrrr",
 			"type": "string",
 			"description": ""
 		}

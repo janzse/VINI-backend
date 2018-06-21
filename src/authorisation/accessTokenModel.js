@@ -1,5 +1,5 @@
 import dbHelper from "../database/dbHelper";
-import accessTokensDBHelper from "../database/accessTokensDBHelper";
+import tokenDBHelper from "../database/tokenDBHelper";
 
 /* All methods in this file are called by the node-oauth2-server module. They are provided as an object in the "app.js"
 * while instantiating the oAuthServer object.*/
@@ -31,8 +31,6 @@ function getClient(clientID, clientSecret, callback) {
  */
 function grantTypeAllowed(clientID, grantType, callback) {
 
-    console.log('grantTypeAllowed called: clientID is: ', clientID, ' and grantType is: ', grantType);
-
     callback(false, true);
 }
 
@@ -43,8 +41,6 @@ function grantTypeAllowed(clientID, grantType, callback) {
  * @param callback a function taking an error-indicator and a user object as parameter
  */
 async function getUser(email, password, callback) {
-
-    console.log('getUser() called and email is: ', email, ' and password is: ', password, ' and callback is: ', callback);
 
     //try and get the user using the user's credentials
     const user = await dbHelper.getUserFromCredentials(email, password);
@@ -61,11 +57,8 @@ async function getUser(email, password, callback) {
  */
 async function saveAccessToken(accessToken, clientID, expires, user, callback) {
 
-    console.log('saveAccessToken() called and accessToken is: ', accessToken,
-        ' and clientID is: ', clientID, ' and user is: ', user, ' and expires is: ', expires, ' and accessTokensDBhelper is: ', accessTokensDBHelper);
-
     //save the accessToken along with the user.id
-    const result = await accessTokensDBHelper.saveAccessToken(accessToken, user.id, expires);
+    const result = await tokenDBHelper.saveAccessToken(accessToken, user.id, expires);
     if(result == null){
         console.log("Could not save access token to db");
         callback(true);

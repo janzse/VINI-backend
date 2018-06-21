@@ -16,13 +16,6 @@ async function registerCarInDB(vin, privateKey, publicKey, creationDate) {
     return await dbConnection.query(queryString);
 }
 
-async function updateCarHeadTx(publicKey, hash) {
-
-    const queryString = `UPDATE kfz SET headTx = '${hash}' WHERE publicKey = '${toBasicString(publicKey)}'`;
-
-    return await dbConnection.query(queryString);
-}
-
 async function getUserFromCredentials(email, password) {
 
     const queryString = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}';`;
@@ -80,7 +73,7 @@ async function getCarAddressFromVin(vin) {
 }
 
 async function getUserInfoFromToken(token) {
-    const queryString = `SELECT privateKey, publicKey, email FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
+    const queryString = `SELECT * FROM users WHERE id = (SELECT user_id FROM bearer_tokens WHERE token = '${token}')`;
 
     const result = await dbConnection.query(queryString);
 
@@ -89,9 +82,39 @@ async function getUserInfoFromToken(token) {
     }
 
     return {
-        "privateKey": result[0],
-        "address": result[1],
-        "email": result[2]
+        "id": result[0],
+        "email": result[1],
+        "privateKey": result[3],
+        "authorityLevel": result[4],
+        "forename": result[5],
+        "surname": result[6],
+        "companyName": result[7],
+        "creationDate": result[8],
+        "blocked": result[9],
+        "publicKey": result[10]
+    }
+}
+
+async function getUserInfoFromUserId(userId){
+    const queryString = `SELECT * FROM users WHERE id = ${userId}`;
+
+    const result = await dbConnection.query(queryString);
+
+    if(result == null || result.length === 0){
+        return null;
+    }
+
+    return {
+        "id": result[0],
+        "email": result[1],
+        "privateKey": result[3],
+        "authorityLevel": result[4],
+        "forename": result[5],
+        "surname": result[6],
+        "companyName": result[7],
+        "creationDate": result[8],
+        "blocked": result[9],
+        "publicKey": result[10]
     }
 }
 
@@ -158,23 +181,34 @@ async function getHeadTransactionHash(publicKeyCar) {
 
 async function updateHeadTransactionHash(publicKeyCar, headTxHash) {
 
-    const queryString = `UPDATE kfz SET headTx = '${headTxHash}' WHERE publicKey = '${toBasicString(publicKeyCar)}';`;
+    const queryString = `UPDATE kfz SET headTx = '${toBasicString(headTxHash)}' WHERE publicKey = '${toBasicString(publicKeyCar)}';`;
 
     return await dbConnection.query(queryString);
 }
 
 async function getAllAnnulmentTransactions() {
-    const queryString = `SELECT at.transactionHash, at.pending, at.user_id, kfz.vin FROM annulment_transactions as at,
-                        kfz where kfz.publicKey = (SELECT publicKey from users WHERE id = at.user_id)`;
+
+    const queryString = `SELECT transactionHash, pending, user_id FROM annulment_transactions`;
 
     return await dbConnection.query(queryString);
 }
 
-async function getAnnulment(hash, user_id){
+async function getAnnulment(hash){
 
-    const queryString = `SELECT * FROM annulment_transactions WHERE transactionHash = '${toBasicString(hash)}' AND user_id = ${user_id}`;
+    const queryString = `SELECT * FROM annulment_transactions WHERE transactionHash = '${toBasicString(hash)}'`;
 
-    return await dbConnection.query(queryString);
+    const result = await dbConnection.query(queryString);
+
+    if(result == null || result.length === 0){
+        return null;
+    }
+
+    return {
+        "transactionHash": result[1],
+        "pending": result[2],
+        "creationDate": result[3],
+        "userId": result[4]
+    }
 }
 
 async function insertAnnulment(hash, user_id){
@@ -184,9 +218,30 @@ async function insertAnnulment(hash, user_id){
     return await dbConnection.query(queryString);
 }
 
-async function rejectAnnulment(hash, user_id){
+async function rejectAnnulment(hash){
 
-    const queryString = `DELETE FROM annulment_transactions WHERE transactionHash = '${hash}' AND user_id = ${user_id}`;
+    const queryString = `DELETE FROM annulment_transactions WHERE transactionHash = '${hash}'`;
+
+    return await dbConnection.query(queryString);
+}
+
+async function acceptAnnulment(hash){
+
+    const queryString = `UPDATE annulment_transactions SET pending = 0 WHERE transactionHash = '${toBasicString(hash)}'`;
+
+    return await dbConnection.query(queryString)
+}
+
+async function getVinByPublicKey(publicKey)
+{
+    const queryString = `SELECT vin from kfz WHERE publicKey = '${toBasicString(publicKey)}'`;
+
+    return await dbConnection.query(queryString);
+}
+
+async function getUserByID(userID)
+{
+    const queryString = `SELECT email from users WHERE id = '${userID}'`;
 
     return await dbConnection.query(queryString);
 }
@@ -195,12 +250,12 @@ async function rejectAnnulment(hash, user_id){
 module.exports = {
     "registerUserInDB": registerUserInDB,
     "registerCarInDB": registerCarInDB,
-    "updateCarHeadTx": updateCarHeadTx,
     "getUserFromCredentials": getUserFromCredentials,
     "doesUserExist": doesUserExist,
     "blockUserInDB": blockUserInDB,
     "getCarAddressFromVin": getCarAddressFromVin,
     "getUserInfoFromToken": getUserInfoFromToken,
+    "getUserInfoFromUserId": getUserInfoFromUserId,
     "checkUserAuthorization": checkUserAuthorization,
     "getAllUsers": getAllUsers,
     "getAllAnnulmentTransactions": getAllAnnulmentTransactions,
@@ -208,5 +263,8 @@ module.exports = {
     "updateHeadTransactionHash": updateHeadTransactionHash,
     "getAnnulment": getAnnulment,
     "insertAnnulment": insertAnnulment,
-    "rejectAnnulment": rejectAnnulment
+    "rejectAnnulment": rejectAnnulment,
+    "acceptAnnulment": acceptAnnulment,
+    "getVinByPublicKey": getVinByPublicKey,
+    "getUserByID": getUserByID
 };

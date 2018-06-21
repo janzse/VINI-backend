@@ -13,10 +13,8 @@ async function query(queryString) {
             return null;
         }
     }
-    //if (jsonArray === undefined)
-        return await executeSql(queryString);
-    //else
-    //    return await executeSqlJSON(queryString);
+
+    return await executeSql(queryString);
 }
 
 function initConnection() {
@@ -62,6 +60,7 @@ function executeSql(query) {
         const request = new Request(query, (err, rowCount) => {
             if (err) {
                 console.log("Error while request was performed: ", err);
+                resolve(null);
                 return;
             }
             else {
@@ -78,56 +77,8 @@ function executeSql(query) {
         request.on('row', (columns) => {
             // This collects all non-null rows in an array
             columns.forEach((column) => {
-                if (column.value != null) {
-                    if (column.metadata.colName === "transactionHash")
-                        resultValues.push("0x"+column.value);
-                    else
-                        resultValues.push(column.value);
-                }
+                resultValues.push(column.value);
             });
-        });
-
-        request.on('error', (err) => {
-            console.log("Error while executing ", query, ":\n", err); // Might not be secure
-            resolve(null);
-        });
-
-        dbConnection.execSql(request);
-        console.log("End of query.")
-    });
-}
-
-//TODO: Auf async/await ändern, sofern verwendet
-function executeSqlJSON(query) {
-    let entries = [];
-    // Use of explicit promise, because of the event listeners
-    return new Promise((resolve) => {
-
-        console.log("Begin query.");
-        let resultValues = [];
-
-        const request = new Request(query, (err, rowCount) => {
-            if (err) {
-                console.log("Error while request was performed: ", err);
-                return;
-            }
-            else {
-                console.log("Got", rowCount, "row(s)");
-            }
-            dbConnection.close();
-        });
-
-        request.on('requestCompleted', () => {
-            resolve(resultValues);
-        });
-
-        request.on('row', (columns) => {
-            let entry = [];
-            // This collects all non-null rows in an array
-            columns.forEach((column) => {
-                entry.push({[column.metadata.colName]: [column.value]});
-            });
-             entries.push(entry);
         });
 
         request.on('error', (err) => {
