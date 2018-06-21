@@ -30,7 +30,7 @@ function sendTransaction(transaction) {
             web3.eth.sendTransaction(transaction)
                 .once("transactionHash", (hash) => {
                     console.log("Sending transaction successful:", hash);
-                    resolve(hash);
+                    resolve(toBasicString(hash));
                 }).catch((err) => {
                 console.log("Error while sending Transaction\n", err);
                 resolve(null);
@@ -131,8 +131,6 @@ async function createUserAccount() {
         "gas": 100000,
         "value": 500000000000
     };
-
-    console.log("Trasnaction: ", transaction);
 
     const result = sendTransaction(transaction);
 
