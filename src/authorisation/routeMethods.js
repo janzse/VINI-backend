@@ -6,11 +6,10 @@ import {USER_LEVEL} from "../utils";
   The req body should contain an email and a password. */
 async function registerUser(req, res) {
 
-    console.log(req.body)
-    if (req.body.email == null || req.get("Authorization") == null || req.body.password == null ||
-        req.body.authorityLevel == null || req.body.authLevel == null || req.body.forename == null || req.body.surname == null ||
+    if (req.body.email == null || req.body.password == null || req.body.authorityLevel == null ||
+        req.body.authLevel == null || req.body.forename == null || req.body.surname == null ||
         req.body.companyName == null || req.body.creationDate == null) {
-        console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
+        console.log("Invalid request on register-user: ", req.body);
         res.status(400);
         res.json({
             "message": "Request has to include: email, password, authorityLevel, forename," +
@@ -78,16 +77,15 @@ async function registerUser(req, res) {
 
 async function blockUser(req, res) {
 
-    const email = req.body.email;
-
-    if (email == null || req.get("Authorization") == null) {
-        console.log("Invalid request on register-user: ", req.body, req.get("Authorization"));
+    if (req.body.email == null) {
+        console.log("Invalid request on register-user: ", req.body);
         res.status(400);
         res.send({
             "message": "Request has to include: email in the body and bearer_token in the header"
         });
         return;
     }
+    const email = req.body.email;
 
     if (req.body.authorityLevel !== USER_LEVEL.ASTVA) {
         res.status(401);
