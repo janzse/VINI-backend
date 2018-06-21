@@ -54,20 +54,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-/*TODO: "isAuthorised" passend einbauen
-Bei einer Route, die als 2. Parameter "isAuthorised" erhält, kann geprüft werden, ob der
-Zugriff legitim ist. Und außerdem greift dies bei alles unter Routen.
-Das heißt es kann beispielsweise für /api "isAuthorised" hinterlegt werden und dann werden bei allen
-Pfaden die mit /api beginnen die Rechte geprüft.
-*/
-
 //TODO: Routen zusammenlegen (z.B. /api/car Unterpfade in eine Datei zusammenführen)?
 //rest API routes
 app.use('/', require("./routes/root"));
+app.use('/api', require("./blockchain/routeMethods")); // Checking the connection to the ethereum node for every /api request
 app.use('/api/car', require('./routes/api/car'));
 app.use('/api/users', userRoutes.router); // This can't be required directly, because of the oAuthServer
 app.use('/ethTest', require('./routes/ethTest'));
-app.use('/error', require("./routes/root"));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -76,11 +69,6 @@ app.use((req, res, next) => {
 
 app.listen(port);
 console.log("HTTP-Server is running on", "http://localhost:" + port, " or", "http://vini-ethereum.westeurope.cloudapp.azure.com/\n");
-
-
-// Check the node Connection every 2 Minutes
-ethNode.connectToNode();
-setInterval(ethNode.connectToNode, 120000);
 
 // Remove expired Bearer Token every 5 Minutes
 setInterval(tokenDBHelper.deleteExpiredTokens, 300000);

@@ -4,45 +4,36 @@ import dbHelper from "../database/dbHelper";
 import Transaction from "./transaction";
 
 let web3;
-let isConnected = false;
 
-function connectToNode() {
+const nodeIP = "http://137.117.247.14:3311";
+web3 = new Web3(nodeIP);
 
-    if(isConnected){
-        return;
+async function isConnected() {
+    try {
+        return await web3.eth.net.isListening();
     }
-
-    const nodeIP = "http://137.117.247.14:3311";
-    web3 = new Web3(nodeIP);
-
-    web3.eth.net.isListening()
-        .then(() => {
-            console.log("Successfully connected to node running on: ", nodeIP);
-            isConnected = true;
-        })
-        .catch((err) => {
-            console.error("Failed to connect to node running on: ", nodeIP, "\n", err);
-            isConnected = false;
-        });
+    catch (err) {
+        console.log("Error while checking connection status to node: \n", err);
+        return false;
+    }
 }
 
 function sendTransaction(transaction) {
 
     return new Promise(async (resolve) => {
-        try {
-            await web3.eth.net.isListening();
+        const connected = await isConnected();
 
+        if (connected) {
             web3.eth.sendTransaction(transaction)
                 .once("transactionHash", (hash) => {
                     console.log("Sending transaction successful:", hash);
                     resolve(toBasicString(hash));
                 })
                 .catch((err) => {
-                console.log("Error while sending Transaction\n", err);
-                resolve(null);
-            });
-        } catch (err) {
-            console.log("Error while sending transaction: ", err);
+                    console.log("Error while sending Transaction\n", err);
+                    resolve(null);
+                });
+        } else {
             resolve(null);
         }
     });
@@ -50,9 +41,9 @@ function sendTransaction(transaction) {
 
 async function sendSignedTransaction(transaction, privateKey) {
     return new Promise(async (resolve) => {
-        try {
-            await web3.eth.net.isListening();
+        const connected = await isConnected();
 
+        if (connected) {
             transaction.data = web3.utils.toHex(JSON.stringify(transaction.data));
 
             privateKey = toHexString(privateKey);
@@ -70,12 +61,10 @@ async function sendSignedTransaction(transaction, privateKey) {
                     resolve(toBasicString(hash));
                 })
                 .catch((err) => {
-                console.log("Error while sending signed Transaction\n", err);
-                resolve(null);
-            });
-        }
-        catch (err) {
-            console.log("Error while sending signedTransaction: ", err);
+                    console.log("Error while sending signed Transaction\n", err);
+                    resolve(null);
+                });
+        } else {
             resolve(null);
         }
     });
@@ -83,20 +72,24 @@ async function sendSignedTransaction(transaction, privateKey) {
 
 async function getTransaction(transHash) {
     try {
-        await web3.eth.net.isListening();
+        const connected = await isConnected();
 
-        const rawTransaction = await web3.eth.getTransaction(toHexString(transHash));
+        if (connected) {
+            const rawTransaction = await web3.eth.getTransaction(toHexString(transHash));
 
-        const transaction = new Transaction(rawTransaction.from, null, null, null, rawTransaction.to, null);
-        transaction.setHash(rawTransaction.hash);
-        transaction.data = JSON.parse(web3.utils.toAscii(rawTransaction.input));
+            const transaction = new Transaction(rawTransaction.from, null, null, null, rawTransaction.to, null);
+            transaction.setHash(rawTransaction.hash);
+            transaction.data = JSON.parse(web3.utils.toAscii(rawTransaction.input));
 
-        return transaction;
+            return transaction;
+        }
+        return null;
     }
     catch (err) {
         console.error("Error while getting Transaction: ", "\n", err);
         return null;
     }
+
 }
 
 //TODO: Testing on real blockchain transactions
@@ -169,7 +162,8 @@ function createCarAccount() {
 
 
 module.exports = {
-    "connectToNode": connectToNode,
+    "nodeIP": nodeIP,
+    "isConnected": isConnected,
     "createUserAccount": createUserAccount,
     "createCarAccount": createCarAccount,
     "sendTransaction": sendTransaction,
