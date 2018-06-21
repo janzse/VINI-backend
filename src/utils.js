@@ -12,21 +12,10 @@ function toBasicString(key) {
     return key;
 }
 
+// Using UTC time (GTM + 00:00)!
 function getTimestamp() {
-    const today = new Date();
-    const todayStr = today.getFullYear();
-    let month = today.getMonth() + 1;
-    month = month < 10 ? "0" + month : month;
-    let day = today.getDate();
-    day = day < 10 ? "0" + day : day;
 
-    let hours = today.getHours();
-    hours = hours < 10 ? "0" + hours : hours;
-    let minute = today.getMinutes();
-    minute = minute < 10 ? "0" + minute : minute;
-    let seconds = today.getSeconds();
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-    return todayStr + "-" + month + "-" + day + "T" + hours + ":" + minute + ":" + seconds;
+    return new Date().toISOString();
 }
 
 const USER_LEVEL = {
@@ -43,7 +32,7 @@ const TRANSACTION_STATUS = {
     VALID : "valid",
     INVALID : "invalid",
     PENDING : "open"
-}
+};
 
 module.exports = {
     "toHexString": toHexString,
