@@ -8,6 +8,10 @@ let isConnected = false;
 
 function connectToNode() {
 
+    if(isConnected){
+        return;
+    }
+
     const nodeIP = "http://137.117.247.14:3311";
     web3 = new Web3(nodeIP);
 
@@ -18,6 +22,7 @@ function connectToNode() {
         })
         .catch((err) => {
             console.error("Failed to connect to node running on: ", nodeIP, "\n", err);
+            isConnected = false;
         });
 }
 
@@ -31,7 +36,8 @@ function sendTransaction(transaction) {
                 .once("transactionHash", (hash) => {
                     console.log("Sending transaction successful:", hash);
                     resolve(toBasicString(hash));
-                }).catch((err) => {
+                })
+                .catch((err) => {
                 console.log("Error while sending Transaction\n", err);
                 resolve(null);
             });
@@ -62,7 +68,8 @@ async function sendSignedTransaction(transaction, privateKey) {
                         console.log("Transaction not saved to database.");
                     }
                     resolve(toBasicString(hash));
-                }).catch((err) => {
+                })
+                .catch((err) => {
                 console.log("Error while sending signed Transaction\n", err);
                 resolve(null);
             });

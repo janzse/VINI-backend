@@ -1,10 +1,11 @@
 import dbConnection from "./msSqlWrapper";
+import {getTimestamp} from "../utils";
 
 async function saveAccessToken(token, userID, expiration) {
 
     // ON DUPLICATE gibt es in MSSQL nicht, wird durch eine Query ersetzt
     //const insertTokenQuery = `INSERT INTO bearer_tokens (token, user_id) VALUES ('${token}', ${userID}) ON DUPLICATE KEY UPDATE token = '${token}';`;
-    const insertTokenQuery = `    
+    const queryString = `    
     begin tran
     if exists (select * from bearer_tokens with (updlock,serializable) where user_id LIKE '${userID}')
     begin
@@ -18,32 +19,25 @@ async function saveAccessToken(token, userID, expiration) {
     end
     commit tran`;
 
-    return await dbConnection.query(insertTokenQuery);
+    return await dbConnection.query(queryString);
 }
 
-async function deleteAccessToken(userID)
-{
-    const insertTokenQuery = `DELETE FROM bearer_token WHERE user_id = '${userID}'`;
+async function deleteExpiredTokens(){
 
-    await dbConnection.query(insertTokenQuery);
-}
+    const queryString = `DELETE FROM bearer_tokens WHERE expiration < '${getTimestamp()}'`;
 
-async function getUserIDFromAccessToken(token) {
+    const result = await dbConnection.query(queryString);
 
-    const getUserIDQuery = `SELECT user_id FROM bearer_tokens WHERE token = '${token}';`;
-
-    const result = await dbConnection.query(getUserIDQuery);
-
-    if(result == null || result.length === 0){
-        return null;
+    if(result == null){
+        console.log("Error while deleting expired bearer tokens");
+        return;
     }
 
-    return result[0];
+    console.log("Successfully deleted eventually expired bearer tokens");
 }
 
 
 module.exports = {
     "saveAccessToken": saveAccessToken,
-    "getUserIDFromAccessToken": getUserIDFromAccessToken,
-    "deleteAccessToken": deleteAccessToken
+    "deleteExpiredTokens": deleteExpiredTokens
 };
