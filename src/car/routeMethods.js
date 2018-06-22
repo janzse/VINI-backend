@@ -461,12 +461,8 @@ async function getAllAnnulmentTransactions(req, res) {
         //     "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
         // [x] transactionHash
 
-        res.json({ "annulments": [
-                annulmentPayload,
-            //2. annulment,
-            // ...
-        ]
-
+        res.json({ "annulments": 
+                annulmentPayload
         });
     }
 }
