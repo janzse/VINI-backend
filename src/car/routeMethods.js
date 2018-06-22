@@ -536,7 +536,7 @@ async function insertAnnulmentTransaction(req, res) {
 
     res.status(200);
     res.json({
-        "message": "Successfully inserted annulment transaction"
+        "message": "Annulierung beantragt."
     });
 }
 
@@ -627,6 +627,11 @@ async function rejectAnnulmentTransaction(req, res) {
                 "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
             });
         }
+    });
+
+    res.status(200);
+    res.json({
+        "message": "Annullierung abgenehnt!"
     });
 }
 
@@ -768,7 +773,7 @@ async function acceptAnnulmentTransaction(req, res) {
 
     res.status(200);
     res.json({
-        "message": "Successfully accepted annulmentTransaction"
+        "message": "Annullierung durchgeführt."
     });
 }
 
