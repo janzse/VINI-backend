@@ -399,7 +399,6 @@ async function getAllAnnulmentTransactions(req, res) {
         res.json({
             "message": "User is not authorized to retrieve annulment transactions"
         });
-
         return;
     }
 
@@ -542,7 +541,9 @@ async function insertAnnulmentTransaction(req, res) {
 
 async function rejectAnnulmentTransaction(req, res) {
 
-    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
+    const hash = req.body.transactionHash;
+
+    if (hash == null || hash.length < TRANS_HASH_SIZE) {
         console.log("Invalid request to reject an annulment. A transactionHash is required.");
         res.status(400);
         res.json({
@@ -550,7 +551,6 @@ async function rejectAnnulmentTransaction(req, res) {
         });
         return;
     }
-    const hash = req.body.transactionHash;
 
     if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
         res.status(401);
@@ -581,12 +581,14 @@ async function rejectAnnulmentTransaction(req, res) {
         return;
     }
 
-    const email = await dbHelper.getUserByID(annulment[4]);
-    if (email == null) {
-        console.log("Could not find email of request sender " + email);
-        res.status(404);
+    // Get Information about the original creator of the annulment transaction
+    const creator = await dbHelper.getUserInfoFromUserId(annulment.userId);
+
+    if(creator == null){
+        console.log("Cloud not get user from userId:", annulment.userId);
+        res.status(500);
         res.json({
-            "message": "E-Mail-Adresse des Antragsstellers konnte nicht gefunden werden: " + email
+            "message": "Cloud not get user from userId:" + annulment.userId
         });
         return;
     }
@@ -602,7 +604,7 @@ async function rejectAnnulmentTransaction(req, res) {
 
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
-        to: email,
+        to: creator.email,
         subject: 'Ihr Annulierungsantrag vom XX wurde abgelehnt.',
         text: 'Sehr geehrte Damen und Herren,' +
         '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
@@ -690,8 +692,26 @@ async function acceptAnnulmentTransaction(req, res) {
     // Get preTransaction Hash from the publicKey of the car
     const preTransaction = await dbHelper.getHeadTransactionHash(annulmentTarget.to);
 
+    if(preTransaction == null){
+        console.log("Cloud not get preTransaction from: ", annulmentTarget.to);
+        res.status(500);
+        res.json({
+            "message": "Cloud not get preTransaction from: " + annulmentTarget.to
+        });
+        return;
+    }
+
     // Get Information about the original creator of the annulment transaction
     const creator = await dbHelper.getUserInfoFromUserId(annulment.userId);
+
+    if(creator == null){
+        console.log("Cloud not get user from userId:", annulment.userId);
+        res.status(500);
+        res.json({
+            "message": "Cloud not get user from userId:" + annulment.userId
+        });
+        return;
+    }
 
     const transaction = new Transaction(stvaEmployee.publicKey, creator.email, annulmentTarget.data.vin, preTransaction, annulmentTarget.to, getTimestamp());
     transaction.setAnnulmentTarget(annulmentTarget.hash);
@@ -718,16 +738,6 @@ async function acceptAnnulmentTransaction(req, res) {
         return;
     }
 
-    const email = await dbHelper.getUserByID(annulment[4]);
-    if (email == null) {
-        console.log("Could not find email of request sender " + email);
-        res.status(404);
-        res.json({
-            "message": "E-Mail-Adresse des Antragsstellers konnte nicht gefunden werden: " + email
-        });
-        return;
-    }
-
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -736,10 +746,9 @@ async function acceptAnnulmentTransaction(req, res) {
         }
     });
 
-
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
-        to: email,
+        to: creator.email,
         subject: 'Ihr Annulierungsantrag vom XX wurde angenommen.',
         text: 'Sehr geehrte Damen und Herren,' +
         '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +

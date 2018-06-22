@@ -3,6 +3,8 @@ import ethNode from "../blockchain/ethNode";
 
 const router = express.Router();
 
+//TODO: Kann ich weg?
+
 /* GET home page. */
 router.get('/allTransactions', (req, res) => {ethNode.getAllTransactions(req.query.vin, (err, transactions) => {
     if (!err){
