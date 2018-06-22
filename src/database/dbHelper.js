@@ -118,6 +118,12 @@ async function getUserInfoFromUserId(userId){
     }
 }
 
+async function updatePassword(email, passwordHash){
+    const queryString = `UPDATE users SET password = '${passwordHash}' WHERE email = '${email}'`;
+
+    return await dbConnection.query(queryString);
+}
+
 async function checkUserAuthorization(token) {
     const queryString = `SELECT users.blocked, users.id, users.authorityLevel, tokens.expiration FROM users, bearer_tokens as tokens WHERE users.id = tokens.user_id AND tokens.token = '${token}'`;
 
@@ -266,5 +272,6 @@ module.exports = {
     "rejectAnnulment": rejectAnnulment,
     "acceptAnnulment": acceptAnnulment,
     "getVinByPublicKey": getVinByPublicKey,
-    "getUserByID": getUserByID
+    "getUserByID": getUserByID,
+    "updatePassword": updatePassword
 };

@@ -1,3 +1,7 @@
+const PASSWORD_LENGTH = 8;
+
+const FRONTEND_URL = 'https://sgse18.github.io/VINI/';
+
 function toHexString(key) {
     if (key != null && key.substring(0, 2) !== "0x") {
         return "0x" + key;
@@ -40,5 +44,7 @@ module.exports = {
     "getTimestamp": getTimestamp,
     "USER_LEVEL": USER_LEVEL,
     "TRANS_HASH_SIZE": TRANS_HASH_SIZE,
-    "TRANSACTION_STATUS": TRANSACTION_STATUS
+    "TRANSACTION_STATUS": TRANSACTION_STATUS,
+    "FRONTEND_URL": FRONTEND_URL,
+    "PASSWORD_LENGTH": PASSWORD_LENGTH
 };

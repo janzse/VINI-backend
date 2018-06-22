@@ -2,6 +2,8 @@ import Transaction from "../blockchain/transaction";
 import ethNode from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
 import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS} from "../utils";
+import {MAILACCOUNT} from "../passwords";
+import nodemailer from "nodemailer";
 
 async function updateMileage(req, res) {
 
@@ -14,7 +16,8 @@ async function updateMileage(req, res) {
         return;
     }
 
-    if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
+    if (!(req.body.authorityLevel === USER_LEVEL.ZWS || req.body.authorityLevel === USER_LEVEL.TUEV ||
+        req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
         console.log("User is not authorized to update mileage for car");
         res.status(401);
         res.json({
@@ -458,12 +461,8 @@ async function getAllAnnulmentTransactions(req, res) {
         //     "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
         // [x] transactionHash
 
-        res.json({ "annulments": [
-                annulmentPayload,
-            //2. annulment,
-            // ...
-        ]
-
+        res.json({ "annulments": 
+                annulmentPayload
         });
     }
 }
@@ -537,7 +536,7 @@ async function insertAnnulmentTransaction(req, res) {
 
     res.status(200);
     res.json({
-        "message": "Successfully inserted annulment transaction"
+        "message": "Annulierung beantragt."
     });
 }
 
@@ -563,10 +562,9 @@ async function rejectAnnulmentTransaction(req, res) {
     }
 
     const annulment = await dbHelper.getAnnulment(hash);
-
     if (annulment == null) {
         console.log("Could not find annulment transaction with hash " + hash);
-        res.status(400);
+        res.status(404);
         res.json({
             "message": "Could not find annulment transaction with hash " + hash
         });
@@ -574,7 +572,6 @@ async function rejectAnnulmentTransaction(req, res) {
     }
 
     const deletion = await dbHelper.rejectAnnulment(hash);
-
     if (deletion == null) {
         console.log("Error while deleting annulment transaction from DB.");
         res.status(500);
@@ -584,9 +581,52 @@ async function rejectAnnulmentTransaction(req, res) {
         return;
     }
 
-    res.status(200);
-    res.json({
-        "message": "Successfully rejected annulment transaction"
+    const email = await dbHelper.getUserByID(annulment[4]);
+    if (email == null) {
+        console.log("Could not find email of request sender " + email);
+        res.status(404);
+        res.json({
+            "message": "E-Mail-Adresse des Antragsstellers konnte nicht gefunden werden: " + email
+        });
+        return;
+    }
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: MAILACCOUNT.LOGIN,
+            pass: MAILACCOUNT.PASSWORD
+        }
+    });
+
+
+    let mailOptions = {
+        from: MAILACCOUNT.LOGIN,
+        to: email,
+        subject: 'Ihr Annulierungsantrag vom XX wurde abgelehnt.',
+        text: 'Sehr geehrte Damen und Herren,' +
+        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
+        ' Fahrgestellnummer ' + body.req.vin + ' wurde abgelehnt.' +
+        '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
+        '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
+        'Straßenverkehrsamt.' +
+        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+            res.status(400);
+            res.send({
+                "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
+            });
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200);
+            res.send({
+                "message": "Annullierung erfolgreich abgelehnt! User wurde via E-Mail benachrichtigt."
+            });
+        }
     });
 }
 
@@ -678,9 +718,52 @@ async function acceptAnnulmentTransaction(req, res) {
         return;
     }
 
-    res.status(200);
-    res.json({
-        "message": "Successfully accepted annulmentTransaction"
+    const email = await dbHelper.getUserByID(annulment[4]);
+    if (email == null) {
+        console.log("Could not find email of request sender " + email);
+        res.status(404);
+        res.json({
+            "message": "E-Mail-Adresse des Antragsstellers konnte nicht gefunden werden: " + email
+        });
+        return;
+    }
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: MAILACCOUNT.LOGIN,
+            pass: MAILACCOUNT.PASSWORD
+        }
+    });
+
+
+    let mailOptions = {
+        from: MAILACCOUNT.LOGIN,
+        to: email,
+        subject: 'Ihr Annulierungsantrag vom XX wurde angenommen.',
+        text: 'Sehr geehrte Damen und Herren,' +
+        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
+        ' Fahrgestellnummer XX wurde angenommen.' +
+        '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
+        '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
+        'Straßenverkehrsamt.' +
+        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+            res.status(400);
+            res.send({
+                "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
+            });
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200);
+            res.send({
+                "message": "Annullierung durchgeführt. User wurde via E-Mail benachrichtigt."
+            });
+        }
     });
 }
 

@@ -33,7 +33,7 @@ async function deleteExpiredTokens(){
         return;
     }
 
-    console.log("Successfully deleted eventually expired bearer tokens");
+    console.log("Successfully deleted possible expired bearer tokens");
 }
 
 

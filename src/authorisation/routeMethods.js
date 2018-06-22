@@ -1,16 +1,18 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount} from "../blockchain/ethNode";
-import {USER_LEVEL} from "../utils";
+import {USER_LEVEL, FRONTEND_URL, PASSWORD_LENGTH} from "../utils";
 import nodemailer from "nodemailer";
-import {PASSWORD} from "../passwords";
+import {MAILACCOUNT} from "../passwords";
+import sha256 from 'sha256';
+import generator from 'generate-password';
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
 async function registerUser(req, res) {
 
-    if (req.body.email == null || req.body.password == null || req.body.authorityLevel == null ||
-        req.body.authLevel == null || req.body.forename == null || req.body.surname == null ||
-        req.body.companyName == null || req.body.creationDate == null) {
+    if (req.body.email == null || req.body.authorityLevel == null || req.body.authLevel == null ||
+        req.body.forename == null || req.body.surname == null || req.body.companyName == null ||
+        req.body.creationDate == null) {
         console.log("Invalid request on register-user: ", req.body);
         res.status(400);
         res.json({
@@ -30,6 +32,7 @@ async function registerUser(req, res) {
     }
 
     const doesUserExist = await dbHelper.doesUserExist(req.body.email);
+    console.log("Does User Exist: ", doesUserExist);
     if (doesUserExist) {
         res.status(400);
         res.json({
@@ -50,9 +53,15 @@ async function registerUser(req, res) {
         return;
     }
 
+    let password = generator.generate({
+        length: PASSWORD_LENGTH,
+        numbers: true
+    });
+    console.log("Password: ", password);
+
     const registerResult = await dbHelper.registerUserInDB(
         req.body.email,
-        req.body.password,
+        sha256(password),
         userKeys.privateKey,
         userKeys.publicKey,
         req.body.authLevel,
@@ -70,9 +79,43 @@ async function registerUser(req, res) {
         });
     }
     else {
-        res.status(200);
-        res.json({
-            "message": "Der Benutzer wurde erfolgreich erstellt."
+
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: MAILACCOUNT.LOGIN,
+                pass: MAILACCOUNT.PASSWORD
+            }
+        });
+
+
+        let mailOptions = {
+            from: MAILACCOUNT.LOGIN,
+            to: req.body.email,
+            subject: 'Ihre Zugangsdaten für VINI',
+            text: 'Sehr geehrte Damen und Herren,' +
+            '\n\nherzlich willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzeraccount für Sie angelegt ' +
+            'worden. Ihre Zugangsdaten lauten:\nLogin: ' + req.body.email + '\nPasswort: ' + password +
+            '\n\nBitte logen Sie sich auf folgender URL ein: '+ FRONTEND_URL +
+            '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
+            'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
+            '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
+        };
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+                res.status(400);
+                res.send({
+                    "message": "E-Mail konnte nicht gesendet werden."
+                });
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.status(200);
+                res.send({
+                    "message": "Neuer User wurde registriert. Eine E-Mail mit Zugangsdaten wurde versendet."
+                });
+            }
         });
     }
 }
@@ -207,30 +250,81 @@ function errorHandling(response, status, message) {
     response.redirect(query);
 }
 
-async function statusMessage(req, res) {
+async function resetPassword(req, res) {
+
+    if (req.body.email == null) {
+        console.log("Invalid request on register-user: ", req.body.email);
+        res.status(400);
+        res.send({
+            "message": "Request has to include: email in the body"
+        });
+        return;
+    }
+    console.log("Email: ", req.body.email);
+
+    const doesUserExist = await dbHelper.doesUserExist(req.body.email);
+    if (!doesUserExist) {
+        console.log("User does not exist.");
+        res.status(400);
+        res.send({
+            "message": "E-Mail-Adresse unbekannt."
+        });
+        return;
+    }
+
+    let password = generator.generate({
+        length: PASSWORD_LENGTH,
+        numbers: true
+    });
+    console.log("Password: ", password);
+    const resultPasswordUpdate = dbHelper.updatePassword(req.body.email, sha256(password));
+    if (resultPasswordUpdate == null) {
+        console.log("Password could not be updated.");
+        res.status(400);
+        res.send({
+            "message": "Das Passwort konnte nicht erneuert werden."
+        });
+        return;
+    }
 
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'maildeamon.vini@gmail.com',
-            pass: PASSWORD.MAILACCOUNT,
+            user: MAILACCOUNT.LOGIN,
+            pass: MAILACCOUNT.PASSWORD
         }
     });
 
-    userInfo = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
+    console.log("Login: ", MAILACCOUNT.LOGIN, " Passwort: ", MAILACCOUNT.PASSWORD);
 
     let mailOptions = {
-        from: 'maildeamon.vini@gmail.com',
-        to: userInfo.email,
-        subject: 'Annulment request status update - Accepted',
-        text: 'Your annulment request for car XX was accepted/rejected.'
+        from: MAILACCOUNT.LOGIN,
+        to: req.body.email,
+        subject: 'Ihr neues Passwort für VINI',
+        text: 'Sehr geehrte Damen und Herren,' +
+        '\n\nSie haben ein neues Passwort angefordert. Ihre neuen Zugangsdaten lauten:' +
+        '\nLogin: ' + req.body.email + '\nPasswort: ' + password +
+        '\n\nBitte logen Sie sich auf folgender URL ein: '+ FRONTEND_URL +
+        '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
+        'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
+        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
+
+    console.log("Mail options: ", mailOptions);
 
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-            console.log(error);
+            console.log('Email not sent.', error);
+            res.status(400);
+            res.send({
+                "message": "E-Mail konnte nicht gesendet werden."
+            });
         } else {
             console.log('Email sent: ' + info.response);
+            res.status(200);
+            res.send({
+                "message": "Passwort wurde geändert. Eine E-Mail mit dem neuen Passwort wurde zugesendet."
+            });
         }
     });
 }
@@ -242,5 +336,5 @@ module.exports = {
     "blockUser": blockUser,
     "getUsers": getUsers,
     "errorHandling": errorHandling,
-    "statusMessage": statusMessage
+    "resetPassword": resetPassword
 };
