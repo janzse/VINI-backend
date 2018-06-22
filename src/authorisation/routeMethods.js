@@ -113,7 +113,7 @@ async function registerUser(req, res) {
                 console.log('Email sent: ' + info.response);
                 res.status(200);
                 res.send({
-                    "message": "E-Mail mit neuem Passwort wurde versendet."
+                    "message": "Neuer User wurde registriert. Eine E-Mail mit Zugangsdaten wurde versendet."
                 });
             }
         });
@@ -323,7 +323,7 @@ async function resetPassword(req, res) {
             console.log('Email sent: ' + info.response);
             res.status(200);
             res.send({
-                "message": "E-Mail mit neuem Passwort wurde versendet."
+                "message": "Passwort wurde geändert. Eine E-Mail mit dem neuen Passwort wurde zugesendet."
             });
         }
     });

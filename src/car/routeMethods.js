@@ -616,22 +616,17 @@ async function rejectAnnulmentTransaction(req, res) {
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
             console.log(error);
-            res.status(200);
+            res.status(400);
             res.send({
                 "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
             });
         } else {
             console.log('Email sent: ' + info.response);
-            res.status(400);
+            res.status(200);
             res.send({
-                "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
+                "message": "Annullierung erfolgreich abgelehnt! User wurde via E-Mail benachrichtigt."
             });
         }
-    });
-
-    res.status(200);
-    res.json({
-        "message": "Annullierung abgenehnt!"
     });
 }
 
@@ -766,14 +761,9 @@ async function acceptAnnulmentTransaction(req, res) {
             console.log('Email sent: ' + info.response);
             res.status(200);
             res.send({
-                "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
+                "message": "Annullierung durchgeführt. User wurde via E-Mail benachrichtigt."
             });
         }
-    });
-
-    res.status(200);
-    res.json({
-        "message": "Annullierung durchgeführt."
     });
 }
 
