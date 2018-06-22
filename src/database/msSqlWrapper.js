@@ -1,4 +1,5 @@
 import {Connection, Request} from "tedious";
+import {DATABASE} from "../passwords";
 
 let dbConnection = null;
 
@@ -23,12 +24,12 @@ function initConnection() {
         console.log("Initializing DB connection");
 
         dbConnection = new Connection({
-            userName: 'vini@vini.database.windows.net',
-            password: 't51sy9RbdohKsa',
-            server: 'vini.database.windows.net',
+            userName: DATABASE.USER,
+            password: DATABASE.PASSWORD,
+            server: DATABASE.SERVER,
             options: {
                 encrypt: true,
-                database: 'vini-database'
+                database: DATABASE.DATABASE
             }
         });
 
@@ -54,7 +55,6 @@ function executeSql(query) {
     // Use of explicit promise, because of the event listeners
     return new Promise((resolve) => {
 
-        console.log("Begin query.");
         let resultValues = [];
 
         const request = new Request(query, (err, rowCount) => {
@@ -87,7 +87,6 @@ function executeSql(query) {
         });
 
         dbConnection.execSql(request);
-        console.log("End of query.")
     });
 }
 

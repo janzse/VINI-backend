@@ -1,6 +1,8 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount} from "../blockchain/ethNode";
 import {USER_LEVEL} from "../utils";
+import nodemailer from "nodemailer";
+import {MAILACCOUNT} from "../passwords";
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -205,6 +207,58 @@ function errorHandling(response, status, message) {
     response.redirect(query);
 }
 
+async function resetPassword(req, res) {
+
+    if (req.body.email == null) {
+        console.log("Invalid request on register-user: ", req.body);
+        res.status(400);
+        res.send({
+            "message": "Request has to include: email in the body"
+        });
+        return;
+    }
+
+    const result = dbHelper.doesUserExist(req.body.email);
+    if (result == null) {
+        console.log("User does not exist.");
+        res.status(400);
+        res.send({
+            "message": "E-Mail-Adresse unbekannt."
+        });
+        return;
+    }
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: MAILACCOUNT.LOGIN,
+            pass: MAILACCOUNT.PASSWORD,
+        }
+    });
+
+
+    let mailOptions = {
+        from: MAILACCOUNT.LOGIN,
+        to: req.body.email,
+        subject: 'Annulment request status update - Accepted',
+        text: 'Your annulment request for car XX was accepted/rejected.'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            res.status(200);
+            res.send({
+                "message": "E-Mail mit neuem Passwort wurde versendet."
+            });
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(400);
+            res.send({
+                "message": "E-Mail konnte nicht gesendet werden."
+            });
+        }
+    });
+}
 
 module.exports = {
     "registerUser": registerUser,
@@ -212,5 +266,6 @@ module.exports = {
     "isAuthorised": isAuthorised,
     "blockUser": blockUser,
     "getUsers": getUsers,
-    "errorHandling": errorHandling
+    "errorHandling": errorHandling,
+    "resetPassword": resetPassword
 };
