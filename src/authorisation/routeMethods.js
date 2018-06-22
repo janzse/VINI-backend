@@ -1,16 +1,17 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount} from "../blockchain/ethNode";
-import {USER_LEVEL} from "../utils";
+import {USER_LEVEL, FRONTEND_URL, generatePassword} from "../utils";
 import nodemailer from "nodemailer";
 import {MAILACCOUNT} from "../passwords";
+import sha256 from 'sha256';
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
 async function registerUser(req, res) {
 
-    if (req.body.email == null || req.body.password == null || req.body.authorityLevel == null ||
-        req.body.authLevel == null || req.body.forename == null || req.body.surname == null ||
-        req.body.companyName == null || req.body.creationDate == null) {
+    if (req.body.email == null || req.body.authorityLevel == null || req.body.authLevel == null ||
+        req.body.forename == null || req.body.surname == null || req.body.companyName == null ||
+        req.body.creationDate == null) {
         console.log("Invalid request on register-user: ", req.body);
         res.status(400);
         res.json({
@@ -50,9 +51,12 @@ async function registerUser(req, res) {
         return;
     }
 
+    let password = generatePassword();
+    console.log("Password: ", password);
+
     const registerResult = await dbHelper.registerUserInDB(
         req.body.email,
-        req.body.password,
+        sha256(password),
         userKeys.privateKey,
         userKeys.publicKey,
         req.body.authLevel,
@@ -70,6 +74,44 @@ async function registerUser(req, res) {
         });
     }
     else {
+
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: MAILACCOUNT.LOGIN,
+                pass: MAILACCOUNT.PASSWORD,
+            }
+        });
+
+
+        let mailOptions = {
+            from: MAILACCOUNT.LOGIN,
+            to: req.body.email,
+            subject: 'Ihre Zugangsdaten für VINI',
+            text: 'Sehr geehrte Damen und Herren,' +
+            '\n\nherzlich willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzeraccount für Sie angelegt ' +
+            'worden. Ihre Zugangsdaten lauten:\nLogin: ' + req.body.email + '\nPasswort: ' + password +
+            '\n\nBitte logen Sie sich auf folgender URL ein: '+ FRONTEND_URL +
+            '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
+            'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
+            '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
+        };
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                res.status(200);
+                res.send({
+                    "message": "E-Mail mit neuem Passwort wurde versendet."
+                });
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.status(400);
+                res.send({
+                    "message": "E-Mail konnte nicht gesendet werden."
+                });
+            }
+        });
+
         res.status(200);
         res.json({
             "message": "Der Benutzer wurde erfolgreich erstellt."
@@ -236,12 +278,28 @@ async function resetPassword(req, res) {
         }
     });
 
+    let password = generatePassword();
+    const resultPasswordUpdate = dbHelper.updatePassword(req.body.email, sha256(password));
+    if (resultPasswordUpdate == null) {
+        console.log("Password could not be updated.");
+        res.status(400);
+        res.send({
+            "message": "Das Passwort konnte nicht erneuert werden."
+        });
+        return;
+    }
 
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: req.body.email,
-        subject: 'Annulment request status update - Accepted',
-        text: 'Your annulment request for car XX was accepted/rejected.'
+        subject: 'Ihr neues Passwort für VINI',
+        text: 'Sehr geehrte Damen und Herren,' +
+        '\n\nSie haben ein neues Passwort angefordert. Ihre neuen Zugangsdaten lauten:' +
+        '\nLogin: ' + req.body.email + '\nPasswort: ' + password +
+        '\n\nBitte logen Sie sich auf folgender URL ein: '+ FRONTEND_URL +
+        '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
+        'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
+        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
     transporter.sendMail(mailOptions, function(error, info){
