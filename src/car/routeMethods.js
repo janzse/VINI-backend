@@ -536,7 +536,7 @@ async function insertAnnulmentTransaction(req, res) {
 
     res.status(200);
     res.json({
-        "message": "Annulierung beantragt."
+        "message": "Annullierung beantragt."
     });
 }
 
