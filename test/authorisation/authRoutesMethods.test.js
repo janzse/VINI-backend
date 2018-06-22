@@ -14,9 +14,10 @@ test('Restricted auth request test', () => {
     };
     
     //is there a better way?
-    const accessRestrictedArea = require('../../src/authorisation/restrictedAreaRoutesMethods').accessRestrictedArea(null,res_mock);
+    const accessRestrictedArea = require('../../src/authorisation/routeMethods').isAuthorised();
     
     //accessRestrictedArea(null, res_mock);
-    expect(string_received).toBe(true);
+    expect(string_received).toBe(false);
     
 });
+
