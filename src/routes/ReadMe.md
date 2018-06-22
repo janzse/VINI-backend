@@ -147,12 +147,42 @@ noch nicht exisiteren, wird ein neues angelegt.
 ## /api/users/login
 
 - [GET] Gibt den aktuellen Login-Status und das Rechte-Level zu einem übergebenen Bearer Token zurück.
+- Parameter: Authorization
+- HTTP-Code Parameter Authorization fehlt: 406
+- HTTP-Code Error Authorization: 403
+- HTTP-Code Authorization Token abgelaufen: 401
+- HTTP-Code User blockiert: 401
+- HTTP-Code success: 200
 
 ## /api/users/register
 
 - [DEL] Setzt den Benutzer zu einer übergebenen Email-Adresse auf blocked.
+- Parameter: Authorization, email, authorityLevel
+- HTTP-Code Parameter Authorization fehlt: 406
+- HTTP-Code Error Authorization: 403
+- HTTP-Code Authorization Token abgelaufen: 401
+- HTTP-Code User blockiert: 401
+- HTTP-Code Email fehlt: 400
+- HTTP-Code authorityLevel fehlt oder fehlerhaft (nur ASTVA(4) erlaubt): 401
+- HTTP-Code Nutzer existiert nicht (anhand email): 400
+- HTTP-Code Nutzer existiert und wurde geblockt (anhand email): 200
+- HTTP-Code Datenbankfehler bei blocken: 500
+
 - [POST] Legt einen neuen Benutzer zu übergebenen Email, Passwort, Authorisierungs-Level, Vorname, Nachname,
 Firmenname und Zeitstempel Daten an.
+- Parameter: Authorization, email, authorityLevel, authLevel, forename, surname, companyName, creationDate(authorityLevel -> anlegender Nutzer, authLevel -> anzulegender Nutzer)
+- HTTP-Code Parameter Authorization fehlt: 406
+- HTTP-Code Error Authorization: 403
+- HTTP-Code Authorization Token abgelaufen: 401
+- HTTP-Code User blockiert: 401
+- HTTP-Code Parameter email, authorityLevel, authLevel, forename, surname, companyName, creationDate (oder) fehlt: 400
+- HTTP-Code fehlerhaft (nur ASTVA(4) erlaubt): 401
+- HTTP-Code Nutzer für Email existiert beriets: 400
+- HTTP-Code DB-Fehler (oder Blockchain) bei anlegen des Nutzers: 500
+- HTTP-Code allg. Registrierunggfehler: 500
+- HTTP-Code Bestätigungmail versendet: 200
+- HTTP-Code Bestätigungmail nicht versendet: 400
+- HTTP-Code success: 200
 
 
 http-statuscodes: https://de.wikipedia.org/wiki/HTTP-Statuscode

@@ -35,12 +35,12 @@ it('car tuev no param test',function(){ //406 expected, 200 received
 it('get user token no param test',function(){ //would expect 400 here (500 received)
     return frisby.post(baseUrl+'/api/users/token').expect('status',400);
 })
-it('get user login status no param test',function(){ //would expect 400 here (200 received)
-    return frisby.get(baseUrl+'/api/users/login').expect('status',400);
+it('get user login status no param test',function(){ //406 expected, 200 received
+    return frisby.get(baseUrl+'/api/users/login').expect('status',406);
 })
-it('register user no param test',function(){ //would expect 400 or 403 here (200 received)
-    return frisby.post(baseUrl+'/api/users/register').expect('status',400);
+it('register user no param test',function(){ //406 expected, 200 received
+    return frisby.post(baseUrl+'/api/users/register').expect('status',406);
 })
-it('block user no param test',function(){ //would expect 400 or 403 here (404 received)
-    return frisby.del(baseUrl+'/api/users/register').expect('status',400);
+it('block user no param test',function(){ //406 expected, 404 received
+    return frisby.del(baseUrl+'/api/users/register').expect('status',406);
 })
