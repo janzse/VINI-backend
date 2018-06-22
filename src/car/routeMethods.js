@@ -595,7 +595,7 @@ async function rejectAnnulmentTransaction(req, res) {
         service: 'gmail',
         auth: {
             user: MAILACCOUNT.LOGIN,
-            pass: MAILACCOUNT.PASSWORD,
+            pass: MAILACCOUNT.PASSWORD
         }
     });
 
@@ -615,22 +615,18 @@ async function rejectAnnulmentTransaction(req, res) {
 
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
+            console.log(error);
             res.status(200);
             res.send({
-                "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
+                "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
             });
         } else {
             console.log('Email sent: ' + info.response);
             res.status(400);
             res.send({
-                "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
+                "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
             });
         }
-    });
-
-    res.status(200);
-    res.json({
-        "message": "Successfully rejected annulment transaction"
     });
 }
 
@@ -736,7 +732,7 @@ async function acceptAnnulmentTransaction(req, res) {
         service: 'gmail',
         auth: {
             user: MAILACCOUNT.LOGIN,
-            pass: MAILACCOUNT.PASSWORD,
+            pass: MAILACCOUNT.PASSWORD
         }
     });
 
@@ -756,15 +752,16 @@ async function acceptAnnulmentTransaction(req, res) {
 
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-            res.status(200);
-            res.send({
-                "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
-            });
-        } else {
-            console.log('Email sent: ' + info.response);
+            console.log(error);
             res.status(400);
             res.send({
                 "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
+            });
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200);
+            res.send({
+                "message": "E-Mail mit Ablehnungs-Nachricht wurde versendet."
             });
         }
     });

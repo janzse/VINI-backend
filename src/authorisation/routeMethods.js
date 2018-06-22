@@ -1,9 +1,10 @@
 import dbHelper from "../database/dbHelper";
 import {createUserAccount} from "../blockchain/ethNode";
-import {USER_LEVEL, FRONTEND_URL, generatePassword} from "../utils";
+import {USER_LEVEL, FRONTEND_URL, PASSWORD_LENGTH} from "../utils";
 import nodemailer from "nodemailer";
 import {MAILACCOUNT} from "../passwords";
 import sha256 from 'sha256';
+import generator from 'generate-password';
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -31,6 +32,7 @@ async function registerUser(req, res) {
     }
 
     const doesUserExist = await dbHelper.doesUserExist(req.body.email);
+    console.log("Does User Exist: ", doesUserExist);
     if (doesUserExist) {
         res.status(400);
         res.json({
@@ -51,7 +53,10 @@ async function registerUser(req, res) {
         return;
     }
 
-    let password = generatePassword();
+    let password = generator.generate({
+        length: PASSWORD_LENGTH,
+        numbers: true
+    });
     console.log("Password: ", password);
 
     const registerResult = await dbHelper.registerUserInDB(
@@ -79,7 +84,7 @@ async function registerUser(req, res) {
             service: 'gmail',
             auth: {
                 user: MAILACCOUNT.LOGIN,
-                pass: MAILACCOUNT.PASSWORD,
+                pass: MAILACCOUNT.PASSWORD
             }
         });
 
@@ -99,22 +104,18 @@ async function registerUser(req, res) {
 
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-                res.status(200);
-                res.send({
-                    "message": "E-Mail mit neuem Passwort wurde versendet."
-                });
-            } else {
-                console.log('Email sent: ' + info.response);
+                console.log(error);
                 res.status(400);
                 res.send({
                     "message": "E-Mail konnte nicht gesendet werden."
                 });
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.status(200);
+                res.send({
+                    "message": "E-Mail mit neuem Passwort wurde versendet."
+                });
             }
-        });
-
-        res.status(200);
-        res.json({
-            "message": "Der Benutzer wurde erfolgreich erstellt."
         });
     }
 }
@@ -252,16 +253,17 @@ function errorHandling(response, status, message) {
 async function resetPassword(req, res) {
 
     if (req.body.email == null) {
-        console.log("Invalid request on register-user: ", req.body);
+        console.log("Invalid request on register-user: ", req.body.email);
         res.status(400);
         res.send({
             "message": "Request has to include: email in the body"
         });
         return;
     }
+    console.log("Email: ", req.body.email);
 
-    const result = dbHelper.doesUserExist(req.body.email);
-    if (result == null) {
+    const doesUserExist = await dbHelper.doesUserExist(req.body.email);
+    if (!doesUserExist) {
         console.log("User does not exist.");
         res.status(400);
         res.send({
@@ -270,15 +272,11 @@ async function resetPassword(req, res) {
         return;
     }
 
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: MAILACCOUNT.LOGIN,
-            pass: MAILACCOUNT.PASSWORD,
-        }
+    let password = generator.generate({
+        length: PASSWORD_LENGTH,
+        numbers: true
     });
-
-    let password = generatePassword();
+    console.log("Password: ", password);
     const resultPasswordUpdate = dbHelper.updatePassword(req.body.email, sha256(password));
     if (resultPasswordUpdate == null) {
         console.log("Password could not be updated.");
@@ -288,6 +286,16 @@ async function resetPassword(req, res) {
         });
         return;
     }
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: MAILACCOUNT.LOGIN,
+            pass: MAILACCOUNT.PASSWORD
+        }
+    });
+
+    console.log("Login: ", MAILACCOUNT.LOGIN, " Passwort: ", MAILACCOUNT.PASSWORD);
 
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
@@ -302,17 +310,20 @@ async function resetPassword(req, res) {
         '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
+    console.log("Mail options: ", mailOptions);
+
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-            res.status(200);
-            res.send({
-                "message": "E-Mail mit neuem Passwort wurde versendet."
-            });
-        } else {
-            console.log('Email sent: ' + info.response);
+            console.log('Email not sent.', error);
             res.status(400);
             res.send({
                 "message": "E-Mail konnte nicht gesendet werden."
+            });
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200);
+            res.send({
+                "message": "E-Mail mit neuem Passwort wurde versendet."
             });
         }
     });
