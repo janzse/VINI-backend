@@ -22,18 +22,6 @@ function getTimestamp() {
     return new Date().toISOString();
 }
 
-function generatePassword() {
-    let password = '';
-    let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-    while(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/) == null){
-        for (var i=0; i<PASSWORD_LENGTH; i++) {
-            var rnum = Math.floor(Math.random() * chars.length);
-            password += chars.substring(rnum,rnum+1);
-        }
-    }
-    return password;
-}
-
 const USER_LEVEL = {
     NOT_LOGGED_IN: 0,
     ZWS: 1,
@@ -58,5 +46,5 @@ module.exports = {
     "TRANS_HASH_SIZE": TRANS_HASH_SIZE,
     "TRANSACTION_STATUS": TRANSACTION_STATUS,
     "FRONTEND_URL": FRONTEND_URL,
-    "generatePassword": generatePassword
+    "PASSWORD_LENGTH": PASSWORD_LENGTH
 };
