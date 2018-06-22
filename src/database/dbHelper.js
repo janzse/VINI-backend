@@ -95,12 +95,12 @@ async function getUserInfoFromToken(token) {
     }
 }
 
-async function getUserInfoFromUserId(userId){
+async function getUserInfoFromUserId(userId) {
     const queryString = `SELECT * FROM users WHERE id = ${userId}`;
 
     const result = await dbConnection.query(queryString);
 
-    if(result == null || result.length === 0){
+    if (result == null || result.length === 0) {
         return null;
     }
 
@@ -118,7 +118,7 @@ async function getUserInfoFromUserId(userId){
     }
 }
 
-async function updatePassword(email, passwordHash){
+async function updatePassword(email, passwordHash) {
     const queryString = `UPDATE users SET password = '${passwordHash}' WHERE email = '${email}'`;
 
     return await dbConnection.query(queryString);
@@ -178,7 +178,7 @@ async function getHeadTransactionHash(publicKeyCar) {
 
     const result = await dbConnection.query(queryString);
 
-    if(result == null || result.length === 0){
+    if (result == null || result.length === 0) {
         return null;
     }
 
@@ -194,59 +194,80 @@ async function updateHeadTransactionHash(publicKeyCar, headTxHash) {
 
 async function getAllAnnulmentTransactions() {
 
-    const queryString = `SELECT transactionHash, pending, user_id FROM annulment_transactions`;
-
-    return await dbConnection.query(queryString);
-}
-
-async function getAnnulment(hash){
-
-    const queryString = `SELECT * FROM annulment_transactions WHERE transactionHash = '${toBasicString(hash)}'`;
+    // Selects all information from annulment_transactions plus the email address which belongs to the user_id
+    const queryString = `SELECT at.transactionHash, at.pending, at.creationDate, at.vin, at.applicant, users.email FROM annulment_transactions AS at, users WHERE at.user_id = users.id`;
 
     const result = await dbConnection.query(queryString);
 
-    if(result == null || result.length === 0){
+    if (result == null || result.length === 0) {
+        return null;
+    }
+
+    let allAnnulments = [];
+
+    for (let i = 0; i < result.length; i += 6) {
+        allAnnulments.push({
+            "transactionHash": result[i],
+            "pending": result[i + 1],
+            "creationDate": result[i + 2],
+            "vin": result[i + 3],
+            "applicant": result[i + 4],
+            "creator": result[i + 5]
+        });
+    }
+
+    return allAnnulments;
+}
+
+async function getAnnulment(hash) {
+
+    // Selects all information from annulment_transactions plus the email address which belongs to the user_id for a specific transactionHash
+    const queryString = `SELECT at.transactionHash, at.pending, at.creationDate, at.vin, at.applicant, users.email FROM annulment_transactions AS at, users WHERE at.user_id = users.id AND transactionHash = '${toBasicString(hash)}'`;
+
+    const result = await dbConnection.query(queryString);
+
+    if (result == null || result.length === 0) {
         return null;
     }
 
     return {
-        "transactionHash": result[1],
-        "pending": result[2],
-        "creationDate": result[3],
-        "userId": result[4]
+        "transactionHash": result[0],
+        "pending": result[1],
+        "creationDate": result[2],
+        "vin": result[3],
+        "applicant": result[4],
+        "creator": result[5]
     }
 }
 
-async function insertAnnulment(hash, user_id){
+async function insertAnnulment(hash, user_id, vin) {
 
-    const queryString = `INSERT INTO annulment_transactions (transactionHash, pending, creationDate, user_id) VALUES ('${toBasicString(hash)}', 1, '${getTimestamp()}', ${user_id})`;
+    const queryString = `INSERT INTO annulment_transactions (transactionHash, pending, creationDate, user_id, vin, applicant) VALUES ('${toBasicString(hash)}', 1, '${getTimestamp()}', ${user_id}, '${vin}', NULL)`;
 
     return await dbConnection.query(queryString);
 }
 
-async function rejectAnnulment(hash){
+async function rejectAnnulment(hash) {
 
     const queryString = `DELETE FROM annulment_transactions WHERE transactionHash = '${hash}'`;
 
     return await dbConnection.query(queryString);
 }
 
-async function acceptAnnulment(hash){
+async function acceptAnnulment(hash, applicant) {
 
-    const queryString = `UPDATE annulment_transactions SET pending = 0 WHERE transactionHash = '${toBasicString(hash)}'`;
+    const queryString = `UPDATE annulment_transactions SET pending = 0, applicant = '${applicant}' WHERE transactionHash = '${toBasicString(hash)}'`;
 
     return await dbConnection.query(queryString)
 }
 
-async function getVinByPublicKey(publicKey)
-{
+async function getVinByPublicKey(publicKey) {
     const queryString = `SELECT vin from kfz WHERE publicKey = '${toBasicString(publicKey)}'`;
 
     return await dbConnection.query(queryString);
 }
 
-async function getUserByID(userID)
-{
+async function getUserByID(userID) {
     const queryString = `SELECT email from users WHERE id = '${userID}'`;
 
     return await dbConnection.query(queryString);
