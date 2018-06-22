@@ -7,6 +7,7 @@ TODOs.md
 .vscode
 
 passwords.js
+src/passwords.js
 
 **.idea/**
 .idea
@@ -81,3 +82,4 @@ fabric.properties
 
 
 # End of https://www.gitignore.io/api/intellij
+
