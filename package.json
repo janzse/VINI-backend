@@ -24,6 +24,7 @@
     "node-oauth2-server": "^2.4.0",
     "oauth2-server": "^3.0.0",
     "react-hot-loader": "^4.3.3",
+    "sha256": "^0.2.0",
     "tedious": "^2.6.2",
     "transform-runtime": "0.0.0",
     "web3": "^1.0.0-beta.34"
