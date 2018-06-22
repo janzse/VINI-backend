@@ -114,8 +114,8 @@ async function getCarByVin(req, res) {
 
     let annulmentTransactions = [];
     let transactionsWithoutAnnulments = [];
-    for (let i=0; i<allTransactions.length; i++){
-        if (allTransactions[i].annulmentTarget != null){
+    for (let i = 0; i < allTransactions.length; i++) {
+        if (allTransactions[i].annulmentTarget != null) {
             annulmentTransactions.push(allTransactions[i]);
         }
         else {
@@ -123,17 +123,17 @@ async function getCarByVin(req, res) {
         }
     }
 
-    for (let i=0; i<transactionsWithoutAnnulments.length; i++){
+    for (let i = 0; i < transactionsWithoutAnnulments.length; i++) {
         transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.VALID;
-        for (let j=0; j<annulmentTransactions.length; j++){
-            if (transactionsWithoutAnnulments[i].hash === annulmentTransactions[j].data.annulmentTarget){
+        for (let j = 0; j < annulmentTransactions.length; j++) {
+            if (transactionsWithoutAnnulments[i].hash === annulmentTransactions[j].data.annulmentTarget) {
                 transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.INVALID;
                 break;
             }
         }
-        if (transactionsWithoutAnnulments[i].data.state === TRANSACTION_STATUS.VALID){
+        if (transactionsWithoutAnnulments[i].data.state === TRANSACTION_STATUS.VALID) {
             let annulment = await dbHelper.getAnnulment(toBasicString(transactionsWithoutAnnulments[i].hash));
-            if (annulment !== null){
+            if (annulment !== null) {
                 transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.PENDING;
             }
         }
@@ -319,7 +319,7 @@ async function stvaRegister(req, res) {
         return;
     }
 
-    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
         console.log("User is not authorized to update registration data for car");
         res.status(401);
         res.json({
@@ -393,83 +393,57 @@ async function stvaRegister(req, res) {
 
 async function getAllAnnulmentTransactions(req, res) {
 
-    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
         console.log("User is not authorized to retrieve annulment transactions");
         res.status(401);
         res.json({
             "message": "User is not authorized to retrieve annulment transactions"
         });
-
         return;
     }
 
-    const results = await dbHelper.getAllAnnulmentTransactions();
-    if (results === null) {
+    const annulmentsFromDB = await dbHelper.getAllAnnulmentTransactions();
+    if (annulmentsFromDB === null) {
         res.status(500);
         res.json({
             "message": "Die Annulierungs-Transaktionen konnten nicht geladen werden!"
         });
+        return;
     }
-    else {
-        let annulmentPayload = [];
-        let annulments = [];
 
-        for (let i = 0; i < results.length; i += 3)
-        {
-            annulments.push(results.slice(i, i + 3));
-        }
+    const combinedTransactions = [];
 
-        for (let j = 0; j < annulments.length; j++){
-            let arr = annulments[j];
-            let state = arr[1] === true ? TRANSACTION_STATUS.PENDING : TRANSACTION_STATUS.INVALID;
-            let trx = await ethNode.getTransaction(arr[0]);
-            let vin = await dbHelper.getVinByPublicKey(trx.to);
-            const user = await dbHelper.getUserInfoFromToken(req.get("Authorization").slice("Bearer ".length));
-            const userEmail = await dbHelper.getUserByID(arr[2]);
-            let body = {
-                date: trx.data.timestamp,
-                vin: vin[0],
-                mileage: trx.data.mileage,
-                ownerCount: trx.data.ownerCount,
-                entrant: user.email,
-                mainInspection: trx.data.mainInspection,
-                service1: trx.data.serviceOne,
-                service2: trx.data.serviceTwo,
-                oilChange: trx.data.oilChange,
-                applicant: userEmail[0],
-                state: state,
-                transactionHash: arr[0]
-            };
-            annulmentPayload.push(body);
-        }
+    for (let i = 0; i < annulmentsFromDB.length; i++) {
+        const annulment = annulmentsFromDB[i];
+        const ethTx = await ethNode.getTransaction(annulment.transactionHash);
 
-        // from : user publicKey
-        // to:  kfz publicKey
-
-        // benötigt werden folgende Attribute:
-        // [x] date // Transaktion von wann?
-        // [x] vin
-        // [x] mileage
-        // [x] ownerCount
-        // [x] entrant
-        // [x] mainInspection
-        // [x] service1
-        // [x] service2
-        // [x] oilChange
-        // [x] applicant // wer hat den Antrag erstellt? (aus der DB) -> userID aus annulment_transactions
-        // [x] state    "pending"     nicht bearbeitet
-        //     "invalid"     angenommen (heißt aus Kompatibilitätsgründen so)
-        // [x] transactionHash
-
-        res.json({ "annulments": 
-                annulmentPayload
+        combinedTransactions.push({
+            date: ethTx.data.timestamp,
+            vin: ethTx.data.vin,
+            mileage: ethTx.data.mileage,
+            ownerCount: ethTx.data.ownerCount,
+            entrant: annulment.creator,
+            mainInspection: ethTx.data.mainInspection,
+            service1: ethTx.data.serviceOne,
+            service2: ethTx.data.serviceTwo,
+            oilChange: ethTx.data.oilChange,
+            applicant: annulment.applicant == null ? "" : annulment.applicant,
+            state: annulment.pending === true ? "pending" : "invalid",
+            transactionHash: annulment.transactionHash
         });
     }
+
+    res.status(200);
+    res.json({
+        "annulments": combinedTransactions
+    });
 }
 
 async function insertAnnulmentTransaction(req, res) {
 
-    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
+    const hash = req.body.transactionHash;
+
+    if (hash == null || hash.length < TRANS_HASH_SIZE) {
         console.log("Invalid request for annulment. To create an annulment transaction a transactionHash is required.");
         res.status(400);
         res.json({
@@ -477,11 +451,11 @@ async function insertAnnulmentTransaction(req, res) {
         });
         return;
     }
-    const hash = req.body.transactionHash;
+
     const token = req.get("Authorization").slice("Bearer ".length);
 
     if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA ||
-        req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.ZWS)){
+        req.body.authorityLevel === USER_LEVEL.TUEV || req.body.authorityLevel === USER_LEVEL.ZWS)) {
         res.status(401);
         res.json({
             "message": "User is not authorized to create an annulment request"
@@ -523,7 +497,7 @@ async function insertAnnulmentTransaction(req, res) {
         return;
     }
 
-    const insertResult = await dbHelper.insertAnnulment(hash, creator.id);
+    const insertResult = await dbHelper.insertAnnulment(hash, creator.id, transaction.data.vin);
 
     if (insertResult == null) {
         console.log("Could not insert annulment transaction in DB");
@@ -542,7 +516,9 @@ async function insertAnnulmentTransaction(req, res) {
 
 async function rejectAnnulmentTransaction(req, res) {
 
-    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
+    const hash = req.body.transactionHash;
+
+    if (hash == null || hash.length < TRANS_HASH_SIZE) {
         console.log("Invalid request to reject an annulment. A transactionHash is required.");
         res.status(400);
         res.json({
@@ -550,9 +526,8 @@ async function rejectAnnulmentTransaction(req, res) {
         });
         return;
     }
-    const hash = req.body.transactionHash;
 
-    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
         res.status(401);
         res.json({
             "message": "User is not authorized to reject an annulment request"
@@ -581,16 +556,6 @@ async function rejectAnnulmentTransaction(req, res) {
         return;
     }
 
-    const email = await dbHelper.getUserByID(annulment[4]);
-    if (email == null) {
-        console.log("Could not find email of request sender " + email);
-        res.status(404);
-        res.json({
-            "message": "E-Mail-Adresse des Antragsstellers konnte nicht gefunden werden: " + email
-        });
-        return;
-    }
-
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -602,18 +567,18 @@ async function rejectAnnulmentTransaction(req, res) {
 
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
-        to: email,
+        to: annulment.creator,
         subject: 'Ihr Annulierungsantrag vom XX wurde abgelehnt.',
         text: 'Sehr geehrte Damen und Herren,' +
         '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
-        ' Fahrgestellnummer ' + body.req.vin + ' wurde abgelehnt.' +
+        ' Fahrgestellnummer ' + annulment.vin + ' wurde abgelehnt.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
         '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
         'Straßenverkehrsamt.' +
         '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
-    transporter.sendMail(mailOptions, function(error, info){
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);
             res.status(400);
@@ -632,7 +597,9 @@ async function rejectAnnulmentTransaction(req, res) {
 
 async function acceptAnnulmentTransaction(req, res) {
 
-    if (req.body.transactionHash == null || req.body.transactionHash.length < TRANS_HASH_SIZE) {
+    const hash = req.body.transactionHash;
+
+    if (hash == null || hash < TRANS_HASH_SIZE) {
         console.log("Invalid request to accept annulment. A transactionHash is required.");
         res.status(400);
         res.json({
@@ -640,10 +607,10 @@ async function acceptAnnulmentTransaction(req, res) {
         });
         return;
     }
-    const hash = req.body.transactionHash;
+
     const token = req.get("Authorization").slice("Bearer ".length);
 
-    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)){
+    if (!(req.body.authorityLevel === USER_LEVEL.STVA || req.body.authorityLevel === USER_LEVEL.ASTVA)) {
         res.status(401);
         res.json({
             "message": "User is not authorized to accept an annulment request"
@@ -690,10 +657,16 @@ async function acceptAnnulmentTransaction(req, res) {
     // Get preTransaction Hash from the publicKey of the car
     const preTransaction = await dbHelper.getHeadTransactionHash(annulmentTarget.to);
 
-    // Get Information about the original creator of the annulment transaction
-    const creator = await dbHelper.getUserInfoFromUserId(annulment.userId);
+    if (preTransaction == null) {
+        console.log("Cloud not get preTransaction from: ", annulmentTarget.to);
+        res.status(500);
+        res.json({
+            "message": "Cloud not get preTransaction from: " + annulmentTarget.to
+        });
+        return;
+    }
 
-    const transaction = new Transaction(stvaEmployee.publicKey, creator.email, annulmentTarget.data.vin, preTransaction, annulmentTarget.to, getTimestamp());
+    const transaction = new Transaction(stvaEmployee.publicKey, annulment.creator, annulmentTarget.data.vin, preTransaction, annulmentTarget.to, getTimestamp());
     transaction.setAnnulmentTarget(annulmentTarget.hash);
 
     const result = await ethNode.sendSignedTransaction(transaction, stvaEmployee.privateKey);
@@ -707,23 +680,13 @@ async function acceptAnnulmentTransaction(req, res) {
         return;
     }
 
-    const pendingResult = await dbHelper.acceptAnnulment(annulment.transactionHash);
+    const pendingResult = await dbHelper.acceptAnnulment(annulment.transactionHash, stvaEmployee.email);
 
     if (pendingResult == null) {
         console.log("Error while updating pending annulmentTransaction");
         res.status(500);
         res.json({
             "message": "Error while updating pending annulmentTransaction"
-        });
-        return;
-    }
-
-    const email = await dbHelper.getUserByID(annulment[4]);
-    if (email == null) {
-        console.log("Could not find email of request sender " + email);
-        res.status(404);
-        res.json({
-            "message": "E-Mail-Adresse des Antragsstellers konnte nicht gefunden werden: " + email
         });
         return;
     }
@@ -736,26 +699,25 @@ async function acceptAnnulmentTransaction(req, res) {
         }
     });
 
-
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
-        to: email,
+        to: annulment.creator,
         subject: 'Ihr Annulierungsantrag vom XX wurde angenommen.',
         text: 'Sehr geehrte Damen und Herren,' +
         '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
-        ' Fahrgestellnummer XX wurde angenommen.' +
+        ' Fahrgestellnummer ' + annulment.vin + ' wurde angenommen.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
         '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
         'Straßenverkehrsamt.' +
         '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
-    transporter.sendMail(mailOptions, function(error, info){
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);
             res.status(400);
             res.send({
-                "message": "Ablehnungs-Nachricht konnte nicht gesendet werden."
+                "message": "Akzeptierungs-Nachricht konnte nicht gesendet werden."
             });
         } else {
             console.log('Email sent: ' + info.response);
