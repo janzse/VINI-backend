@@ -153,3 +153,6 @@ noch nicht exisiteren, wird ein neues angelegt.
 - [DEL] Setzt den Benutzer zu einer übergebenen Email-Adresse auf blocked.
 - [POST] Legt einen neuen Benutzer zu übergebenen Email, Passwort, Authorisierungs-Level, Vorname, Nachname,
 Firmenname und Zeitstempel Daten an.
+
+
+http-statuscodes: https://de.wikipedia.org/wiki/HTTP-Statuscode
