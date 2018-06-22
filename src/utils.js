@@ -1,3 +1,7 @@
+const PASSWORD_LENGTH = 8;
+
+const FRONTEND_URL = 'https://sgse18.github.io/VINI/';
+
 function toHexString(key) {
     if (key != null && key.substring(0, 2) !== "0x") {
         return "0x" + key;
@@ -16,6 +20,18 @@ function toBasicString(key) {
 function getTimestamp() {
 
     return new Date().toISOString();
+}
+
+function generatePassword() {
+    let password = '';
+    let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+    while(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/) == null){
+        for (var i=0; i<PASSWORD_LENGTH; i++) {
+            var rnum = Math.floor(Math.random() * chars.length);
+            password += chars.substring(rnum,rnum+1);
+        }
+    }
+    return password;
 }
 
 const USER_LEVEL = {
@@ -40,5 +56,7 @@ module.exports = {
     "getTimestamp": getTimestamp,
     "USER_LEVEL": USER_LEVEL,
     "TRANS_HASH_SIZE": TRANS_HASH_SIZE,
-    "TRANSACTION_STATUS": TRANSACTION_STATUS
+    "TRANSACTION_STATUS": TRANSACTION_STATUS,
+    "FRONTEND_URL": FRONTEND_URL,
+    "generatePassword": generatePassword
 };

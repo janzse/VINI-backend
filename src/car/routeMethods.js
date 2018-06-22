@@ -607,8 +607,14 @@ async function rejectAnnulmentTransaction(req, res) {
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: email,
-        subject: 'Annulment request status update - Accepted',
-        text: 'Your annulment request for car XX was accepted/rejected.'
+        subject: 'Ihr Annulierungsantrag vom XX wurde abgelehnt.',
+        text: 'Sehr geehrte Damen und Herren,' +
+        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
+        ' Fahrgestellnummer ' + body.req.vin + ' wurde abgelehnt.' +
+        '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
+        '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
+        'Straßenverkehrsamt.' +
+        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
     transporter.sendMail(mailOptions, function(error, info){
@@ -742,8 +748,14 @@ async function acceptAnnulmentTransaction(req, res) {
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: email,
-        subject: 'Annulment request status update - Accepted',
-        text: 'Your annulment request for car XX was accepted/rejected.'
+        subject: 'Ihr Annulierungsantrag vom XX wurde angenommen.',
+        text: 'Sehr geehrte Damen und Herren,' +
+        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
+        ' Fahrgestellnummer XX wurde angenommen.' +
+        '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
+        '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
+        'Straßenverkehrsamt.' +
+        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
     transporter.sendMail(mailOptions, function(error, info){
