@@ -53,10 +53,11 @@ async function registerUser(req, res) {
         return;
     }
 
-    let password = generator.generate({
+    /*let password = generator.generate({
         length: PASSWORD_LENGTH,
         numbers: true
-    });
+    });*/
+    let password = 'abc123';
     console.log("Password: ", password);
 
     const registerResult = await dbHelper.registerUserInDB(
@@ -102,20 +103,20 @@ async function registerUser(req, res) {
             '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
         };
 
-        transporter.sendMail(mailOptions, function(error, info){
+        /*transporter.sendMail(mailOptions, function(error, info){
             if (error) {
                 console.log(error);
                 res.status(400);
                 res.send({
                     "message": "E-Mail konnte nicht gesendet werden."
                 });
-            } else {
+            } else {*/
                 console.log('Email sent: ' + info.response);
                 res.status(200);
                 res.send({
                     "message": "Neuer User wurde registriert. Eine E-Mail mit Zugangsdaten wurde versendet."
-                });
-            }
+               /* });
+            }*/
         });
     }
 }
@@ -272,10 +273,11 @@ async function resetPassword(req, res) {
         return;
     }
 
-    let password = generator.generate({
+    /*let password = generator.generate({
         length: PASSWORD_LENGTH,
         numbers: true
-    });
+    });*/
+    let password = 'abc123';
     console.log("Password: ", password);
     const resultPasswordUpdate = dbHelper.updatePassword(req.body.email, sha256(password));
     if (resultPasswordUpdate == null) {
@@ -310,22 +312,20 @@ async function resetPassword(req, res) {
         '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
-    console.log("Mail options: ", mailOptions);
-
-    transporter.sendMail(mailOptions, function(error, info){
+    /*transporter.sendMail(mailOptions, function(error, info){
         if (error) {
             console.log('Email not sent.', error);
             res.status(400);
             res.send({
                 "message": "E-Mail konnte nicht gesendet werden."
             });
-        } else {
+        } else {*/
             console.log('Email sent: ' + info.response);
             res.status(200);
             res.send({
                 "message": "Passwort wurde geändert. Eine E-Mail mit dem neuen Passwort wurde zugesendet."
-            });
-        }
+            /*});
+        }*/
     });
 }
 
