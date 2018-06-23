@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0845b0b6-35ea-4aa7-b5d7-0a7d8a8a7384",
+		"_postman_id": "f4e5149a-ce33-4e05-9368-0cf99ba16a54",
 		"name": "VINI Rest API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,7 +19,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{local_url}}/api/car?vin=W0L012051T2123456",
+							"raw": "{{local_url}}/api/car?vin=A1111111111111111",
 							"host": [
 								"{{local_url}}"
 							],
@@ -30,7 +30,7 @@
 							"query": [
 								{
 									"key": "vin",
-									"value": "W0L012051T2123456"
+									"value": "A1111111111111111"
 								}
 							]
 						}
@@ -72,7 +72,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"WD3LMN1J4664M7766\"\n}"
+							"raw": "{\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"vin\" : \"A1111111111111111\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/mileage",
@@ -123,7 +123,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"WD3LMN1J4665M2100\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 5000,\n\t\"ownerCount\" : 2\n}"
+							"raw": "{\n\t\"vin\": \"WD3LMN1J4665M4444\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 9000,\n\t\"ownerCount\" : 1\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/register",
@@ -174,7 +174,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"XD1LOL1KEK1ROFLXD\",\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
+							"raw": "{\n\t\"vin\": \"A1111111111111111\",\n\t\"timestamp\" : \"{{timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"service1\" : true,\n\t\"service2\" : false,\n\t\"oilChange\" : true\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/service",
@@ -225,7 +225,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vin\": \"XD1LOL1KEK1ROFLXD\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
+							"raw": "{\n\t\"vin\": \"A1111111111111111\",\n\t\"timestamp\" : \"{{$timestamp}}\",\n\t\"mileage\" : 123456,\n\t\"nextCheck\" : \"2020-05-31\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/tuev",
@@ -413,7 +413,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\" : \"testguy@test.de\",\n\t\"password\" : \"6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090\",\n\t\"authLevel\": 4,\n\t\"forename\": \"Test\",\n\t\"surname\": \"Guy\",\n\t\"companyName\": \"Testing Co. KG\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
+							"raw": "{\n\t\"email\" : \"postman@tokentest.de\",\n\t\"password\" : \"6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090\",\n\t\"authLevel\": 4,\n\t\"forename\": \"Post\",\n\t\"surname\": \"Man\",\n\t\"companyName\": \"Testing Co. KG\",\n\t\"creationDate\": \"{{$timestamp}}\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/users/register",
@@ -452,12 +452,12 @@
 								},
 								{
 									"key": "username",
-									"value": "ethnodeTest",
+									"value": "postman@tokentest.de",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "secret",
+									"value": "6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090",
 									"type": "text"
 								},
 								{
@@ -508,7 +508,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"transactionHash\": \"1d447cd008770b3870e67e3af3414e4e0d7e7b56b6abe72d3de2aa607a660fc9\"\n}"
+							"raw": "{\n\t\"transactionHash\": \"cc3479e6e553d2b890a58f709c07882218189b78483f8abec726bc4f7927f612\"\n}"
 						},
 						"url": {
 							"raw": "{{local_url}}/api/car/applyCancelTransaction",
@@ -615,7 +615,10 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{local_url}}/api/car/cancelTransaction",
 							"host": [

@@ -159,20 +159,6 @@ async function getAllUsers() {
     });
 }
 
-//TODO: Auf async/await ändern, sofern verwendet
-function addAnnulmentTransaction(transactionHash, timestamp) {
-
-    const queryString = `INSERT INTO annulment_transactions (transactionHash, creationDate, executed) VALUES ('${transactionHash}', '${timestamp}', 'false');`;
-
-    const sqlCallback = (error, result) => {
-
-        const isUserRegistered = (result) !== null ? result.length > 0 : null;
-        callback(error, isAnnulementRequested);
-    };
-
-    dbConnection.query(queryString, sqlCallback);
-}
-
 async function getHeadTransactionHash(publicKeyCar) {
     const queryString = `SELECT headTx FROM kfz WHERE publicKey = '${toBasicString(publicKeyCar)}'`;
 
