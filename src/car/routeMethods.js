@@ -428,7 +428,7 @@ async function getAllAnnulmentTransactions(req, res) {
             service2: ethTx.data.serviceTwo,
             oilChange: ethTx.data.oilChange,
             applicant: annulment.applicant == null ? "" : annulment.applicant,
-            state: annulment.pending === true ? "pending" : "invalid",
+            state: annulment.pending === true ? TRANSACTION_STATUS.PENDING : TRANSACTION_STATUS.INVALID,
             transactionHash: annulment.transactionHash
         });
     }
