@@ -7,5 +7,5 @@ test('Init test case', () => {
 test('Testing getUser', async () => {
     expect.assertions(1);
     const data = await getUser();
-    expect(data.email).toEqual('user@zws.com');
+    expect(data.email).toEqual('benutzer@zws.com');
 });
