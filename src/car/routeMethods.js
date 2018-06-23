@@ -1,7 +1,7 @@
 import Transaction from "../blockchain/transaction";
 import ethNode from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS} from "../utils";
+import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS, validMileage} from "../utils";
 import {MAILACCOUNT} from "../passwords";
 import nodemailer from "nodemailer";
 
@@ -23,6 +23,13 @@ async function updateMileage(req, res) {
         res.json({
             "message": "User is not authorized to update mileage for car"
         });
+        return;
+    }
+
+    if (!validMileage(req.body.mileage)) {
+        console.log("Mileage not a valid number.");
+        res.status(400);
+        res.json({"message": "Ungültiger Kilometerstand!"});
         return;
     }
 
