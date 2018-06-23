@@ -104,7 +104,6 @@ async function getCarByVin(req, res) {
     }
 
     const allTransactions = await ethNode.getAllTransactions(headTxHash);
-    console.log("Transactions: ", allTransactions);
     if (allTransactions == null) {
         console.log("Could not find vin in blockchain");
         res.status(400);
@@ -115,7 +114,7 @@ async function getCarByVin(req, res) {
     let annulmentTransactions = [];
     let transactionsWithoutAnnulments = [];
     for (let i = 0; i < allTransactions.length; i++) {
-        if (allTransactions[i].annulmentTarget != null) {
+        if (allTransactions[i].data.annulmentTarget != null) {
             annulmentTransactions.push(allTransactions[i]);
         }
         else {
@@ -133,7 +132,7 @@ async function getCarByVin(req, res) {
         }
         if (transactionsWithoutAnnulments[i].data.state === TRANSACTION_STATUS.VALID) {
             let annulment = await dbHelper.getAnnulment(toBasicString(transactionsWithoutAnnulments[i].hash));
-            if (annulment !== null) {
+            if (annulment !== null && annulment.pending === true) {
                 transactionsWithoutAnnulments[i].data.state = TRANSACTION_STATUS.PENDING;
             }
         }
