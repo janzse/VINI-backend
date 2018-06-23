@@ -685,7 +685,7 @@ async function acceptAnnulmentTransaction(req, res) {
         console.log("Error while updating pending annulmentTransaction");
         res.status(500);
         res.json({
-            "message": "Error while updating pending annulmentTransaction"
+            "message": "Annullierung konnte nicht durchgeführt werden."
         });
         return;
     }
