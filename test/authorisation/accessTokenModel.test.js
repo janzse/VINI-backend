@@ -1,4 +1,4 @@
-import {getUser} from "../__mocks__/request"
+import {getUser} from "../database/userDBHelper.test"
 
 test('Init test case', () => {
     expect(1).toBe(1);
