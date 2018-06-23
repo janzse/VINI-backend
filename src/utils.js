@@ -38,6 +38,17 @@ const TRANSACTION_STATUS = {
     PENDING : "open"
 };
 
+function validMileage(value){
+    value = value.toString();
+    if(value.length > 6){
+        return false
+    }
+    for (let i = 0 ; i < value.length ; i++) {
+        if ((value.charAt(i) < '0') || (value.charAt(i) > '9')) return false
+    }
+    return true
+}
+
 module.exports = {
     "toHexString": toHexString,
     "toBasicString": toBasicString,
@@ -46,5 +57,6 @@ module.exports = {
     "TRANS_HASH_SIZE": TRANS_HASH_SIZE,
     "TRANSACTION_STATUS": TRANSACTION_STATUS,
     "FRONTEND_URL": FRONTEND_URL,
-    "PASSWORD_LENGTH": PASSWORD_LENGTH
+    "PASSWORD_LENGTH": PASSWORD_LENGTH,
+    "validMileage": validMileage
 };
