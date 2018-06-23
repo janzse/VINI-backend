@@ -443,7 +443,7 @@ async function insertAnnulmentTransaction(req, res) {
 
     const hash = req.body.transactionHash;
 
-    if (!hash || hash.length !== TRANS_HASH_SIZE) {
+    if (!hash || hash.length < TRANS_HASH_SIZE) {
         console.log("Invalid request for annulment. To create an annulment transaction a transactionHash is required.");
         res.status(400);
         res.json({
