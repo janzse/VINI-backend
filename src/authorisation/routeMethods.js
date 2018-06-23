@@ -1,8 +1,8 @@
 import dbHelper from "../database/dbHelper";
-import {createUserAccount} from "../blockchain/ethNode";
-import {USER_LEVEL, FRONTEND_URL, PASSWORD_LENGTH} from "../utils";
+import { createUserAccount } from "../blockchain/ethNode";
+import { USER_LEVEL, FRONTEND_URL, PASSWORD_LENGTH } from "../utils";
 import nodemailer from "nodemailer";
-import {MAILACCOUNT} from "../passwords";
+import { MAILACCOUNT } from "../passwords";
 import sha256 from 'sha256';
 import generator from 'generate-password';
 
@@ -17,7 +17,7 @@ async function registerUser(req, res) {
         res.status(400);
         res.json({
             "message": "Request has to include: email, password, authorityLevel, forename," +
-            "surname, companyName & creationDate in the body and bearer_token in the header"
+                "surname, companyName & creationDate in the body and bearer_token in the header"
         });
         return;
     }
@@ -85,12 +85,12 @@ async function registerUser(req, res) {
         to: req.body.email,
         subject: 'Ihre Zugangsdaten für VINI',
         text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nherzlich Willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzerkonto für Sie angelegt ' +
-        'worden. Ihre Zugangsdaten lauten:\nLogin: ' + req.body.email + '\nPasswort: ' + req.body.password +
-        '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +
-        '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
-        'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
-        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
+            '\n\nherzlich Willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzerkonto für Sie angelegt ' +
+            'worden. Ihre Zugangsdaten lauten:\nLogin: ' + req.body.email + '\nPasswort: ' + req.body.password +
+            '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +
+            '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
+            'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
+            '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -180,7 +180,7 @@ async function getUsers(req, res) {
     }
     else {
         res.status(500);
-        res.json({"message": "Datenbankverbindung fehlgeschlagen."});
+        res.json({ "message": "Datenbankverbindung fehlgeschlagen." });
     }
 }
 
@@ -293,28 +293,28 @@ async function resetPassword(req, res) {
         to: req.body.email,
         subject: 'Ihr neues Passwort für VINI',
         text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nSie haben ein neues Passwort angefordert. Ihre neuen Zugangsdaten lauten:' +
-        '\nLogin: ' + req.body.email + '\nPasswort: ' + password +
-        '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +
-        '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
-        'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
-        '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
+            '\n\nSie haben ein neues Passwort angefordert. Ihre neuen Zugangsdaten lauten:' +
+            '\nLogin: ' + req.body.email + '\nPasswort: ' + password +
+            '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +
+            '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
+            'oder Unklarheiten wenden Sie sich bitte an das nächste für Sie zuständige Straßenverkehrsamt.' +
+            '\n\nMit freundlichen Grüßen\n\nVINI - Ihr digitales Scheckheft'
     };
 
-    /*transporter.sendMail(mailOptions, function(error, info){
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log('Email not sent.', error);
             res.status(400);
             res.send({
                 "message": "E-Mail konnte nicht gesendet werden."
             });
-        } else {*/
-    console.log('Email sent: ' + info.response);
-    res.status(200);
-    res.send({
-        "message": "Passwort wurde geändert. Eine E-Mail mit dem neuen Passwort wurde zugesendet."
-        /*});
-    }*/
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200);
+            res.send({
+                "message": "Passwort wurde geändert. Eine E-Mail mit dem neuen Passwort wurde zugesendet."
+            });
+        }
     });
 }
 
