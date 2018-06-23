@@ -1,4 +1,4 @@
-import * as data from "../__mockData__/users.json"
+import * as data from "../__mockData__/readUser.json"
 
 test('Init test case', () => {
     expect(1).toBe(1);
