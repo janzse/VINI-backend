@@ -714,7 +714,7 @@ async function acceptAnnulmentTransaction(req, res) {
         subject: 'Ihr Annulierungsantrag vom ' + moment(annulment.creationDate).format("DD.MM.YYYY") +
         ' wurde angenommen.',
         text: 'Hallo,' +
-        '\n\nder von Ihnen am ' + moment(annulment.creationDate).format("DD.MM.YYYY") + ' gestellte' +
+        '\n\nder von Ihnen am ' + moment(annulment.creationDate).format("DD.MM.YYYY") + ' gestellte ' +
         'Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der Fahrgestellnummer ' + annulment.vin +
         ' wurde angenommen.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
