@@ -40,7 +40,7 @@ const TRANSACTION_STATUS = {
 
 function validMileage(value){
     value = value.toString();
-    if(value.length > 6){
+    if(value.length > 7){
         return false
     }
     for (let i = 0 ; i < value.length ; i++) {
