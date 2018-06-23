@@ -85,7 +85,7 @@ async function registerUser(req, res) {
         to: req.body.email,
         subject: 'Ihre Zugangsdaten für VINI',
         text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nherzlich willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzeraccount für Sie angelegt ' +
+        '\n\nherzlich Willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzerkonto für Sie angelegt ' +
         'worden. Ihre Zugangsdaten lauten:\nLogin: ' + req.body.email + '\nPasswort: ' + req.body.password +
         '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +
         '\n\nDies ist eine automatisch erstellte E-Mail. Bitte antworten Sie nicht auf diese E-Mail. Bei Fragen ' +
