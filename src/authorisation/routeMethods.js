@@ -84,7 +84,7 @@ async function registerUser(req, res) {
         from: MAILACCOUNT.LOGIN,
         to: req.body.email,
         subject: 'Ihre Zugangsdaten für VINI',
-        text: 'Sehr geehrte Damen und Herren,' +
+        text: 'Hallo ' + req.body.forename +
             '\n\nherzlich Willkommen bei VINI, dem digitalen Scheckheft. Es ist ein Benutzerkonto für Sie angelegt ' +
             'worden. Ihre Zugangsdaten lauten:\nLogin: ' + req.body.email + '\nPasswort: ' + req.body.password +
             '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +
@@ -292,7 +292,7 @@ async function resetPassword(req, res) {
         from: MAILACCOUNT.LOGIN,
         to: req.body.email,
         subject: 'Ihr neues Passwort für VINI',
-        text: 'Sehr geehrte Damen und Herren,' +
+        text: 'Hallo,' +
             '\n\nSie haben ein neues Passwort angefordert. Ihre neuen Zugangsdaten lauten:' +
             '\nLogin: ' + req.body.email + '\nPasswort: ' + password +
             '\n\nBitte logen Sie sich auf folgender URL ein: ' + FRONTEND_URL +

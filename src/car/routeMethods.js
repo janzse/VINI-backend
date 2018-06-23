@@ -4,6 +4,7 @@ import dbHelper from "../database/dbHelper";
 import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS, validMileage} from "../utils";
 import {MAILACCOUNT} from "../passwords";
 import nodemailer from "nodemailer";
+import moment from "moment";
 
 async function updateMileage(req, res) {
 
@@ -574,10 +575,12 @@ async function rejectAnnulmentTransaction(req, res) {
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: annulment.creator,
-        subject: 'Ihr Annulierungsantrag vom XX wurde abgelehnt.',
-        text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
-        ' Fahrgestellnummer ' + annulment.vin + ' wurde abgelehnt.' +
+        subject: 'Ihr Annulierungsantrag vom ' + moment(annulment.creationDate).format("DD.MM.YYYY") +
+        ' wurde abgelehnt.',
+        text: 'Hallo,' +
+        '\n\nder von Ihnen am ' + moment(annulment.creationDate).format("DD.MM.YYYY") + ' gestellte ' +
+        'Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der Fahrgestellnummer ' + annulment.vin +
+        ' wurde abgelehnt.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
         '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
         'Straßenverkehrsamt.' +
@@ -708,10 +711,12 @@ async function acceptAnnulmentTransaction(req, res) {
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: annulment.creator,
-        subject: 'Ihr Annulierungsantrag vom XX wurde angenommen.',
-        text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
-        ' Fahrgestellnummer ' + annulment.vin + ' wurde angenommen.' +
+        subject: 'Ihr Annulierungsantrag vom ' + moment(annulment.creationDate).format("DD.MM.YYYY") +
+        ' wurde angenommen.',
+        text: 'Hallo,' +
+        '\n\nder von Ihnen am ' + moment(annulment.creationDate).format("DD.MM.YYYY") + ' gestellte' +
+        'Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der Fahrgestellnummer ' + annulment.vin +
+        ' wurde angenommen.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
         '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
         'Straßenverkehrsamt.' +
