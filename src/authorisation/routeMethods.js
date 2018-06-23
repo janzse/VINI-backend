@@ -53,7 +53,7 @@ async function registerUser(req, res) {
 
     const registerResult = await dbHelper.registerUserInDB(
         req.body.email,
-        req.body.password,
+        sha256(req.body.password),
         userKeys.privateKey,
         userKeys.publicKey,
         req.body.authLevel,
