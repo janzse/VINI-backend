@@ -1,9 +1,10 @@
 import Transaction from "../blockchain/transaction";
 import ethNode from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS} from "../utils";
+import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS, validMileage} from "../utils";
 import {MAILACCOUNT} from "../passwords";
 import nodemailer from "nodemailer";
+import moment from "moment";
 
 async function updateMileage(req, res) {
 
@@ -23,6 +24,13 @@ async function updateMileage(req, res) {
         res.json({
             "message": "User is not authorized to update mileage for car"
         });
+        return;
+    }
+
+    if (!validMileage(req.body.mileage)) {
+        console.log("Mileage not a valid number.");
+        res.status(400);
+        res.json({"message": "Ungültiger Kilometerstand!"});
         return;
     }
 
@@ -567,10 +575,12 @@ async function rejectAnnulmentTransaction(req, res) {
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: annulment.creator,
-        subject: 'Ihr Annulierungsantrag vom XX wurde abgelehnt.',
-        text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
-        ' Fahrgestellnummer ' + annulment.vin + ' wurde abgelehnt.' +
+        subject: 'Ihr Annulierungsantrag vom ' + moment(annulment.creationDate).format("DD.MM.YYYY") +
+        ' wurde abgelehnt.',
+        text: 'Hallo,' +
+        '\n\nder von Ihnen am ' + moment(annulment.creationDate).format("DD.MM.YYYY") + ' gestellte ' +
+        'Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der Fahrgestellnummer ' + annulment.vin +
+        ' wurde abgelehnt.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
         '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
         'Straßenverkehrsamt.' +
@@ -674,7 +684,7 @@ async function acceptAnnulmentTransaction(req, res) {
         console.log("Error while accepting annulmentTransaction.");
         res.status(500);
         res.json({
-            "message": "Error while accepting annulmentTransaction."
+            "message": "Annullierung konnte nicht durchgeführt werden."
         });
         return;
     }
@@ -685,7 +695,7 @@ async function acceptAnnulmentTransaction(req, res) {
         console.log("Error while updating pending annulmentTransaction");
         res.status(500);
         res.json({
-            "message": "Error while updating pending annulmentTransaction"
+            "message": "Annullierung konnte nicht durchgeführt werden."
         });
         return;
     }
@@ -701,10 +711,12 @@ async function acceptAnnulmentTransaction(req, res) {
     let mailOptions = {
         from: MAILACCOUNT.LOGIN,
         to: annulment.creator,
-        subject: 'Ihr Annulierungsantrag vom XX wurde angenommen.',
-        text: 'Sehr geehrte Damen und Herren,' +
-        '\n\nder von Ihnen am XX gestellte Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der' +
-        ' Fahrgestellnummer ' + annulment.vin + ' wurde angenommen.' +
+        subject: 'Ihr Annulierungsantrag vom ' + moment(annulment.creationDate).format("DD.MM.YYYY") +
+        ' wurde angenommen.',
+        text: 'Hallo,' +
+        '\n\nder von Ihnen am ' + moment(annulment.creationDate).format("DD.MM.YYYY") + ' gestellte ' +
+        'Annulierungs-Antrag für den Scheckheft-Eintrag des Fahrzeugs mit der Fahrgestellnummer ' + annulment.vin +
+        ' wurde angenommen.' +
         '\n\nDiese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht auf diese E-Mail.' +
         '\n\nFalls Sie Fragen zu dem Vorgang haben, wenden sie sich bitte an das für Sie zuständige ' +
         'Straßenverkehrsamt.' +
