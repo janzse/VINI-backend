@@ -27,11 +27,13 @@ export async function registerUser(email, pwd, authLevel, forename, surname, com
         "publicKey": "901opiajdoas0asd242588asjasklf04urohda"
     });
 
-    const fs = require('fs');
-    fs.writeFile('./test/__mockData__/userdata.json', benutzer, function(err) {
-        if (err !== null)
-            return false;
-        else
-            return true;
+    return new Promise(function(resolve, reject) {
+        const fs = require('fs');
+        fs.writeFile('./test/__mockData__/userdata.json', benutzer, function (err) {
+            if (err !== null)
+                reject(err);
+            else
+                resolve(true);
+        });
     });
 }
