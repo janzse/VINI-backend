@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "ci": "server-test 4711"
   },
   "dependencies": {
     "babel": "^6.23.0",
@@ -24,7 +25,7 @@
     "moment": "^2.22.2",
     "morgan": "~1.9.0",
     "node-oauth2-server": "^2.4.0",
-    "npm": "^6.1.0",
+    "nodemailer": "^4.6.7",
     "oauth2-server": "^3.0.0",
     "react-hot-loader": "^4.3.3",
     "sha256": "^0.2.0",
@@ -40,6 +41,8 @@
     "babel-register": "^6.26.0",
     "frisby": "^2.0.16",
     "jest": "^23.1.0",
-    "nodemailer": "^4.6.7"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "start-server-and-test": "^1.4.1"
   }
 }
