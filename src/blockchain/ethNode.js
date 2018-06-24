@@ -3,10 +3,8 @@ import {toHexString, toBasicString} from "../utils"
 import dbHelper from "../database/dbHelper";
 import Transaction from "./transaction";
 
-let web3;
-
 const nodeIP = "http://137.117.247.14:3311";
-web3 = new Web3(nodeIP);
+const web3 = new Web3(nodeIP);
 
 async function isConnected() {
     try {
@@ -19,7 +17,6 @@ async function isConnected() {
 }
 
 function sendTransaction(transaction) {
-
     return new Promise(async (resolve) => {
         const connected = await isConnected();
 
@@ -92,7 +89,6 @@ async function getTransaction(transHash) {
 
 }
 
-//TODO: Testing on real blockchain transactions
 async function getAllTransactions(headTxHash) {
     let transactions = [];
 
