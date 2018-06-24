@@ -29,11 +29,30 @@ export async function registerUser(email, pwd, authLevel, forename, surname, com
 
     return new Promise(function(resolve, reject) {
         const fs = require('fs');
-        fs.writeFile('./test/__mockData__/userdata.json', benutzer, function (err) {
+        fs.writeFile('./test/__mockData__/writeUser.json', benutzer, function (err) {
             if (err !== null)
                 reject(err);
             else
                 resolve(true);
         });
     });
+}
+
+export async function doesUserExist(email)
+{
+    if (email !== null || email !== undefined)
+    {
+        return new Promise(function(resolve, reject) {
+            const fs = require('fs');
+            fs.readFile('./test/__mockData__/writeUser.json', function (err, data) {
+                if (!err) {
+                    const content = JSON.parse(data);
+                    resolve(content.blocked);
+                }
+                else
+                    reject(err);
+            });
+
+        });
+    }
 }
