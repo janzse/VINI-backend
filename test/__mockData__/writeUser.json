@@ -1,12 +1,1 @@
-{
-  "email":"abc@abc.de",
-  "password":"*****",
-  "privateKey":"9012381940asdjajdklasjasklf04urohdasd",
-  "authorityLevel":2,
-  "forename":"Max",
-  "surname":"Mustermann",
-  "companyName":"Firma",
-  "creationDate":"2018-06-23T14:42:39.681Z",
-  "blocked":false,
-  "publicKey":"901opiajdoas0asd242588asjasklf04urohda"
-}
+{"email":"abc@abc.de","password":"*****","privateKey":"9012381940asdjajdklasjasklf04urohdasd","authorityLevel":2,"forename":"Max","surname":"Mustermann","companyName":"Firma","creationDate":"2018-06-24T10:23:52.308Z","blocked":false,"publicKey":"901opiajdoas0asd242588asjasklf04urohda"}
