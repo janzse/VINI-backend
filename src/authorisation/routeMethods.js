@@ -1,6 +1,6 @@
 import dbHelper from "../database/dbHelper";
 import { createUserAccount } from "../blockchain/ethNode";
-import { USER_LEVEL, FRONTEND_URL} from "../utils";
+import { USER_LEVEL, FRONTEND_URL, PASSWORD_LENGTH} from "../utils";
 import nodeMailer from "nodemailer";
 import { MAILACCOUNT } from "../passwords";
 import sha256 from 'sha256';
@@ -250,7 +250,6 @@ async function resetPassword(req, res) {
         });
         return;
     }
-    console.log("Email: ", req.body.email);
 
     const doesUserExist = await dbHelper.doesUserExist(req.body.email);
     if (!doesUserExist) {
@@ -262,7 +261,7 @@ async function resetPassword(req, res) {
         return;
     }
 
-    let password = generate.generate({
+    let password = generate({
         length: PASSWORD_LENGTH,
         numbers: true
     });
