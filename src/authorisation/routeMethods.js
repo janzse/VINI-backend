@@ -4,6 +4,7 @@ import { USER_LEVEL, FRONTEND_URL} from "../utils";
 import nodeMailer from "nodemailer";
 import { MAILACCOUNT } from "../passwords";
 import sha256 from 'sha256';
+import { generate } from 'generate-password';
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -261,11 +262,10 @@ async function resetPassword(req, res) {
         return;
     }
 
-    /*let password = generator.generate({
+    let password = generate.generate({
         length: PASSWORD_LENGTH,
         numbers: true
-    });*/
-    let password = 'abc123';
+    });
     console.log("Password: ", password);
     const resultPasswordUpdate = dbHelper.updatePassword(req.body.email, sha256(password));
     if (resultPasswordUpdate == null) {
