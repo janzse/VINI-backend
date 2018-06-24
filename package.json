@@ -44,5 +44,10 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "start-server-and-test": "^1.4.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "node"
+    ]
   }
 }
