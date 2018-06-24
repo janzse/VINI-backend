@@ -3,8 +3,6 @@ import {DATABASE} from "../passwords";
 
 let dbConnection = null;
 
-//TODO: Datenbankverbindung offen halten, statt jedes Mal zu schließen?
-
 async function query(queryString) {
 
     if (dbConnection == null) {
@@ -89,6 +87,7 @@ function executeSql(query) {
         dbConnection.execSql(request);
     });
 }
+
 
 module.exports = {
     "query": query

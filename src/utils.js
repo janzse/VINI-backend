@@ -38,7 +38,7 @@ const TRANSACTION_STATUS = {
     PENDING : "open"
 };
 
-function validMileage(value){
+function isValidMileage(value){
     value = value.toString();
     if(value.length > 7){
         return false
@@ -49,6 +49,7 @@ function validMileage(value){
     return true
 }
 
+
 module.exports = {
     "toHexString": toHexString,
     "toBasicString": toBasicString,
@@ -58,5 +59,5 @@ module.exports = {
     "TRANSACTION_STATUS": TRANSACTION_STATUS,
     "FRONTEND_URL": FRONTEND_URL,
     "PASSWORD_LENGTH": PASSWORD_LENGTH,
-    "validMileage": validMileage
+    "isValidMileage": isValidMileage
 };

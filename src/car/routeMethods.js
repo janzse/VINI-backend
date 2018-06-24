@@ -1,9 +1,9 @@
 import Transaction from "../blockchain/transaction";
 import ethNode from "../blockchain/ethNode";
 import dbHelper from "../database/dbHelper";
-import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS, validMileage} from "../utils";
+import {toBasicString, getTimestamp, USER_LEVEL, TRANS_HASH_SIZE, TRANSACTION_STATUS, isValidMileage} from "../utils";
 import {MAILACCOUNT} from "../passwords";
-import nodemailer from "nodemailer";
+import nodeMailer from "nodemailer";
 import moment from "moment";
 
 async function updateMileage(req, res) {
@@ -27,10 +27,12 @@ async function updateMileage(req, res) {
         return;
     }
 
-    if (!validMileage(req.body.mileage)) {
+    if (!isValidMileage(req.body.mileage)) {
         console.log("Mileage not a valid number.");
         res.status(400);
-        res.json({"message": "Ungültiger Kilometerstand!"});
+        res.json({
+            "message": "Ungültiger Kilometerstand!"
+        });
         return;
     }
 
@@ -38,7 +40,9 @@ async function updateMileage(req, res) {
     if (carAddress === null) {
         console.log("vin not found! aborting.");
         res.status(400);
-        res.json({"message": "Fahrzeug nicht gefunden!"});
+        res.json({
+            "message": "Fahrzeug nicht gefunden!"
+        });
         return;
     }
 
@@ -46,10 +50,10 @@ async function updateMileage(req, res) {
     const userInfo = await dbHelper.getUserInfoFromToken(token);
 
     if (userInfo == null) {
-        console.log("Could not find user for token <" + token + ">");
+        console.log("Could not find user for token:", token);
         res.status(400);
         res.json({
-            "message": "Could not find user for token <" + token + ">"
+            "message": "Could not find user for token: " + token
         });
         return;
     }
@@ -99,7 +103,9 @@ async function getCarByVin(req, res) {
     if (carAddress === null) {
         console.log("vin not found! aborting.");
         res.status(400);
-        res.json({"message": "Fahrzeug nicht gefunden!"});
+        res.json({
+            "message": "Fahrzeug nicht gefunden!"
+        });
         return;
     }
 
@@ -107,7 +113,9 @@ async function getCarByVin(req, res) {
     if (headTxHash === null) {
         console.log("Head transaction hash not found! aborting.");
         res.status(400);
-        res.json({"message": "Fahrzeug nicht gefunden!"});
+        res.json({
+            "message": "Fahrzeug nicht gefunden!"
+        });
         return;
     }
 
@@ -115,7 +123,9 @@ async function getCarByVin(req, res) {
     if (allTransactions == null) {
         console.log("Could not find vin in blockchain");
         res.status(400);
-        res.json({"message": "Fahrzeug nicht gefunden!"});
+        res.json({
+            "message": "Fahrzeug nicht gefunden!"
+        });
         return;
     }
 
@@ -146,7 +156,7 @@ async function getCarByVin(req, res) {
         }
     }
 
-    let transactionPayload = transactionsWithoutAnnulments.map((element) => {
+    const transactionPayload = transactionsWithoutAnnulments.map((element) => {
         return {
             timestamp: element.data.timestamp,
             mileage: element.data.mileage,
@@ -192,9 +202,11 @@ async function shopService(req, res) {
 
     const carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
     if (carAddress === null) {
-        console.log("vin not found! aborting.");
+        console.log("Could not find car by given vin:", req.body.vin);
         res.status(400);
-        res.json({"message": "Fahrzeug nicht gefunden!"});
+        res.json({
+            "message": "Fahrzeug nicht gefunden!"
+        });
         return;
     }
 
@@ -202,10 +214,10 @@ async function shopService(req, res) {
     const userInfo = await dbHelper.getUserInfoFromToken(token);
 
     if (userInfo == null) {
-        console.log("Could not find user for token <" + token + ">");
+        console.log("Could not find user for token:", token);
         res.status(400);
         res.json({
-            "message": "Could not find user for token <" + token + ">"
+            "message": "Could not find user for token:" + token
         });
         return;
     }
@@ -229,7 +241,7 @@ async function shopService(req, res) {
     const transHash = await ethNode.sendSignedTransaction(transaction, userInfo.privateKey);
 
     if (transHash == null) {
-        console.log("An error occurred while sending transaction: ", transaction);
+        console.log("An error occurred while sending transaction: \n", transaction);
         res.status(500);
         res.json({
             "message": "Entering shop-service failed"
@@ -266,19 +278,20 @@ async function tuevEntry(req, res) {
 
     const carAddress = await dbHelper.getCarAddressFromVin(req.body.vin);
     if (carAddress === null) {
-        console.log("vin not found! aborting.");
+        console.log("Could not find car by given vin:", req.body.vin);
         res.status(400);
-        res.json({"message": "Fahrzeug wurde nicht gefunden!"});
+        res.json({
+            "message": "Fahrzeug wurde nicht gefunden!"});
         return;
     }
 
     const userInfo = await dbHelper.getUserInfoFromToken(token);
 
     if (userInfo == null) {
-        console.log("Could not find user for token <" + token + ">");
+        console.log("Could not find user for token:", token);
         res.status(400);
         res.json({
-            "message": "Could not find user for token <" + token + ">"
+            "message": "Could not find user for token: " + token
         });
         return;
     }
@@ -370,10 +383,10 @@ async function stvaRegister(req, res) {
     const userInfo = await dbHelper.getUserInfoFromToken(token);
 
     if (userInfo == null) {
-        console.log("Could not find user for token <" + token + ">");
+        console.log("Could not find user for token:", token);
         res.status(400);
         res.json({
-            "message": "Could not find user for token <" + token + ">"
+            "message": "Could not find user for token: " + token
         });
         return;
     }
@@ -563,7 +576,7 @@ async function rejectAnnulmentTransaction(req, res) {
         return;
     }
 
-    let transporter = nodemailer.createTransport({
+    let transporter = nodeMailer.createTransport({
         service: 'gmail',
         auth: {
             user: MAILACCOUNT.LOGIN,
@@ -700,7 +713,7 @@ async function acceptAnnulmentTransaction(req, res) {
         return;
     }
 
-    let transporter = nodemailer.createTransport({
+    let transporter = nodeMailer.createTransport({
         service: 'gmail',
         auth: {
             user: MAILACCOUNT.LOGIN,

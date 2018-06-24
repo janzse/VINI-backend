@@ -1,10 +1,9 @@
 import dbHelper from "../database/dbHelper";
 import { createUserAccount } from "../blockchain/ethNode";
-import { USER_LEVEL, FRONTEND_URL, PASSWORD_LENGTH } from "../utils";
-import nodemailer from "nodemailer";
+import { USER_LEVEL, FRONTEND_URL} from "../utils";
+import nodeMailer from "nodemailer";
 import { MAILACCOUNT } from "../passwords";
 import sha256 from 'sha256';
-import generator from 'generate-password';
 
 /* handles the api call to register the user and insert them into the users table.
   The req body should contain an email and a password. */
@@ -72,7 +71,7 @@ async function registerUser(req, res) {
         return;
     }
 
-    const transporter = nodemailer.createTransport({
+    const transporter = nodeMailer.createTransport({
         service: 'gmail',
         auth: {
             user: MAILACCOUNT.LOGIN,
@@ -278,7 +277,7 @@ async function resetPassword(req, res) {
         return;
     }
 
-    let transporter = nodemailer.createTransport({
+    let transporter = nodeMailer.createTransport({
         service: 'gmail',
         auth: {
             user: MAILACCOUNT.LOGIN,
@@ -317,6 +316,7 @@ async function resetPassword(req, res) {
         }
     });
 }
+
 
 module.exports = {
     "registerUser": registerUser,
