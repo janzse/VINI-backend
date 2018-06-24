@@ -5,7 +5,6 @@ import oAuth2Server from "node-oauth2-server";
 import oAuthModel from "./authorisation/accessTokenModel";
 import tokenDBHelper from "./database/tokenDBHelper";
 import userRoutes from "./routes/api/users";
-import ethNode from "./blockchain/ethNode";
 import fs from 'fs';
 import https from 'https';
 import cors from 'cors';
@@ -54,13 +53,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-//TODO: Routen zusammenlegen (z.B. /api/car Unterpfade in eine Datei zusammenführen)?
 //rest API routes
 app.use('/', require("./routes/root"));
 app.use('/api', require("./blockchain/routeMethods")); // Checking the connection to the ethereum node for every /api request
 app.use('/api/car', require('./routes/api/car'));
 app.use('/api/users', userRoutes.router); // This can't be required directly, because of the oAuthServer
-app.use('/ethTest', require('./routes/ethTest'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

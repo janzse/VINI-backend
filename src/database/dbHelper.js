@@ -27,7 +27,6 @@ async function getUserFromCredentials(email, password) {
         return null;
     }
 
-    //TODO: Prüfen, was alles für das Client-Objekt im weiteren Verlauf
     return {
         "id": result[0],
         "email": result[1],
